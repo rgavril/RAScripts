@@ -57,6 +57,10 @@ BRUSH_PAINTING_OLD_TRACE = 0x00
 BRUSH_NOT_PAITING = 0x01
 BRUSH_PAINTING_NEW_TRACE = 0xff
 
+// Memory Location : Amidar1 Sprite
+function admidar1Sprite() => byte(0x0069)
+SPRITE_BANANA = 0x21
+SPRITE_5000_POINTS = 0x3c
 
 
 
@@ -134,6 +138,14 @@ function frameAmidarAttacked() {
     return
         attackModeTimer() > 0 &&
         prev(consecutiveAmidarsAttacked()) != consecutiveAmidarsAttacked()
+}
+
+// Frame : Bonus Game Won
+function frameBonusGameWon() {
+    return
+        gameState() == GAME_STATE_BONUS_RESULTS
+        && prev(admidar1Sprite()) == SPRITE_BANANA
+        && admidar1Sprite() == SPRITE_5000_POINTS
 }
 
 
@@ -256,13 +268,13 @@ function triggerAttackCombo(comboSize) {
     // REQUIRED :
     conditions =
         // Game is started
-        gameStarted() == TRUE &&
+        gameStarted() == TRUE
 
         // Player 1 is active
-        activePlayer() == ACTIVE_PLAYER_1 &&
+        && activePlayer() == ACTIVE_PLAYER_1
 
         // Currently playing a maze game (not bonus game)
-        gameState() == GAME_STATE_MAZE_PLAYING
+        && gameState() == GAME_STATE_MAZE_PLAYING
     
     
     if (comboSize == 6)
@@ -330,6 +342,35 @@ function triggerPaintChallange() {
     return conditions && trigger && start && cancel
 }
 
+// Trigger : Banana Easting Challange
+function triggerBananaEatingChallange(quantity) {
+    // REQUIRED
+    goal = 
+        // Game is started
+        gameStarted() == TRUE
+
+        // Lives DIP Switch is set to 3 lives
+        && dipSwitchLives() == 3
+
+        // Player 1 is active
+        && activePlayer() == ACTIVE_PLAYER_1
+        
+        // A bonus game was won
+        && frameBonusGameWon()
+
+    // RESET :
+    reset = 
+        never(gameStarted() == FALSE)
+    
+    // PAUSE :
+    pause = unless(
+        // When player2 is playing
+        gameStarted() == TRUE && activePlayer() == ACTIVE_PLAYER_2
+    )
+
+ 
+    return repeated(quantity, goal) && reset
+}
 
 
 
@@ -457,7 +498,11 @@ achievement(
     trigger = triggerAttackCombo(7)
 )
 
-
-
-
-
+achievement(
+    id = 514151,
+    badge = "581749",
+    title = "Banana Bite",
+    points = 1,
+    description = "Win a bonus stage having the Lives DIP switch set to 3.",
+    trigger = triggerBananaEatingChallange(1)
+)
