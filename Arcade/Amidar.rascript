@@ -56,7 +56,6 @@ function attackModeTimer() => byte(0x01f6)
 // Memory Location : Consecutive Amidars Attacked
 function consecutiveAmidarsAttacked() => byte(0x1f7)
 
-
 // Memory Location : Painbrush Status
 function painbrushStatus() => byte(0x0352)
 BRUSH_PAINTING_OLD_TRACE = 0x00
@@ -68,7 +67,8 @@ function admidar1Sprite() => byte(0x0069)
 SPRITE_BANANA = 0x21
 SPRITE_5000_POINTS = 0x3c
 
-
+// Memory Location : Dying Animation Timer
+function dyingAnimationTimer() => byte(0x0591)
 
 
 // Frame : Maze Game Completed
@@ -86,7 +86,7 @@ function framePlayer1ProgressedToStage(stage) {
 }
 
 // Frame : Player 1 Game Over
-function framePlayer1Died() {
+function framePlayer1LivesZeroed() {
     return
         gameStarted() == TRUE
         && prev(player1Lives()) == 1
@@ -162,6 +162,19 @@ function frameBonusGameWon() {
         && admidar1Sprite() == SPRITE_5000_POINTS
 }
 
+// Frame : Dying Animation Started
+function frameDyingAnimationStarted() {
+    return
+        prev(dyingAnimationTimer() == 0)
+        && dyingAnimationTimer() > 0
+}
+
+// Frame : Dying Animation Ended
+function frameDyingAnimationEnded() {
+    return
+        prev(dyingAnimationTimer() > 0)
+        && dyingAnimationTimer() == 0
+}
 
 
 // Trigger : Stages Completed
@@ -534,6 +547,35 @@ rich_presence_display(
 )
 
 leaderboard(
+    title = "Hiscore 3 Test",
+    description = "Highest score on 3 lives game.",
+    format = "SCORE",
+    start =
+        dipSwitchLives() == 3
+        // && once(frameGameStarted())
+        // && never(gameStarted() == FALSE)
+
+        // && (
+        //     (player1Lives() == 1 && frameDyingAnimationStarted())
+        //     ||
+        //     (player1Score() < prev(player1Score()))
+        // ),
+    cancel =
+        gameStarted() == FALSE,
+    submit =
+        framePlayer1LivesZeroed(),
+    value =
+        max_of(
+            never(gameStarted() == FALSE) &&
+            measured( tally(0, always_false()) ),
+            measured( player1Score()),
+            measured( player1Score() + 1000000, when = repeated(1, player1Score() < prev(player1Score())) ),
+            measured( player1Score() + 2000000, when = repeated(2, player1Score() < prev(player1Score())) ),
+            measured( player1Score() + 3000000, when = repeated(3, player1Score() < prev(player1Score())) )
+        )
+)
+
+leaderboard(
     id = 128966,
     title = "Hiscore 3 Lives",
     description = "Highest score on 3 lives game.",
@@ -544,16 +586,9 @@ leaderboard(
     cancel =
         gameStarted() == FALSE,
     submit =
-        framePlayer1Died(),
+        framePlayer1LivesZeroed(),
     value =
-        max_of(
-            never(gameStarted() == FALSE) &&
-            measured( tally(0, always_false()) ),
-            measured( player1Score()),
-            measured( player1Score() + 1000000, when = repeated(1, player1Score() < prev(player1Score())) ),
-            measured( player1Score() + 2000000, when = repeated(2, player1Score() < prev(player1Score())) ),
-            measured( player1Score() + 3000000, when = repeated(3, player1Score() < prev(player1Score())) )
-        )
+        player1Score()
 )
 
 leaderboard(
@@ -567,16 +602,9 @@ leaderboard(
     cancel =
         gameStarted() == FALSE,
     submit =
-        framePlayer1Died(),
+        framePlayer1LivesZeroed(),
     value =
-        max_of(
-            never(gameStarted() == FALSE) &&
-            measured( tally(0, always_false()) ),
-            measured( player1Score()),
-            measured( player1Score() + 1000000, when = repeated(1, player1Score() < prev(player1Score())) ),
-            measured( player1Score() + 2000000, when = repeated(2, player1Score() < prev(player1Score())) ),
-            measured( player1Score() + 3000000, when = repeated(3, player1Score() < prev(player1Score())) )
-        )
+        player1Score()
 )
 
 leaderboard(
@@ -586,7 +614,7 @@ leaderboard(
     format = "VALUE",
     start =
         dipSwitchLives() <= 5
-        && framePlayer1Died(),
+        && framePlayer1LivesZeroed(),
     cancel =
         gameStarted() == FALSE,
     submit =
