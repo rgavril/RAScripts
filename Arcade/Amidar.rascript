@@ -387,7 +387,6 @@ function triggerBananaEatingChallange(quantity) {
 // Achievement : Navigating the Basics
 achievement(
     id = 514157,
-    badge = "581755",
     title = "Navigating the Basics",
     points = 5,
     type = "progression",
@@ -398,7 +397,6 @@ achievement(
 // Achievement : Intermediate Grid Runner
 achievement(
     id = 514158,
-    badge = "581757",
     title = "Intermediate Grid Runner",
     points = 10,
     type = "progression",
@@ -409,7 +407,6 @@ achievement(
 // Achievement : Advanced Grid Tactics
 achievement(
     id = 514159,
-    badge = "581758",
     title = "Advanced Grid Tactics",
     points = 25,
     type = "progression",
@@ -420,7 +417,6 @@ achievement(
 // Achievement : Expert Grid Navigator
 achievement(
     id = 514160,
-    badge = "581759",
     title = "Expert Grid Navigator",
     points = 25,
     type = "win_condition",
@@ -431,7 +427,6 @@ achievement(
 // Achievement : Breaking the Score Barrier
 achievement(
     id = 514148,
-    badge = "581744",
     title = "Breaking the Score Barrier",
     points = 1,
     description = "Score 10,000 points with the Lives DIP switch set to 3.",
@@ -441,7 +436,6 @@ achievement(
 // Achievement : A Life's Worth of Points
 achievement(
     id = 514149,
-    badge = "581746",
     title = "A Life's Worth of Points",
     points = 5,
     description = "Score 30,000 points with the Lives DIP switch set to 3.",
@@ -451,7 +445,6 @@ achievement(
 // Achievement : Century Scorer
 achievement(
     id = 514150,
-    badge = "582583",
     title = "Century Scorer",
     points = 25,
     description = "Score 100,000 points with the Lives DIP switch set to 3.",
@@ -461,7 +454,6 @@ achievement(
 // Achievement : Grounded Gorilla
 achievement(
     id = 514154,
-    badge = "581752",
     title = "Grounded Gorilla",
     points = 10,
     description = "Finish a gorilla stage without using any jumps or losing a life.",
@@ -471,7 +463,6 @@ achievement(
 // Achievement : Silent Roller
 achievement(
     id = 514155,
-    badge = "581753",
     title = "Silent Roller",
     points = 10,
     description = "Finish a paint stage without using any jumps or losing a life.",
@@ -481,7 +472,6 @@ achievement(
 // Achievement : Commited Painter
 achievement(
     id = 514156,
-    badge = "582141",
     title = "Commited Painter",
     points = 10,
     description = "Finish a paint stage without canceling any painted lines or losing a life.",
@@ -491,7 +481,6 @@ achievement(
 // Achievement : Light Attack Combo
 achievement(
     id = 514161,
-    badge = "582142",
     title = "Light Attack Combo",
     points = 5,
     description = "Attack five enemies in a row and earn a 1600 bonus.",
@@ -501,7 +490,6 @@ achievement(
 // Achievement : Heavey Attack Combo
 achievement(
     id = 514162,
-    badge = "582143",
     title = "Heavy Attack Combo",
     points = 10,
     description = "Attack seven enemies in a row and earn a 3200 bonus.",
@@ -510,7 +498,6 @@ achievement(
 
 achievement(
     id = 514151,
-    badge = "581749",
     title = "Banana Bite",
     points = 1,
     description = "Win a bonus stage having the Lives DIP switch set to 3.",
@@ -519,7 +506,6 @@ achievement(
 
 achievement(
     id = 514152,
-    badge = "581750",
     title = "Banana Binge",
     points = 3,
     description = "Win two bonus stages on one credit having the Lives DIP switch set to 3.",
@@ -528,7 +514,6 @@ achievement(
 
 achievement(
     id = 514153,
-    badge = "581751",
     title = "Banana Overload",
     points = 5,
     description = "Win three bonus stages on one credit having the Lives DIP switch set to 3.",
