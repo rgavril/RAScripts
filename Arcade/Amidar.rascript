@@ -355,21 +355,17 @@ function triggerBananaEatingChallange(quantity) {
         // Player 1 is active
         && activePlayer() == ACTIVE_PLAYER_1
         
-        // A bonus game was won
+        // Bonus game was won
         && frameBonusGameWon()
 
     // RESET :
     reset = 
         never(gameStarted() == FALSE)
-    
-    // PAUSE :
-    pause = unless(
-        // When player2 is playing
-        gameStarted() == TRUE && activePlayer() == ACTIVE_PLAYER_2
-    )
 
- 
-    return repeated(quantity, goal) && reset
+    if (quantity > 1)
+        return measured(repeated(quantity, goal)) && reset
+    else
+        return goal
 }
 
 
@@ -505,4 +501,22 @@ achievement(
     points = 1,
     description = "Win a bonus stage having the Lives DIP switch set to 3.",
     trigger = triggerBananaEatingChallange(1)
+)
+
+achievement(
+    id = 514152,
+    badge = "581750",
+    title = "Banana Binge",
+    points = 3,
+    description = "Win two bonus stages on one credit having the Lives DIP switch set to 3.",
+    trigger = triggerBananaEatingChallange(2)
+)
+
+achievement(
+    id = 514153,
+    badge = "581751",
+    title = "Banana Overload",
+    points = 5,
+    description = "Win three bonus stages on one credit having the Lives DIP switch set to 3.",
+    trigger = triggerBananaEatingChallange(3)
 )
