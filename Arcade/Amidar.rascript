@@ -1,10 +1,13 @@
 // Amidar
 // #ID = 11847
 
-// Memory Location: Game Started
+// Memory Location : Game Started
 function gameStarted() => byte(0x0006)
 TRUE = 0x01
 FALSE = 0x00
+
+// Memory Location : Credits
+function credits() => byte(0x0002)
 
 // Memory Location : Starting Lives (DIP Switch)
 function dipSwitchLives() => byte(0x007)
@@ -24,6 +27,9 @@ function currentStage() => byte(0x0280) + 1
 
 // Memory Location : Player 1 Stage
 function player1Stage() => byte(0x0380) + 1
+
+// Memory Location : Player 1 Lives
+function player1Lives() => byte(0x0388)
 
 // Memory Location : Player 1 Score
 function player1Score() => bcd(tbyte(0x00a2))
@@ -519,4 +525,17 @@ achievement(
     points = 5,
     description = "Win three bonus stages on one credit having the Lives DIP switch set to 3.",
     trigger = triggerBananaEatingChallange(3)
+)
+
+rich_presence_conditional_display(
+    gameStarted() == TRUE,
+    "Stage: {0} | Lives: {1} | Score: {2}",
+    rich_presence_macro("Number", player1Stage()),
+    rich_presence_macro("Number", player1Lives()),
+    rich_presence_macro("Score", player1Score())
+)
+
+rich_presence_display(
+    "In Attract Mode with {0} Credits.",
+    rich_presence_macro("Number", credits())
 )
