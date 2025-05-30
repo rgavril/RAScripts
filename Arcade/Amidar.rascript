@@ -85,6 +85,14 @@ function framePlayer1ProgressedToStage(stage) {
         player1Stage() == stage
 }
 
+// Frame : Player 1 Game Over
+function framePlayer1Died() {
+    return
+        gameStarted() == TRUE
+        && prev(player1Lives()) == 1
+        && player1Lives() == 0
+}
+
 // Frame : Game Started
 function frameGameStarted() {
     return 
@@ -538,4 +546,66 @@ rich_presence_conditional_display(
 rich_presence_display(
     "In Attract Mode with {0} Credits.",
     rich_presence_macro("Number", credits())
+)
+
+leaderboard(
+    id = 128966,
+    title = "Hiscore 3 Lives",
+    description = "Highest score on 3 lives game.",
+    format = "SCORE",
+    start =
+        dipSwitchLives() == 3
+        && frameGameStarted(),
+    cancel =
+        gameStarted() == FALSE,
+    submit =
+        framePlayer1Died(),
+    value =
+        max_of(
+            never(gameStarted() == FALSE) &&
+            measured( tally(0, always_false()) ),
+            measured( player1Score()),
+            measured( player1Score() + 1000000, when = repeated(1, player1Score() < prev(player1Score())) ),
+            measured( player1Score() + 2000000, when = repeated(2, player1Score() < prev(player1Score())) ),
+            measured( player1Score() + 3000000, when = repeated(3, player1Score() < prev(player1Score())) )
+        )
+)
+
+leaderboard(
+    id = 128967,
+    title = "Hiscore 5 Lives",
+    description = "Highest score on 5 lives game.",
+    format = "SCORE",
+    start =
+        dipSwitchLives() == 5
+        && frameGameStarted(),
+    cancel =
+        gameStarted() == FALSE,
+    submit =
+        framePlayer1Died(),
+    value =
+        max_of(
+            never(gameStarted() == FALSE) &&
+            measured( tally(0, always_false()) ),
+            measured( player1Score()),
+            measured( player1Score() + 1000000, when = repeated(1, player1Score() < prev(player1Score())) ),
+            measured( player1Score() + 2000000, when = repeated(2, player1Score() < prev(player1Score())) ),
+            measured( player1Score() + 3000000, when = repeated(3, player1Score() < prev(player1Score())) )
+        )
+)
+
+leaderboard(
+    id = 129461,
+    title = "Highest Stage",
+    description = "Highest stage reached with 5 lives or less.",
+    format = "VALUE",
+    start =
+        dipSwitchLives() <= 5
+        && framePlayer1Died(),
+    cancel =
+        gameStarted() == FALSE,
+    submit =
+        always_true(),
+    value =
+        player1Stage()
 )
