@@ -598,9 +598,10 @@ rich_presence_display(
     rich_presence_macro("Number", credits())
 )
 
-// Version 3 : Late Start + Wrapping
+// Leaderboard : Hiscore 3 Lives
 leaderboard(
-    title = "Hiscore 3",
+    id = 128966,
+    title = "Hiscore 3 Lives",
     description = "Highest score on 3 lives game.",
     format = "SCORE",
     start =
@@ -613,39 +614,23 @@ leaderboard(
         valueHiscoreLeaderboard()
 )
 
-// Version 1 : Early Start + No Wrapping
-leaderboard(
-    id = 128966,
-    title = "Hiscore 3 Lives",
-    description = "Highest score on 3 lives game.",
-    format = "SCORE",
-    start =
-        dipSwitchLives() == 3
-        && frameGameStarted(),
-    cancel =
-        gameStarted() == FALSE,
-    submit =
-        framePlayer1LivesZeroed(),
-    value =
-        player1Score()
-)
-
+// Leaderboard : Hiscore 5 Lives
 leaderboard(
     id = 128967,
     title = "Hiscore 5 Lives",
     description = "Highest score on 5 lives game.",
     format = "SCORE",
     start =
-        dipSwitchLives() == 5
-        && frameGameStarted(),
+        startHiscoreLeaderboard(lives=5),
     cancel =
-        gameStarted() == FALSE,
+        always_false(),
     submit =
         framePlayer1LivesZeroed(),
     value =
-        player1Score()
+        valueHiscoreLeaderboard()
 )
 
+// Leaderboard : Highest Stage
 leaderboard(
     id = 129461,
     title = "Highest Stage",
