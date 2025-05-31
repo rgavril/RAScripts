@@ -81,6 +81,7 @@ function frameMazeGameCompleted() {
 // Frame : Player 1 Progressed to Stage <stage>
 function framePlayer1ProgressedToStage(stage) {
     return 
+        gameStarted() == TRUE &&
         prev(player1Stage()) == stage-1 &&
         player1Stage() == stage
 }
@@ -179,33 +180,30 @@ function triggerStagesCompleted(startStage, endStage) {
     // REQUIRED : 
     conditions = 
         // Game is started
-        gameStarted() == TRUE &&
+        gameStarted() == TRUE
         
-        // Lives DIP Switch is set to 5 lives or less
-        dipSwitchLives() <= 5 &&
-        
+        // Lives DIP Switch is set to 5 or less
+        && dipSwitchLives() <= 5
+
         // Player 1 is active
-        activePlayer() == ACTIVE_PLAYER_1 &&
+        && activePlayer() == ACTIVE_PLAYER_1
         
         // The maze from <endStage> was just completed succesfully
-        frameCompletedMazeFromStage(endStage)
+        && frameCompletedMazeFromStage(endStage)
 
-    // START FLAG:
+    // START CHALLANGE:
     if (startStage == 1) {
-        // First stage is not a progressions so we need to set the start flag
-        // as soon as the game start.
+        // First stage is not a progressions from previous stage,
+        // the callange starts as soon as the game start.
         start = once( frameGameStarted() )
 
     } else {
-        // Other stages are progressions from a previous stage so that is when
-        // the start flag is set
-        start = once( 
-            gameStarted() == TRUE &&
-            framePlayer1ProgressedToStage(startStage)
-        )
+        // Other stages are progressions from a previous stage
+        // so we start the challange when progression to it was made.
+        start = once( framePlayer1ProgressedToStage(startStage) )
     }
 
-    // CANCEL FLAG:
+    // CANCEL CHALLANGE:
     cancel = 
         // When the game is not playable by any player
         never( gameStarted() == FALSE )
@@ -221,10 +219,10 @@ function triggerNoJumpChallange(targetStageType) {
     // REQUIRED :
     conditions = 
         // Game is started
-        gameStarted() == TRUE &&
+        gameStarted() == TRUE
 
         // Player 1 is active
-        activePlayer() == ACTIVE_PLAYER_1
+        && activePlayer() == ACTIVE_PLAYER_1
 
     // TRIGGER :
     trigger = 
@@ -234,7 +232,7 @@ function triggerNoJumpChallange(targetStageType) {
     // START :
     if (targetStageType == STAGE_TYPE_APE) {
         // Since the game start with a ape game, in addition to setting the start 
-        // flag when the user advances from a bonus game, we also need to set it
+        // flag when the user advances from a bonus stage, we also need to set it
         // when the game starts.
         start = (
             once( frameAdvancedFromBonusGameToApeGame() ) || 
