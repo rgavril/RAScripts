@@ -369,6 +369,10 @@ function triggerPaintChallange() {
 }
 
 // Trigger : Banana Easting Challange
+// Used By :
+//  - Banana Bite     : quantity = 1
+//  - Banana Binge    : quantity = 2
+//  - Banana Overload : quantity = 3
 function triggerBananaEatingChallange(quantity) {
     // REQUIRED
     goal = 
@@ -394,7 +398,10 @@ function triggerBananaEatingChallange(quantity) {
         return goal
 }
 
-// Start : Hiscore Leaderboard
+// Leaderboard Start : Hiscore
+// Used By :
+//  - Hiscore 3 Lives : lives = 3
+//  - Hiscore 5 Lives : lives = 5
 function startHiscoreLeaderboard(lives) {
     // CONDITIONS :
     common =
@@ -422,7 +429,10 @@ function startHiscoreLeaderboard(lives) {
     return common && ( flag1 || flag2 ) && reset
 }
 
-// Value : Hiscore Leaderboard
+// Leaderboard Value : Hiscore
+// Used By :
+//  - Hiscore 3 Lives
+//  - Hiscore 5 Lives
 function valueHiscoreLeaderboard() {
     reset =
         never(gameStarted() == FALSE) &&
@@ -548,6 +558,7 @@ achievement(
     trigger = triggerAttackCombo(7)
 )
 
+// Achievement : Banana Bite
 achievement(
     id = 514151,
     title = "Banana Bite",
@@ -556,6 +567,7 @@ achievement(
     trigger = triggerBananaEatingChallange(1)
 )
 
+// Achievement : Banana Binge
 achievement(
     id = 514152,
     title = "Banana Binge",
@@ -564,6 +576,7 @@ achievement(
     trigger = triggerBananaEatingChallange(2)
 )
 
+// Achievement : Banana Overload
 achievement(
     id = 514153,
     title = "Banana Overload",
