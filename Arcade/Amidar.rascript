@@ -67,9 +67,6 @@ function admidar1Sprite() => byte(0x0069)
 SPRITE_BANANA = 0x21
 SPRITE_5000_POINTS = 0x3c
 
-// Memory Location : Dying Animation Timer
-function dyingAnimationTimer() => byte(0x0591)
-
 
 // Frame : Maze Game Completed
 function frameMazeGameCompleted() {
@@ -162,18 +159,11 @@ function frameBonusGameWon() {
         && admidar1Sprite() == SPRITE_5000_POINTS
 }
 
-// Frame : Dying Animation Started
-function frameDyingAnimationStarted() {
+// Frame : Player1 Score Overflow
+function framePlayer1ScoreOveflowed() {
     return
-        prev(dyingAnimationTimer() == 0)
-        && dyingAnimationTimer() > 0
-}
-
-// Frame : Dying Animation Ended
-function frameDyingAnimationEnded() {
-    return
-        prev(dyingAnimationTimer() > 0)
-        && dyingAnimationTimer() == 0
+        prev(gameStarted()) == TRUE
+        && player1Score() < prev(player1Score())
 }
 
 // Trigger : Stages Completed
@@ -408,30 +398,18 @@ function startHiscoreLeaderboard(lives) {
         // Lives DIP Switch is set to <lives> lives
         dipSwitchLives() == lives
 
-    // FLAG 1 : Just before game over
+    // FLAG 1
     flag1 = once (
-        // Game is started
-        gameStarted() == TRUE
-
-        // Player1 is at his last life
-        && player1Lives() == 1
-
-        // Dying animation started playing
-        && frameDyingAnimationStarted()
+        framePlayer1LivesZeroed()
     )
 
-    // FLAG 2 : When score overflow happens
+    // FLAG 2
     flag2 = once (
-        // Game was alreay started
-        prev(gameStarted()) == TRUE
-
-        // Player 1 score went down
-        && player1Score() < prev(player1Score())
+        framePlayer1ScoreOveflowed()
     )
 
-    // RESET
+    // RESET : On game not playing
     reset = never (
-        // Game is not started
         gameStarted() == FALSE
     )
 
@@ -448,9 +426,9 @@ function valueHiscoreLeaderboard() {
         measured( tally(0, always_false()) )
 
     overflow_none = measured( player1Score())
-    overflow_1st  = measured( player1Score() + 1000000, when = repeated(1, player1Score() < prev(player1Score())) )
-    overflow_2nd  = measured( player1Score() + 2000000, when = repeated(2, player1Score() < prev(player1Score())) )
-    overflow_3rd  = measured( player1Score() + 3000000, when = repeated(3, player1Score() < prev(player1Score())) )
+    overflow_1st  = measured( player1Score() + 1000000, when = repeated(1, framePlayer1ScoreOveflowed()) )
+    overflow_2nd  = measured( player1Score() + 2000000, when = repeated(2, framePlayer1ScoreOveflowed()) )
+    overflow_3rd  = measured( player1Score() + 3000000, when = repeated(3, framePlayer1ScoreOveflowed()) )
 
     return max_of(reset, overflow_none, overflow_1st, overflow_2nd, overflow_3rd)
 }
