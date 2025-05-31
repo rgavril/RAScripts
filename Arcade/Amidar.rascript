@@ -394,7 +394,47 @@ function triggerBananaEatingChallange(quantity) {
         return goal
 }
 
+// Start : Hiscore Leaderboard
+function startHiscoreLeaderboard(lives) {
+    // CONDITIONS :
+    common =
+        // Lives DIP Switch is set to <lives> lives
+        dipSwitchLives() == lives
 
+    // FLAG 1 (Before Game Over)
+    flag1 = once (
+        gameStarted() == TRUE
+        && player1Lives() == 1
+        && frameDyingAnimationStarted()
+    )
+
+    // FLAG 2 (Score Overflow)
+    flag2 = once (
+        prev(gameStarted()) == TRUE &&
+        player1Score() < prev(player1Score())
+    )
+
+    // RESET FLAGS
+    reset = never (
+        gameStarted() == FALSE
+    )
+
+    return common && ( flag1 || flag2 ) && reset
+}
+
+// Value : Hiscore Leaderboard
+function valueHiscoreLeaderboard() {
+    reset =
+        never(gameStarted() == FALSE) &&
+        measured( tally(0, always_false()) )
+
+    overflow_none = measured( player1Score())
+    overflow_1st  = measured( player1Score() + 1000000, when = repeated(1, player1Score() < prev(player1Score())) )
+    overflow_2nd  = measured( player1Score() + 2000000, when = repeated(2, player1Score() < prev(player1Score())) )
+    overflow_3rd  = measured( player1Score() + 3000000, when = repeated(3, player1Score() < prev(player1Score())) )
+
+    return max_of(reset, overflow_none, overflow_1st, overflow_2nd, overflow_3rd)
+}
 
 // Achievement : Navigating the Basics
 achievement(
@@ -545,31 +585,22 @@ rich_presence_display(
     rich_presence_macro("Number", credits())
 )
 
-// Version 2 : Start on Score Increase + Wrapping
-// leaderboard(
-//     title = "Hiscore 3",
-//     description = "Highest score on 3 lives game.",
-//     format = "SCORE",
-//     start =
-//         dipSwitchLives() == 3
-//         && once(gameStarted() == TRUE && player1Score() > prev(player1Score()))
-//         && never(gameStarted() == FALSE),
-//     cancel =
-//         always_false(),
-//     submit =
-//         framePlayer1LivesZeroed(),
-//     value =
-//         max_of(
-//             never(gameStarted() == FALSE) &&
-//             measured( tally(0, always_false()) ),
-//             measured( player1Score()),
-//             measured( player1Score() + 1000000, when = repeated(1, player1Score() < prev(player1Score())) ),
-//             measured( player1Score() + 2000000, when = repeated(2, player1Score() < prev(player1Score())) ),
-//             measured( player1Score() + 3000000, when = repeated(3, player1Score() < prev(player1Score())) )
-//         )
-// )
+// Version 3 : Late Start + Wrapping
+leaderboard(
+    title = "Hiscore 3",
+    description = "Highest score on 3 lives game.",
+    format = "SCORE",
+    start =
+        startHiscoreLeaderboard(lives=3),
+    cancel =
+        always_false(),
+    submit =
+        framePlayer1LivesZeroed(),
+    value =
+        valueHiscoreLeaderboard()
+)
 
-// Version 1 : Start on Game Start + No Wrapping
+// Version 1 : Early Start + No Wrapping
 leaderboard(
     id = 128966,
     title = "Hiscore 3 Lives",
