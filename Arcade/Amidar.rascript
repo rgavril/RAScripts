@@ -312,7 +312,7 @@ function triggerAttackCombo(comboSize) {
         never( attackMode() == ATTACK_MODE_OFF )
         
     // GOAL :
-    goal = tally(comboSize,
+    goal = repeated(comboSize,
             // Player 1 is active
             activePlayer() == ACTIVE_PLAYER_1
 
