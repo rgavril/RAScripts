@@ -176,7 +176,6 @@ function frameDyingAnimationEnded() {
         && dyingAnimationTimer() == 0
 }
 
-
 // Trigger : Stages Completed
 // Used By :
 //  - Navigating the Basics    : startStage=1, endStage=2
@@ -546,35 +545,31 @@ rich_presence_display(
     rich_presence_macro("Number", credits())
 )
 
-leaderboard(
-    title = "Hiscore 3 Test",
-    description = "Highest score on 3 lives game.",
-    format = "SCORE",
-    start =
-        dipSwitchLives() == 3
-        // && once(frameGameStarted())
-        // && never(gameStarted() == FALSE)
+// Version 2 : Start on Score Increase + Wrapping
+// leaderboard(
+//     title = "Hiscore 3",
+//     description = "Highest score on 3 lives game.",
+//     format = "SCORE",
+//     start =
+//         dipSwitchLives() == 3
+//         && once(gameStarted() == TRUE && player1Score() > prev(player1Score()))
+//         && never(gameStarted() == FALSE),
+//     cancel =
+//         always_false(),
+//     submit =
+//         framePlayer1LivesZeroed(),
+//     value =
+//         max_of(
+//             never(gameStarted() == FALSE) &&
+//             measured( tally(0, always_false()) ),
+//             measured( player1Score()),
+//             measured( player1Score() + 1000000, when = repeated(1, player1Score() < prev(player1Score())) ),
+//             measured( player1Score() + 2000000, when = repeated(2, player1Score() < prev(player1Score())) ),
+//             measured( player1Score() + 3000000, when = repeated(3, player1Score() < prev(player1Score())) )
+//         )
+// )
 
-        // && (
-        //     (player1Lives() == 1 && frameDyingAnimationStarted())
-        //     ||
-        //     (player1Score() < prev(player1Score()))
-        // ),
-    cancel =
-        gameStarted() == FALSE,
-    submit =
-        framePlayer1LivesZeroed(),
-    value =
-        max_of(
-            never(gameStarted() == FALSE) &&
-            measured( tally(0, always_false()) ),
-            measured( player1Score()),
-            measured( player1Score() + 1000000, when = repeated(1, player1Score() < prev(player1Score())) ),
-            measured( player1Score() + 2000000, when = repeated(2, player1Score() < prev(player1Score())) ),
-            measured( player1Score() + 3000000, when = repeated(3, player1Score() < prev(player1Score())) )
-        )
-)
-
+// Version 1 : Start on Game Start + No Wrapping
 leaderboard(
     id = 128966,
     title = "Hiscore 3 Lives",
