@@ -67,6 +67,9 @@ function admidar1Sprite() => byte(0x0069)
 SPRITE_BANANA = 0x21
 SPRITE_5000_POINTS = 0x3c
 
+// Memory Location : Dying Animation Timer
+function dyingAnimationTimer() => byte(0x0591)
+
 
 // Frame : Maze Game Completed
 function frameMazeGameCompleted() {
@@ -147,8 +150,8 @@ function frameJumpUsed() {
 // Frame : Amidar Attacked
 function frameAmidarAttacked() {
     return
-        attackModeTimer() > 0 &&
-        prev(consecutiveAmidarsAttacked()) != consecutiveAmidarsAttacked()
+        attackMode() == ATTACK_MODE_ON
+        && prev(consecutiveAmidarsAttacked()) != consecutiveAmidarsAttacked()
 }
 
 // Frame : Bonus Game Won
@@ -291,38 +294,33 @@ function triggerAttackCombo(comboSize) {
 
         // Currently playing a maze game (not bonus game)
         && gameState() == GAME_STATE_MAZE_PLAYING
-    
-    
+
+        // Attack mode is on
+        && attackMode() == ATTACK_MODE_ON
+
     if (comboSize == 6)
-        // Prevent the counter popping if combo is not possible.
         // Until stage 3 there are less than 6 amidars.
         conditions = conditions && currentStage() >= 3
 
     if (comboSize == 7)
-        // Prevent the counter popping if combo is not possible.
         // Until stage 4 there are less than 7 amidars.
         conditions = conditions && currentStage() >= 4
-
-    // START :
-    start = 
-        // Attack timer is positive (counting down)
-        once( attackModeTimer() > 0 )
     
     // RESET :
-    cancel = 
-        // Attack timer went to zero
-        never( attackModeTimer() == 0 ) &&
-
+    reset =
         // Attack mode is off
         never( attackMode() == ATTACK_MODE_OFF )
         
     // GOAL :
-    goal = 
-        // Amidar Attacked <comboSize> times
-        repeated(comboSize, frameAmidarAttacked())
+    goal = tally(comboSize,
+            // Player 1 is active
+            activePlayer() == ACTIVE_PLAYER_1
 
+            // Amidar was attacked
+            && frameAmidarAttacked()
+    )
 
-    return conditions && start && cancel && (trigger_when(goal) || measured(goal))
+    return conditions && reset && (trigger_when(goal) || measured(goal))
 }
 
 // Trigger : Paint Challange
