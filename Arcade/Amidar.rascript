@@ -408,21 +408,30 @@ function startHiscoreLeaderboard(lives) {
         // Lives DIP Switch is set to <lives> lives
         dipSwitchLives() == lives
 
-    // FLAG 1 (Before Game Over)
+    // FLAG 1 : Just before game over
     flag1 = once (
+        // Game is started
         gameStarted() == TRUE
+
+        // Player1 is at his last life
         && player1Lives() == 1
+
+        // Dying animation started playing
         && frameDyingAnimationStarted()
     )
 
-    // FLAG 2 (Score Overflow)
+    // FLAG 2 : When score overflow happens
     flag2 = once (
-        prev(gameStarted()) == TRUE &&
-        player1Score() < prev(player1Score())
+        // Game was alreay started
+        prev(gameStarted()) == TRUE
+
+        // Player 1 score went down
+        && player1Score() < prev(player1Score())
     )
 
-    // RESET FLAGS
+    // RESET
     reset = never (
+        // Game is not started
         gameStarted() == FALSE
     )
 
