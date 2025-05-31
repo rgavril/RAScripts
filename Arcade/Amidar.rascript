@@ -594,19 +594,6 @@ achievement(
     trigger = triggerBananaEatingChallange(3)
 )
 
-rich_presence_conditional_display(
-    gameStarted() == TRUE,
-    "Stage: {0} | Lives: {1} | Score: {2}",
-    rich_presence_macro("Number", player1Stage()),
-    rich_presence_macro("Number", player1Lives()),
-    rich_presence_macro("Score", player1Score())
-)
-
-rich_presence_display(
-    "In Attract Mode with {0} Credits.",
-    rich_presence_macro("Number", credits())
-)
-
 // Leaderboard : Hiscore 3 Lives
 leaderboard(
     id = 128966,
@@ -654,4 +641,20 @@ leaderboard(
         always_true(),
     value =
         player1Stage()
+)
+
+// Rich Presence : When Game is Started
+rich_presence_conditional_display(
+    gameStarted() == TRUE,
+
+    "Stage: {0} | Lives: {1} | Score: {2}",
+    rich_presence_macro("Number", player1Stage()),
+    rich_presence_macro("Number", player1Lives()),
+    rich_presence_macro("Score", player1Score())
+)
+
+// Rich Presence : Default
+rich_presence_display(
+    "In Attract Mode with {0} Credits.",
+    rich_presence_macro("Number", credits())
 )
