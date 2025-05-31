@@ -234,9 +234,16 @@ function triggerNoJumpChallange(targetStageType) {
         // Since the game start with a ape game, in addition to setting the start 
         // flag when the user advances from a bonus stage, we also need to set it
         // when the game starts.
-        start = (
-            once( frameAdvancedFromBonusGameToApeGame() ) || 
-            once( frameGameStarted() )
+
+        // start = (
+        //     once( frameAdvancedFromBonusGameToApeGame() ) ||
+        //     once( frameGameStarted() )
+        // )
+
+        // I have to admit, I only added this to have a AddHits somewhere :P
+        start = tally( 1 ,
+            frameAdvancedFromBonusGameToApeGame(),
+            frameGameStarted()
         )
     } else {
         // For paint stages the start flag is set when the game advanced from a
