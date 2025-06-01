@@ -2,7 +2,7 @@
 // #ID = 11847
 
 
-function gameStarted() => byte(0x0006)
+function inGame() => byte(0x0006)
 TRUE = 0x01
 FALSE = 0x00
 
@@ -39,7 +39,7 @@ function attackMode() => byte(0x01f5)
 ATTACK_MODE_ON = 0xff
 ATTACK_MODE_OFF = 0x00
 
-function consecutiveAmidarsAttacked() => byte(0x1f7)
+function attackStreakLength() => byte(0x1f7)
 
 function painbrushStatus() => byte(0x0352)
 BRUSH_PAINTING_OLD_TRACE = 0x00
@@ -50,76 +50,72 @@ function admidar1Sprite() => byte(0x0069)
 SPRITE_BANANA = 0x21
 SPRITE_5000_POINTS = 0x3c
 
-function frameMazeGameCompleted() {
+function frameMazeCompleted() {
     return
         prev(gameState()) == GAME_STATE_MAZE_PLAYING  &&
         gameState() == GAME_STATE_MAZE_COMPLETED
 }
 
-function framePlayer1ProgressedToStage(stage) {
+function framePlayer1AdvancedToStage(stage) {
     return
-        gameStarted() == TRUE &&
-        prev(player1Stage()) == stage-1 &&
-        player1Stage() == stage
+        inGame() == TRUE
+        && prev(player1Stage()) == stage-1
+        && player1Stage() == stage
 }
 
 function framePlayer1LivesZeroed() {
     return
-        gameStarted() == TRUE
+        inGame() == TRUE
         && prev(player1Lives()) == 1
         && player1Lives() == 0
 }
 
 function frameGameStarted() {
     return
-        prev(gameStarted()) == FALSE &&
-        gameStarted() == TRUE
+        prev(inGame()) == FALSE
+        && inGame() == TRUE
 }
 
-function frameCompletedMazeFromStage(stage) {
+function frameMazeCompletedOnStage(stage) {
     return
-        currentStage() == stage &&
-        frameMazeGameCompleted()
+        currentStage() == stage
+        && frameMazeCompleted()
 }
 
-function framePlayer1ScoreWentOver(score) {
+function framePlayer1ScoreExceeded(score) {
     return
-        prev(player1Score()) < score &&
-        player1Score() >= score
+        prev(player1Score()) < score
+        && player1Score() >= score
 }
 
-function frameAdvancedFromBonusGameToMazeGame() {
+function frameMazeStartedAfterBonus() {
     return
-        prev(gameState()) == GAME_STATE_BONUS_RESULTS &&
-        gameState() == GAME_STATE_MAZE_STARTING
+        prev(gameState()) == GAME_STATE_BONUS_RESULTS
+        && gameState() == GAME_STATE_MAZE_STARTING
 }
 
-function frameAdvancedFromBonusGameToApeGame() {
+function frameApeMazeStartedAfterBonus() {
     return
-        frameAdvancedFromBonusGameToMazeGame() &&
+        frameMazeStartedAfterBonus() &&
         stageType() == STAGE_TYPE_APE
 }
 
-function frameAdvancedFromBonusGameToPaintGame() {
+function framePaintMazeStartedAfterBonus() {
     return
-        frameAdvancedFromBonusGameToMazeGame() &&
+        frameMazeStartedAfterBonus() &&
         stageType() == STAGE_TYPE_PAINT
-}
-
-function frameRemainingJumpsDecreased() {
-    return jumpsRemaining() < prev(jumpsRemaining())
 }
 
 function frameJumpUsed() {
     return
-        gameState() == GAME_STATE_MAZE_PLAYING &&
-        frameRemainingJumpsDecreased()
+        gameState() == GAME_STATE_MAZE_PLAYING
+        && jumpsRemaining() < prev(jumpsRemaining())
 }
 
 function frameAmidarAttacked() {
     return
         attackMode() == ATTACK_MODE_ON
-        && prev(consecutiveAmidarsAttacked()) != consecutiveAmidarsAttacked()
+        && prev(attackStreakLength()) != attackStreakLength()
 }
 
 function frameBonusGameWon() {
@@ -131,7 +127,7 @@ function frameBonusGameWon() {
 
 function framePlayer1ScoreOveflowed() {
     return
-        prev(gameStarted()) == TRUE
+        prev(inGame()) == TRUE
         && player1Score() < prev(player1Score())
 }
 
@@ -144,7 +140,7 @@ function framePlayer1ScoreOveflowed() {
 function triggerStagesCompleted(startStage, endStage) {
     // Priming Conditions
     primingConditions =
-        gameStarted() == TRUE
+        inGame() == TRUE
         && dipSwitchLives() <= 5
         && activePlayer() == ACTIVE_PLAYER_1
 
@@ -152,15 +148,15 @@ function triggerStagesCompleted(startStage, endStage) {
         && once(frameGameStarted())
 
         if (startStage > 1) primingConditions = primingConditions
-        && once(framePlayer1ProgressedToStage(startStage))
+        && once(framePlayer1AdvancedToStage(startStage))
 
     // Goal Conditions
     goalConditions =
-        frameCompletedMazeFromStage(endStage)
+        frameMazeCompletedOnStage(endStage)
 
     // Cancel Conditions
     cancelConditions =
-        never(gameStarted() == FALSE)
+        never(inGame() == FALSE)
 
     return primingConditions && goalConditions && cancelConditions
 }
@@ -172,18 +168,18 @@ function triggerStagesCompleted(startStage, endStage) {
 function triggerNoJumpChallange(targetStageType) {
     // Priming Conditions
     primingConditions =
-        gameStarted() == TRUE
+        inGame() == TRUE
         && activePlayer() == ACTIVE_PLAYER_1
 
         if (targetStageType == STAGE_TYPE_APE) primingConditions = primingConditions
-        && tally(1, frameAdvancedFromBonusGameToApeGame(), frameGameStarted() )
+        && tally(1, frameApeMazeStartedAfterBonus(), frameGameStarted() )
 
         if (targetStageType == STAGE_TYPE_PAINT) primingConditions = primingConditions
-        && once(frameAdvancedFromBonusGameToPaintGame())
+        && once(framePaintMazeStartedAfterBonus())
 
     // Goal Conditions
     goalConditions =
-        frameMazeGameCompleted()
+        frameMazeCompleted()
 
     // Cancel Conditions
     cancelCondition =
@@ -201,13 +197,13 @@ function triggerNoJumpChallange(targetStageType) {
 function triggerScoreMilestone(score) {
     // Priming Conditions
     primingConditions =
-        gameStarted() == TRUE
+        inGame() == TRUE
         && dipSwitchLives() == 3
         && activePlayer() == ACTIVE_PLAYER_1
 
     // Goal Conditions
     goalConditions =
-        framePlayer1ScoreWentOver(score)
+        framePlayer1ScoreExceeded(score)
 
     return primingConditions && goalConditions
 }
@@ -219,7 +215,7 @@ function triggerScoreMilestone(score) {
 function triggerAttackCombo(comboSize) {
     // Priming Conditions
     primingConditions =
-        gameStarted() == TRUE
+        inGame() == TRUE
         && activePlayer() == ACTIVE_PLAYER_1
         && gameState() == GAME_STATE_MAZE_PLAYING
         && attackMode() == ATTACK_MODE_ON
@@ -250,13 +246,13 @@ function triggerAttackCombo(comboSize) {
 function triggerPaintChallange() {
     // Priming Conditions
     primingConditions =
-        gameStarted() == TRUE
+        inGame() == TRUE
         && activePlayer() == ACTIVE_PLAYER_1
-        && once(frameAdvancedFromBonusGameToPaintGame())
+        && once(framePaintMazeStartedAfterBonus())
 
     // Goal Conditions
     goalConditions =
-        frameMazeGameCompleted()
+        frameMazeCompleted()
 
     // Cancel Conditions
     cancelConditions =
@@ -274,14 +270,14 @@ function triggerPaintChallange() {
 function triggerBananaEatingChallange(quantity) {
     // Goal Conditions
     goalConditions =
-        gameStarted() == TRUE
+        inGame() == TRUE
         && dipSwitchLives() == 3
         && activePlayer() == ACTIVE_PLAYER_1
         && frameBonusGameWon()
 
     // Cancel Conditions
     cancelConditions =
-        never(gameStarted() == FALSE)
+        never(inGame() == FALSE)
 
     if (quantity > 1)
         return measured(repeated(quantity, goalConditions)) && cancelConditions
@@ -297,7 +293,7 @@ function startHiscoreLeaderboard(lives) {
     return
         dipSwitchLives() == lives
         && (once(framePlayer1LivesZeroed()) || once(framePlayer1ScoreOveflowed()) )
-        && never(gameStarted() == FALSE)
+        && never(inGame() == FALSE)
 }
 
 // Leaderboard Value : Hiscore
@@ -306,7 +302,7 @@ function startHiscoreLeaderboard(lives) {
 //  - Hiscore 5 Lives
 function valueHiscoreLeaderboard() {
     reset =
-        never(gameStarted() == FALSE) &&
+        never(inGame() == FALSE) &&
         measured( tally(0, always_false()) )
 
     overflow_none = measured( player1Score())
@@ -498,7 +494,7 @@ leaderboard(
         dipSwitchLives() <= 5
         && framePlayer1LivesZeroed(),
     cancel =
-        gameStarted() == FALSE,
+        inGame() == FALSE,
     submit =
         always_true(),
     value =
@@ -507,7 +503,7 @@ leaderboard(
 
 // Rich Presence : When Game is Started
 rich_presence_conditional_display(
-    gameStarted() == TRUE,
+    inGame() == TRUE,
 
     "Stage: {0} | Lives: {1} | Score: {2}",
     rich_presence_macro("Number", player1Stage()),
