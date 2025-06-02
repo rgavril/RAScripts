@@ -41,12 +41,12 @@ ATTACK_MODE_OFF = 0x00
 
 function attackStreakLength() => byte(0x1f7)
 
-function painbrushStatus() => byte(0x0352)
+function paintbrushStatus() => byte(0x0352)
 BRUSH_PAINTING_OLD_TRACE = 0x00
 BRUSH_NOT_PAITING = 0x01
 BRUSH_PAINTING_NEW_TRACE = 0xff
 
-function admidar1Sprite() => byte(0x0069)
+function amidar1Sprite() => byte(0x0069)
 SPRITE_BANANA = 0x21
 SPRITE_5000_POINTS = 0x3c
 
@@ -121,11 +121,11 @@ function frameAmidarAttacked() {
 function frameBonusGameWon() {
     return
         gameState() == GAME_STATE_BONUS_RESULTS
-        && prev(admidar1Sprite()) == SPRITE_BANANA
-        && admidar1Sprite() == SPRITE_5000_POINTS
+        && prev(amidar1Sprite()) == SPRITE_BANANA
+        && amidar1Sprite() == SPRITE_5000_POINTS
 }
 
-function framePlayer1ScoreOveflowed() {
+function framePlayer1ScoreOverflowed() {
     return
         prev(inGame()) == TRUE
         && player1Score() < prev(player1Score())
@@ -172,7 +172,7 @@ function triggerNoJumpChallange(targetStageType) {
         && activePlayer() == ACTIVE_PLAYER_1
 
         if (targetStageType == STAGE_TYPE_APE) primingConditions = primingConditions
-        && tally(1, frameApeMazeStartedAfterBonus(), frameGameStarted() )
+        && (once(frameApeMazeStartedAfterBonus()) || once(frameGameStarted()))
 
         if (targetStageType == STAGE_TYPE_PAINT) primingConditions = primingConditions
         && once(framePaintMazeStartedAfterBonus())
@@ -256,7 +256,7 @@ function triggerPaintChallange() {
 
     // Cancel Conditions
     cancelConditions =
-        never(painbrushStatus() == BRUSH_NOT_PAITING)
+        never(paintbrushStatus() == BRUSH_NOT_PAITING)
         && never(gameState() == GAME_STATE_MAZE_DYING)
 
     return primingConditions && trigger_when(goalConditions) && cancelConditions
@@ -292,7 +292,7 @@ function triggerBananaEatingChallange(quantity) {
 function startHiscoreLeaderboard(lives) {
     return
         dipSwitchLives() == lives
-        && (once(framePlayer1LivesZeroed()) || once(framePlayer1ScoreOveflowed()) )
+        && (once(framePlayer1LivesZeroed()) || once(framePlayer1ScoreOverflowed()) )
         && never(inGame() == FALSE)
 }
 
@@ -306,9 +306,9 @@ function valueHiscoreLeaderboard() {
         measured( tally(0, always_false()) )
 
     overflow_none = measured( player1Score())
-    overflow_1st  = measured( player1Score() + 1000000, when = repeated(1, framePlayer1ScoreOveflowed()) )
-    overflow_2nd  = measured( player1Score() + 2000000, when = repeated(2, framePlayer1ScoreOveflowed()) )
-    overflow_3rd  = measured( player1Score() + 3000000, when = repeated(3, framePlayer1ScoreOveflowed()) )
+    overflow_1st  = measured( player1Score() + 1000000, when = repeated(1, framePlayer1ScoreOverflowed()) )
+    overflow_2nd  = measured( player1Score() + 2000000, when = repeated(2, framePlayer1ScoreOverflowed()) )
+    overflow_3rd  = measured( player1Score() + 3000000, when = repeated(3, framePlayer1ScoreOverflowed()) )
 
     return max_of(reset, overflow_none, overflow_1st, overflow_2nd, overflow_3rd)
 }
