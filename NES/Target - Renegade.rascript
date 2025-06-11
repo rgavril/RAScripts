@@ -27,6 +27,10 @@ function entity2Type() => byte(0x03d9)
 function entity3Type() => byte(0x03d8)
 function entity4Type() => byte(0x03d7)
 
+entitySlots = range(1,4)
+function entityType(slot) => byte(0x03da+slot-1)
+ENTITY_TYPE_EMPTY = 0xff
+
 function entity1Energy() => byte(0x0407)
 function entity2Energy() => byte(0x0406)
 function entity3Energy() => byte(0x0405)
@@ -35,8 +39,8 @@ function entity4Energy() => byte(0x0404)
 function playerEnergy() => byte(0x00da)
 
 bossesLookup = {
-	0x0a: "Achiles",
-	0x14: "Siggy",
+	0x0a: "Achiles", // Belly-Kick Ballet
+	0x14: "Siggy",   // Stomp, Don't Be Stomped
 	0x1c: "Big Bob",
 	0x3a: "Mr. Big"
 }
@@ -58,44 +62,37 @@ function frameTookDamage() {
 		prev(playerEnergy()) > playerEnergy()
 }
 
-function triggerStageCompleted(stageNumber) {
+function frameEntityAppeared(slot, entityType) {
 	return
-		gameplayState() == GAMEPLAY_STATE_ACTIVE
-		&& stage() == stageNumber
-		&& frameStageCompleted()
+		prev(entityType(slot)) != entityType
+		&& entityType(slot) == entityType
 }
 
-function triggerBoss(bossIndex) {
+function frameEntityVanished(slot, entityType) {
+	return
+		prev(entityType(slot)) == entityType
+		&& entityType(slot) == ENTITY_TYPE_EMPTY
+}
+
+function triggerStageCompleted(stageNumber) {
+	// Priming Conditions
+	primingConditions =
+		gameplayState() == GAMEPLAY_STATE_ACTIVE
+		&& stage() == stageNumber
+
+	// Goal Conditions
+	goalConditions =
+		frameStageCompleted()
+
+	return primingConditions && goalConditions
+}
+
+function triggerBoss(bossId) {
 	return
 		gameplayState() == GAMEPLAY_STATE_ACTIVE
-		&& (
-			once (
-				prev(entity1Type()) != bossIndex && entity1Type() == bossIndex
-			)
-			&& trigger_when(
-				entity1Type() == 0xff
-			)
-
-			|| once (
-				prev(entity2Type()) != bossIndex && entity2Type() == bossIndex
-			)
-			&& trigger_when(
-				entity2Type() == 0xff
-			)
-
-			|| once (
-				prev(entity3Type()) != bossIndex && entity3Type() == bossIndex
-			)
-			&& trigger_when(
-				entity3Type() == 0xff
-			)
-
-			|| once (
-				prev(entity4Type()) != bossIndex && entity4Type() == bossIndex
-			)
-			&& trigger_when(
-				entity4Type() == 0xff
-			)
+		&& any_of(range(1,4), slot =>
+			once(frameEntityAppeared(slot, bossId))
+			&& trigger_when(frameEntityVanished(slot, bossId))
 		)
 		&& never(frameGameOver())
 		&& never(frameTookDamage())
