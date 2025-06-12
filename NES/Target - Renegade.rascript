@@ -159,7 +159,7 @@ function triggerAttackMastery(attackAction, totalKills) {
 		gameplayState() == GAMEPLAY_STATE_PLAYING
 
 	// Goal Conditions
-	goalCondition =
+	goalConditions =
 		tally_of( range(1,4), totalKills, slot =>
 			any_of( ENTITY_TYPE["Enemy"], enemyName =>
 				frameEntityVanished(slot, ENTITY_TYPE["Enemy"][enemyName])
@@ -167,7 +167,11 @@ function triggerAttackMastery(attackAction, totalKills) {
 			)
 		)
 
-	return (primingConditions) && measured(goalCondition)
+	// Cancel Conditions
+	cancelConditions =
+		never(frameGameOver())
+
+	return primingConditions && measured(goalConditions) && cancelConditions
 }
 
 // Achievement : Garage Level 3
@@ -281,7 +285,7 @@ achievement (
 	trigger = triggerAttackMastery("Throw Extinguisher", totalKills=5)
 )
 
-// Achievement : Skilled Trashman Collector
+// Achievement : Skilled Trashman
 achievement (
 	title = "Skilled Trashman",
 	description = "Kill 3 enemies using the Trash Bin before game over.",
