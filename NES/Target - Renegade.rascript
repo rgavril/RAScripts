@@ -59,6 +59,13 @@ ENTITY_INTERACTION = {
 	"None": 0x00
 }
 
+function playerLastAction() => byte(0x00e0)
+PLAYER_LAST_ACTION = {
+	"Punch 1": 0x02b,
+	"Punch 2": 0x30,
+	"Swing Baseball Bat": 0x5e
+}
+
 function frameStageCompleted() {
 	return
 		prev(gameState()) == GAMESTATE_FIGHTING
@@ -238,18 +245,28 @@ achievement (
 	points = 0,
 	trigger =
 		gameplayState() == GAMEPLAY_STATE_PLAYING
-		// && once(entityInteraction() == ENTITY_INTERACTION["Holding Baseball Bat"])
+		&& entityInteraction() == ENTITY_INTERACTION["Holding Baseball Bat"]
 
 		&& measured(
 			tally(10,
-				any_of(ENTITY_TYPE["Enemy"], enemyName => frameEntityVanished(1, ENTITY_TYPE["Enemy"][enemyName])),
-				any_of(ENTITY_TYPE["Enemy"], enemyName => frameEntityVanished(2, ENTITY_TYPE["Enemy"][enemyName])),
-				any_of(ENTITY_TYPE["Enemy"], enemyName => frameEntityVanished(3, ENTITY_TYPE["Enemy"][enemyName])),
-				any_of(ENTITY_TYPE["Enemy"], enemyName => frameEntityVanished(4, ENTITY_TYPE["Enemy"][enemyName]))
+				any_of(ENTITY_TYPE["Enemy"], enemyName =>
+					frameEntityVanished(1, ENTITY_TYPE["Enemy"][enemyName])
+					&& playerLastAction() == PLAYER_LAST_ACTION["Swing Baseball Bat"]
+				),
+				any_of(ENTITY_TYPE["Enemy"], enemyName =>
+					frameEntityVanished(2, ENTITY_TYPE["Enemy"][enemyName])
+					&& playerLastAction() == PLAYER_LAST_ACTION["Swing Baseball Bat"]
+				),
+				any_of(ENTITY_TYPE["Enemy"], enemyName =>
+					frameEntityVanished(3, ENTITY_TYPE["Enemy"][enemyName])
+					&& playerLastAction() == PLAYER_LAST_ACTION["Swing Baseball Bat"]
+				),
+				any_of(ENTITY_TYPE["Enemy"], enemyName =>
+					frameEntityVanished(4, ENTITY_TYPE["Enemy"][enemyName])
+					&& playerLastAction() == PLAYER_LAST_ACTION["Swing Baseball Bat"]
+				)
 			)
 		)
-
-		// && never(entityInteraction() == ENTITY_INTERACTION["None"])
 )
 
 // Rich Presence : When Game is Started
