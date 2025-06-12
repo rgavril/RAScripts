@@ -65,7 +65,7 @@ PLAYER_LAST_ACTION = {
 	"Punch 2": 0x30,
 	"Throw Extinguisher": 0x57,
 	"Swing Baseball Bat": 0x5e,
-	"Throw Tash Bin": 0x63
+	"Throw Trash Bin": 0x63
 }
 
 function frameStageCompleted() {
@@ -149,11 +149,11 @@ function triggerPerfectBossFight(bossEntityId) {
 	return primingConditions && goalConditions && cancelConditions
 }
 
-// Trigger : Weapon Mastery
+// Trigger : Attack Mastery
 // Used By :
 //	- Baseball Superstar : attackAction = "Swing Baseball Bat", totalKills = 10
 //	- Master Firefighter : attackAction = "Throw Extinguisher", totalKills = 10
-function triggerWeaponMastery(attackAction, totalKills) {
+function triggerAttackMastery(attackAction, totalKills) {
 	// Priming Conditions
 	primingConditions =
 		gameplayState() == GAMEPLAY_STATE_PLAYING
@@ -270,7 +270,7 @@ achievement (
 	title = "Baseball Hero",
 	description = "Kill 10 enemies using the Baseball Bat before game over.",
 	points = 0,
-	trigger = triggerWeaponMastery("Swing Baseball Bat", totalKills=10)
+	trigger = triggerAttackMastery("Swing Baseball Bat", totalKills=10)
 )
 
 // Achievement : Master Firefighter
@@ -278,7 +278,15 @@ achievement (
 	title = "Master Firefighter",
 	description = "Kill 5 enemies using the Extinguisher before game over.",
 	points = 0,
-	trigger = triggerWeaponMastery("Throw Extinguisher", totalKills=5)
+	trigger = triggerAttackMastery("Throw Extinguisher", totalKills=5)
+)
+
+// Achievement : Skilled Trashman Collector
+achievement (
+	title = "Skilled Trashman",
+	description = "Kill 3 enemies using the Trash Bin before game over.",
+	points = 0,
+	trigger = triggerAttackMastery("Throw Trash Bin", totalKills=3)
 )
 
 // Rich Presence : When Game is Started
