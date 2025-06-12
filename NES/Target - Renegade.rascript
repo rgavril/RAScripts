@@ -13,10 +13,9 @@ GAMESTATE_FIGHTING = 0x17
 GAMESTATE_STAGE_COMPLETED = 0x35
 GAMESTATE_GAMEOVER = 0x5d
 
-function entityType(slot) => byte(0x03da+slot-1)
+function entityType(slot) => byte(0x03da-(slot-1))
 ENTITY_TYPE = {
 	"Enemy" : {
-		"Motocycle": 0x02,
 		"Sleazy Rider": 0x04,
 		"Sleezy Rideress": 0x10,
 		"Bat Boy": 0x16,
@@ -35,6 +34,7 @@ ENTITY_TYPE = {
 		"Mr. Big": 0x3a
 	},
 	"Prop" : {
+		"Motocycle": 0x02,
 		"Fire Extinguisher": 0x12,
 		"Baseball Bat": 0x18,
 		"Trash Bin": 0x2a,
@@ -50,6 +50,14 @@ ENTITY_TYPE = {
 }
 
 function playerEnergy() => byte(0x00da)
+
+function entityInteraction() => byte(0x03ef)
+ENTITY_INTERACTION = {
+    "Holding Extinguisher": 0x04,
+    "Holding Baseball Bat": 0x08,
+	"Holding Trash Bin": 0x0c,
+	"None": 0x00
+}
 
 function frameStageCompleted() {
 	return
@@ -127,9 +135,6 @@ function triggerPerfectBossFight(bossEntityId) {
 
 	return primingConditions && goalConditions && cancelConditions
 }
-
-// Trigger : Weapon Mastery
-function triggerWeaponMaster(count, )
 
 // Achievement : Garage Level 3
 achievement(
@@ -226,6 +231,26 @@ achievement (
 	trigger = triggerPerfectBossFight(ENTITY_TYPE["Boss"]["Mr. Big"])
 )
 
+// Achievement : Baseball Hero
+achievement (
+	title = "Baseball Hero",
+	description = "Kill 10 enemies using the Baseball Bat without loosing it.",
+	points = 0,
+	trigger =
+		gameplayState() == GAMEPLAY_STATE_PLAYING
+		// && once(entityInteraction() == ENTITY_INTERACTION["Holding Baseball Bat"])
+
+		&& measured(
+			tally(10,
+				any_of(ENTITY_TYPE["Enemy"], enemyName => frameEntityVanished(1, ENTITY_TYPE["Enemy"][enemyName])),
+				any_of(ENTITY_TYPE["Enemy"], enemyName => frameEntityVanished(2, ENTITY_TYPE["Enemy"][enemyName])),
+				any_of(ENTITY_TYPE["Enemy"], enemyName => frameEntityVanished(3, ENTITY_TYPE["Enemy"][enemyName])),
+				any_of(ENTITY_TYPE["Enemy"], enemyName => frameEntityVanished(4, ENTITY_TYPE["Enemy"][enemyName]))
+			)
+		)
+
+		// && never(entityInteraction() == ENTITY_INTERACTION["None"])
+)
 
 // Rich Presence : When Game is Started
 stageMessageLookup = {
