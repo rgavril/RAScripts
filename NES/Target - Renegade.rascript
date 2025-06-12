@@ -248,21 +248,9 @@ achievement (
 		&& entityInteraction() == ENTITY_INTERACTION["Holding Baseball Bat"]
 
 		&& measured(
-			tally(10,
-				any_of(ENTITY_TYPE["Enemy"], enemyName =>
-					frameEntityVanished(1, ENTITY_TYPE["Enemy"][enemyName])
-					&& playerLastAction() == PLAYER_LAST_ACTION["Swing Baseball Bat"]
-				),
-				any_of(ENTITY_TYPE["Enemy"], enemyName =>
-					frameEntityVanished(2, ENTITY_TYPE["Enemy"][enemyName])
-					&& playerLastAction() == PLAYER_LAST_ACTION["Swing Baseball Bat"]
-				),
-				any_of(ENTITY_TYPE["Enemy"], enemyName =>
-					frameEntityVanished(3, ENTITY_TYPE["Enemy"][enemyName])
-					&& playerLastAction() == PLAYER_LAST_ACTION["Swing Baseball Bat"]
-				),
-				any_of(ENTITY_TYPE["Enemy"], enemyName =>
-					frameEntityVanished(4, ENTITY_TYPE["Enemy"][enemyName])
+			tally_of( range(1,4), 10, slot =>
+				any_of( ENTITY_TYPE["Enemy"], enemyName =>
+					frameEntityVanished(slot, ENTITY_TYPE["Enemy"][enemyName])
 					&& playerLastAction() == PLAYER_LAST_ACTION["Swing Baseball Bat"]
 				)
 			)
