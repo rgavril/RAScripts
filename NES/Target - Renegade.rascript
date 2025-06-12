@@ -63,7 +63,9 @@ function playerLastAction() => byte(0x00e0)
 PLAYER_LAST_ACTION = {
 	"Punch 1": 0x02b,
 	"Punch 2": 0x30,
-	"Swing Baseball Bat": 0x5e
+	"Throw Extinguisher": 0x57,
+	"Swing Baseball Bat": 0x5e,
+	"Throw Tash Bin": 0x63
 }
 
 function frameStageCompleted() {
@@ -92,7 +94,11 @@ function frameEntityAppeared(slot, entityType) {
 function frameEntityVanished(slot, entityType) {
 	return
 		prev(entityType(slot)) == entityType
-		&& entityType(slot) == ENTITY_TYPE["Empty"]
+		&& entityType(slot) != prev(entityType(slot))
+		// Strange, RATools complains when writing it like this :
+		// && entityType(slot) != entityType
+
+
 }
 
 // Trigger : Stage Completed
@@ -118,7 +124,7 @@ function triggerStageCompleted(stageNumber) {
 }
 
 // Trigger : Perfect Boss Fight
-// Used By:
+// Used By :
 // 	- Achiles Belly-Kick Ballet   : bossEntityId = ENTITY_TYPE["Boss"]["Achiles"]
 // 	- Siggy's Hysteria Treatment  : bossEntityId = ENTITY_TYPE["Boss"]["Siggy"]
 // 	- Big Bob's Abs Check         : bossEntityId = ENTITY_TYPE["Boss"]["Big Bob"]
@@ -141,6 +147,27 @@ function triggerPerfectBossFight(bossEntityId) {
 		&& never(frameTookDamage())
 
 	return primingConditions && goalConditions && cancelConditions
+}
+
+// Trigger : Weapon Mastery
+// Used By :
+//	- Baseball Superstar : attackAction = "Swing Baseball Bat", totalKills = 10
+//	- Master Firefighter : attackAction = "Throw Extinguisher", totalKills = 10
+function triggerWeaponMastery(attackAction, totalKills) {
+	// Priming Conditions
+	primingConditions =
+		gameplayState() == GAMEPLAY_STATE_PLAYING
+
+	// Goal Conditions
+	goalCondition =
+		tally_of( range(1,4), totalKills, slot =>
+			any_of( ENTITY_TYPE["Enemy"], enemyName =>
+				frameEntityVanished(slot, ENTITY_TYPE["Enemy"][enemyName])
+				&& playerLastAction() == PLAYER_LAST_ACTION[attackAction]
+			)
+		)
+
+	return (primingConditions) && measured(goalCondition)
 }
 
 // Achievement : Garage Level 3
@@ -241,20 +268,17 @@ achievement (
 // Achievement : Baseball Hero
 achievement (
 	title = "Baseball Hero",
-	description = "Kill 10 enemies using the Baseball Bat without loosing it.",
+	description = "Kill 10 enemies using the Baseball Bat before game over.",
 	points = 0,
-	trigger =
-		gameplayState() == GAMEPLAY_STATE_PLAYING
-		&& entityInteraction() == ENTITY_INTERACTION["Holding Baseball Bat"]
+	trigger = triggerWeaponMastery("Swing Baseball Bat", totalKills=10)
+)
 
-		&& measured(
-			tally_of( range(1,4), 10, slot =>
-				any_of( ENTITY_TYPE["Enemy"], enemyName =>
-					frameEntityVanished(slot, ENTITY_TYPE["Enemy"][enemyName])
-					&& playerLastAction() == PLAYER_LAST_ACTION["Swing Baseball Bat"]
-				)
-			)
-		)
+// Achievement : Master Firefighter
+achievement (
+	title = "Master Firefighter",
+	description = "Kill 5 enemies using the Extinguisher before game over.",
+	points = 0,
+	trigger = triggerWeaponMastery("Throw Extinguisher", totalKills=5)
 )
 
 // Rich Presence : When Game is Started
