@@ -153,8 +153,10 @@ function triggerPerfectBossFight(bossEntityId) {
 
 // Trigger : Attack Mastery
 // Used By :
+//	- Headbutt Sensei    : attackAction = "Headbutt"          , totalKills = 15
 //	- Baseball Superstar : attackAction = "Swing Baseball Bat", totalKills = 10
-//	- Master Firefighter : attackAction = "Throw Extinguisher", totalKills = 10
+//	- Master Firefighter : attackAction = "Throw Extinguisher", totalKills =  5
+//	- Skilled Trashman   : attackAction = "Throw Trash Bin"   , totalKills =  3
 function triggerAttackMastery(attackAction, totalKills) {
 	// Priming Conditions
 	primingConditions =
@@ -176,6 +178,9 @@ function triggerAttackMastery(attackAction, totalKills) {
 	return primingConditions && measured(goalConditions) && cancelConditions
 }
 
+// Trigger : Heart Challange
+// Used By :
+//	- Heart Collector : size = 10
 function triggerHeartsChallange(size) {
 	primingConditions =
 		gameplayState() == GAMEPLAY_STATE_PLAYING
@@ -296,9 +301,9 @@ achievement (
 	trigger = triggerAttackMastery("Headbutt", totalKills=15)
 )
 
-// Achievement : Baseball Hero
+// Achievement : Baseball Superstar
 achievement (
-	title = "Baseball Hero",
+	title = "Baseball Superstar",
 	description = "Kill 10 enemies using the Baseball Bat before game over.",
 	points = 0,
 	trigger = triggerAttackMastery("Swing Baseball Bat", totalKills=10)
