@@ -181,7 +181,7 @@ function triggerHeartsChallange(size) {
 		gameplayState() == GAMEPLAY_STATE_PLAYING
 
 	goalConditions =
-		tally_of(range(1,4), 10, slot =>
+		tally_of(range(1,4), size, slot =>
 			playerLastAction() == PLAYER_LAST_ACTION["Pickup"]
 			&& frameEntityVanished(slot, ENTITY_TYPE["Prop"]["Heart"])
 			&& entityTimer(slot) != 0x00
