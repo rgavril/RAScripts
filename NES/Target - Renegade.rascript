@@ -177,19 +177,20 @@ function triggerAttackMastery(attackAction, totalKills) {
 }
 
 function triggerHeartsChallange(size) {
-	return
+	primingConditions =
 		gameplayState() == GAMEPLAY_STATE_PLAYING
 
-		&& any_of(range(1,4), slot =>
-			once(
-				frameEntityAppeared(slot, ENTITY_TYPE["Prop"]["Heart"])
-				&& never (entityTimer(slot) == 0x00)
-			)
-			&& playerLastAction() == PLAYER_LAST_ACTION["Pickup"]
-			&& entityTimer(slot) == prev(entityTimer(slot))
+	goalConditions =
+		tally_of(range(1,4), 10, slot =>
+			playerLastAction() == PLAYER_LAST_ACTION["Pickup"]
+			&& frameEntityVanished(slot, ENTITY_TYPE["Prop"]["Heart"])
+			&& entityTimer(slot) != 0x00
 		)
 
-		&& never(frameGameOver())
+	cancelConditions =
+		never(frameGameOver())
+
+	return primingConditions && measured(goalConditions) && cancelConditions
 }
 
 // Achievement : Garage Level 3
@@ -322,9 +323,9 @@ achievement (
 // Achievement : Heart Collector
 achievement (
 	title = "Heart Collector",
-	description = "Collect 10 hearts before game over.",
+	description = "Collect 20 hearts before game over.",
 	points = 0,
-	trigger = triggerHeartsChallange(10)
+	trigger = triggerHeartsChallange(20)
 )
 
 // Rich Presence : When Game is Started
