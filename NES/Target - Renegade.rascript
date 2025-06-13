@@ -354,21 +354,51 @@ achievement (
 )
 
 // Rich Presence : When Game is Started
-stageMessageLookup = {
-	0x01: "Rumbling with the Sleazy Riders in Garage Level 3",
-	0x02: "Rumbling with the Sleazy Riders in Garage Level 2",
-	0x03: "Kicking Bat Boys and South Side Stranglers in Garage Level 1",
-	0x04: "Annihilating the Dagger Dudes and Bruise Brigade in Downtown",
-	0x05: "Cleaning The Park of Skate Lords and Hammer Heads.",
-	0x06: "Fighting Karate Klan and Bouncers in Uptown",
-	0x07: "Finghing Bouncers and the Bruise Brigade at 'The Pig Pen'"
+stageNamesLookup = {
+	0x01: "Garage 3rd Level",
+	0x02: "Garage 2nd Level",
+	0x03: "Garage 1st Level",
+	0x04: "Downtown",
+	0x05: "The Park",
+	0x06: "Uptown",
+	0x07: "'The Pig Pen'"
 }
 
+enemyNamesLookup = {
+	0x02: "Motocycles",
+	0x04: "Sleazy Riders",
+	0x10: "Sleazy Rideress",
+	0x16: "Bat Bosses",
+	0x1a: "South Side Stranglers",
+	0x1e: "Dagger Dudes",
+	0x26: "Skate Lords",
+	0x2e: "Hammer Heads",
+	0x30: "Karate Clan",
+	0x32: "Bouncers",
+	0x34: "Bruise Brigade",
+	0x0a: "Achiles",
+	0x14: "Siggy",
+	0x1c: "Big Bob",
+	0x3a: "Mr. Big"
+}
+
+// Rich Presence : Enemies on Screen
+for enemyType in enemyNamesLookup {
+	rich_presence_conditional_display(
+		gameplayState() == GAMEPLAY_STATE_PLAYING
+		&& any_of(range(1,4), slot => entityType(slot) == enemyType),
+		"Fighting {1} in {0}",
+
+		rich_presence_lookup("StageName", stage(), stageNamesLookup),
+		enemyNamesLookup[enemyType]
+	)
+}
+
+// Rich Presence : In Gameplay
 rich_presence_conditional_display(
 	gameplayState() == GAMEPLAY_STATE_PLAYING,
-
-	"{0}.",
-	rich_presence_lookup("StageMessage", stage(), stageMessageLookup)
+	"Walking in {0}",
+	rich_presence_lookup("StageName", stage(), stageNamesLookup)
 )
 
 // Rich Presence : Default
