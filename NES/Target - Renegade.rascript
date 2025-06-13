@@ -49,6 +49,8 @@ ENTITY_TYPE = {
 	"Empty": 0xff
 }
 
+function entityTimer(slot) => byte(0x0411-(slot-1))
+
 function playerEnergy() => byte(0x00da)
 
 function entityInteraction() => byte(0x03ef)
@@ -64,6 +66,7 @@ PLAYER_LAST_ACTION = {
 	"Punch 1": 0x02b,
 	"Punch 2": 0x30,
 	"Headbutt": 0x3a,
+	"Pickup": 0x42,
 	"Throw Extinguisher": 0x57,
 	"Swing Baseball Bat": 0x5e,
 	"Throw Trash Bin": 0x63
@@ -98,8 +101,6 @@ function frameEntityVanished(slot, entityType) {
 		&& entityType(slot) != prev(entityType(slot))
 		// Strange, RATools complains when writing it like this :
 		// && entityType(slot) != entityType
-
-
 }
 
 // Trigger : Stage Completed
@@ -173,6 +174,22 @@ function triggerAttackMastery(attackAction, totalKills) {
 		never(frameGameOver())
 
 	return primingConditions && measured(goalConditions) && cancelConditions
+}
+
+function triggerHeartsChallange(size) {
+	return
+		gameplayState() == GAMEPLAY_STATE_PLAYING
+
+		&& any_of(range(1,4), slot =>
+			once(
+				frameEntityAppeared(slot, ENTITY_TYPE["Prop"]["Heart"])
+				&& never (entityTimer(slot) == 0x00)
+			)
+			&& playerLastAction() == PLAYER_LAST_ACTION["Pickup"]
+			&& entityTimer(slot) == prev(entityTimer(slot))
+		)
+
+		&& never(frameGameOver())
 }
 
 // Achievement : Garage Level 3
@@ -302,6 +319,14 @@ achievement (
 	trigger = triggerAttackMastery("Throw Trash Bin", totalKills=3)
 )
 
+// Achievement : Heart Collector
+achievement (
+	title = "Heart Collector",
+	description = "Collect 10 hearts before game over.",
+	points = 0,
+	trigger = triggerHeartsChallange(10)
+)
+
 // Rich Presence : When Game is Started
 stageMessageLookup = {
 	0x01: "Rumbling with the Sleazy Riders in Garage Level 3",
@@ -312,6 +337,7 @@ stageMessageLookup = {
 	0x06: "Fighting Karate Klan and Bouncers in Uptown",
 	0x07: "Finghing Bouncers and the Bruise Brigade at 'The Pig Pen'"
 }
+
 rich_presence_conditional_display(
 	gameplayState() == GAMEPLAY_STATE_PLAYING,
 
