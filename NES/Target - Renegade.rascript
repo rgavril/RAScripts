@@ -72,6 +72,8 @@ PLAYER_LAST_ACTION = {
 	"Throw Trash Bin": 0x63
 }
 
+function playerDeathCount() => byte(0x041b)
+
 function frameStageCompleted() {
 	return
 		prev(gameState()) == GAMESTATE_FIGHTING
@@ -331,6 +333,24 @@ achievement (
 	description = "Collect 20 hearts before game over.",
 	points = 0,
 	trigger = triggerHeartsChallange(20)
+)
+
+// Achivement : One Credit Clear
+achievement (
+	title = "One Credit Clear",
+	description = "Complete the game without using a continue.",
+	points = 0,
+	trigger =
+		gameplayState() == GAMEPLAY_STATE_PLAYING
+		&& playerDeathCount() == 0
+		&& once(stage() == 1 && frameStageCompleted())
+		&& once(stage() == 2 && frameStageCompleted())
+		&& once(stage() == 3 && frameStageCompleted())
+		&& once(stage() == 4 && frameStageCompleted())
+		&& once(stage() == 5 && frameStageCompleted())
+		&& once(stage() == 6 && frameStageCompleted())
+		&& once(stage() == 7 && frameStageCompleted())
+		&& never(frameGameOver())
 )
 
 // Rich Presence : When Game is Started
