@@ -63,6 +63,7 @@ function playerLastAction() => byte(0x00e0)
 PLAYER_LAST_ACTION = {
 	"Punch 1": 0x02b,
 	"Punch 2": 0x30,
+	"Headbutt": 0x3a,
 	"Throw Extinguisher": 0x57,
 	"Swing Baseball Bat": 0x5e,
 	"Throw Trash Bin": 0x63
@@ -80,9 +81,9 @@ function frameGameOver() {
 		&& gameState() == GAMESTATE_GAMEOVER
 }
 
-function frameTookDamage() {
+function frameEnergyDecreased() {
 	return
-		prev(playerEnergy()) > playerEnergy()
+		playerEnergy() < prev(playerEnergy())
 }
 
 function frameEntityAppeared(slot, entityType) {
@@ -144,7 +145,7 @@ function triggerPerfectBossFight(bossEntityId) {
 	// Cancel Conditions
 	cancelConditions =
 		never(frameGameOver())
-		&& never(frameTookDamage())
+		&& never(frameEnergyDecreased())
 
 	return primingConditions && goalConditions && cancelConditions
 }
@@ -267,6 +268,14 @@ achievement (
 	description = "Kill Mr. Big without taking damage.",
 	points = 0,
 	trigger = triggerPerfectBossFight(ENTITY_TYPE["Boss"]["Mr. Big"])
+)
+
+// Achievement : Headbutt Sensei
+achievement (
+	title = "Headbutt Sensei",
+	description = "Kill 15 enemies using your headbutt move before game over.",
+	points = 0,
+	trigger = triggerAttackMastery("Headbutt", totalKills=15)
 )
 
 // Achievement : Baseball Hero
