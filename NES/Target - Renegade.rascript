@@ -9,9 +9,12 @@ GAMEPLAY_STATE_ATTRACT=0x1d
 function stage() => byte(0x0091) + 1
 
 function gameState() => byte(0x01fc)
-GAMESTATE_FIGHTING = 0x17
+GAMESTATE_PLAYING = 0x17
 GAMESTATE_STAGE_COMPLETED = 0x35
 GAMESTATE_GAMEOVER = 0x5d
+
+function gameScreen() => byte(0x008f)
+GAMESCREEN_LEVEL_BRIEFING = 0x1a
 
 function entityType(slot) => byte(0x03da-(slot-1))
 ENTITY_TYPE = {
@@ -76,13 +79,13 @@ function playerDeathCount() => byte(0x041b)
 
 function frameStageCompleted() {
 	return
-		prev(gameState()) == GAMESTATE_FIGHTING
+		prev(gameState()) == GAMESTATE_PLAYING
 		&& gameState() == GAMESTATE_STAGE_COMPLETED
 }
 
 function frameGameOver() {
 	return
-		prev(gameState()) == GAMESTATE_FIGHTING
+		prev(gameState()) == GAMESTATE_PLAYING
 		&& gameState() == GAMESTATE_GAMEOVER
 }
 
@@ -107,13 +110,13 @@ function frameEntityVanished(slot, entityType) {
 
 // Trigger : Stage Completed
 // Used By :
-//	- Garage Level 3 : stageNumber = 1
-//	- Garage Level 2 : stageNumber = 2
-//	- Garage Level 1 : stageNumber = 3
-//	- Downtown       : stageNumber = 4
-//	- The Park       : stageNumber = 5
-//	- Uptown         : stageNumber = 6
-//	- The Pig Pen    : stageNumber = 7
+//	- Parking Garage 3F : stageNumber = 1
+//	- Parking Garage 2F : stageNumber = 2
+//	- Parking Garage 1F : stageNumber = 3
+//	- Downtown          : stageNumber = 4
+//	- The Park          : stageNumber = 5
+//	- Uptown            : stageNumber = 6
+//	- The Pig Pen       : stageNumber = 7
 function triggerStageCompleted(stageNumber) {
 	// Priming Conditions
 	primingConditions =
@@ -200,29 +203,50 @@ function triggerHeartsChallange(size) {
 	return primingConditions && measured(goalConditions) && cancelConditions
 }
 
-// Achievement : Garage Level 3
+// Trigger : Enemies Count
+function triggerEnemiesCount(totalKills) {
+	// Priming Conditions
+	primingConditions =
+		gameplayState() == GAMEPLAY_STATE_PLAYING
+
+	// Goal Conditions
+	goalConditions =
+		tally_of( range(1,4), totalKills, slot =>
+			any_of( ENTITY_TYPE["Enemy"], enemyName =>
+				frameEntityVanished(slot, ENTITY_TYPE["Enemy"][enemyName])
+			)
+		)
+
+	// Pause Conditions
+	pauseConditions =
+		unless(gameplayState() != GAMEPLAY_STATE_PLAYING)
+
+	return primingConditions && pauseConditions && measured(goalConditions)
+}
+
+// Achievement : Parking Garage 3F
 achievement(
-	title = "Garage Level 3",
+	title = "Parking Garage 3F",
 	description = "Complete Stage 1",
-	points = 0,
+	points = 5,
 	type = "progression",
 	trigger = triggerStageCompleted(1)
 )
 
-// Achievement : Garage Level 2
+// Achievement : Parking Garage 2F
 achievement(
-	title = "Garage Level 2",
+	title = "Parking Garage 2F",
 	description = "Complete Stage 2",
-	points = 0,
+	points = 5,
 	type = "progression",
 	trigger = triggerStageCompleted(2)
 )
 
-// Achievement : Garage Level 1
+// Achievement : Parking Garage 1F
 achievement(
-	title = "Garage Level 1",
+	title = "Parking Garage 1F",
 	description = "Complete Stage 3",
-	points = 0,
+	points = 5,
 	type = "progression",
 	trigger = triggerStageCompleted(3)
 )
@@ -231,7 +255,7 @@ achievement(
 achievement(
 	title = "Downtown",
 	description = "Complete Stage 4",
-	points = 0,
+	points = 10,
 	type = "progression",
 	trigger = triggerStageCompleted(4)
 )
@@ -240,7 +264,7 @@ achievement(
 achievement(
 	title = "The Park",
 	description = "Complete Stage 5",
-	points = 0,
+	points = 10,
 	type = "progression",
 	trigger = triggerStageCompleted(5)
 )
@@ -249,7 +273,7 @@ achievement(
 achievement(
 	title = "Uptown",
 	description = "Complete Stage 6",
-	points = 0,
+	points = 10,
 	type = "progression",
 	trigger = triggerStageCompleted(6)
 )
@@ -258,7 +282,7 @@ achievement(
 achievement(
 	title = "The Pig Pen",
 	description = "Complete Stage 7",
-	points = 0,
+	points = 25,
 	type = "win_condition",
 	trigger = triggerStageCompleted(7)
 )
@@ -266,40 +290,40 @@ achievement(
 // Achievement : Achiles Belly-Kick Ballet
 achievement (
 	title = "Achiles Belly-Kick Ballet",
-	description = "Kill Achiles without taking damage.",
-	points = 0,
+	description = "Defeat Achiles without taking damage.",
+	points = 5,
 	trigger = triggerPerfectBossFight(ENTITY_TYPE["Boss"]["Achiles"])
 )
 
 // Achievement : Siggy's Hysteria Treatment
 achievement (
 	title = "Siggy's Hysteria Treatment",
-	description = "Kill Siggy without taking damage.",
-	points = 0,
+	description = "Defeat Siggy without taking damage.",
+	points = 5,
 	trigger = triggerPerfectBossFight(ENTITY_TYPE["Boss"]["Siggy"])
 )
 
 // Achievement : Big Bob's Abs Check
 achievement (
 	title = "Big Bob's Abs Check",
-	description = "Kill Big Bob without taking damage.",
-	points = 0,
+	description = "Defeat Big Bob without taking damage.",
+	points = 5,
 	trigger = triggerPerfectBossFight(ENTITY_TYPE["Boss"]["Big Bob"])
 )
 
 // Achievement : Mr. Big Disapointment
 achievement (
 	title = "Mr. Big Disapointment",
-	description = "Kill Mr. Big without taking damage.",
-	points = 0,
+	description = "Defeat Mr. Big without taking damage.",
+	points = 10,
 	trigger = triggerPerfectBossFight(ENTITY_TYPE["Boss"]["Mr. Big"])
 )
 
 // Achievement : Headbutt Sensei
 achievement (
 	title = "Headbutt Sensei",
-	description = "Kill 15 enemies using your headbutt move before game over.",
-	points = 0,
+	description = "Kill 15 enemies by headbutting before game over.",
+	points = 5,
 	trigger = triggerAttackMastery("Headbutt", totalKills=15)
 )
 
@@ -307,7 +331,7 @@ achievement (
 achievement (
 	title = "Baseball Superstar",
 	description = "Kill 10 enemies using the Baseball Bat before game over.",
-	points = 0,
+	points = 5,
 	trigger = triggerAttackMastery("Swing Baseball Bat", totalKills=10)
 )
 
@@ -315,7 +339,7 @@ achievement (
 achievement (
 	title = "Master Firefighter",
 	description = "Kill 5 enemies using the Extinguisher before game over.",
-	points = 0,
+	points = 10,
 	trigger = triggerAttackMastery("Throw Extinguisher", totalKills=5)
 )
 
@@ -323,7 +347,7 @@ achievement (
 achievement (
 	title = "Skilled Trashman",
 	description = "Kill 3 enemies using the Trash Bin before game over.",
-	points = 0,
+	points = 10,
 	trigger = triggerAttackMastery("Throw Trash Bin", totalKills=3)
 )
 
@@ -331,7 +355,7 @@ achievement (
 achievement (
 	title = "Heart Collector",
 	description = "Collect 20 hearts before game over.",
-	points = 0,
+	points = 10,
 	trigger = triggerHeartsChallange(20)
 )
 
@@ -339,7 +363,7 @@ achievement (
 achievement (
 	title = "One Credit Clear",
 	description = "Complete the game without using a continue.",
-	points = 0,
+	points = 25,
 	trigger =
 		gameplayState() == GAMEPLAY_STATE_PLAYING
 		&& playerDeathCount() == 0
@@ -353,14 +377,22 @@ achievement (
 		&& never(frameGameOver())
 )
 
-// Rich Presence : When Game is Started
+// Achievement : Street Fight Champion
+achievement (
+	title = "Street Fight Champion",
+	description = "Defeat 150 enemies in a single gaming session.",
+	points = 10,
+	trigger = triggerEnemiesCount(150)
+)
+
+// Rich Presence : Lookups
 stageNamesLookup = {
-	0x01: "Garage 3rd Level",
-	0x02: "Garage 2nd Level",
-	0x03: "Garage 1st Level",
-	0x04: "Downtown",
-	0x05: "The Park",
-	0x06: "Uptown",
+	0x01: "parking garage",
+	0x02: "parking garage",
+	0x03: "garage 1st Level",
+	0x04: "downtown",
+	0x05: "the park",
+	0x06: "uptown",
 	0x07: "'The Pig Pen'"
 }
 
@@ -382,13 +414,22 @@ enemyNamesLookup = {
 	0x3a: "Mr. Big"
 }
 
+// Rich Presence : Briefing Screen
+rich_presence_conditional_display (
+	gameplayState() == GAMEPLAY_STATE_PLAYING
+	&& gameScreen() == GAMESCREEN_LEVEL_BRIEFING,
+
+	"In {0}, resting.",
+	rich_presence_lookup("StageName", stage(), stageNamesLookup)
+)
+
 // Rich Presence : Enemies on Screen
 for enemyType in enemyNamesLookup {
 	rich_presence_conditional_display(
 		gameplayState() == GAMEPLAY_STATE_PLAYING
 		&& any_of(range(1,4), slot => entityType(slot) == enemyType),
-		"Fighting {1} in {0}",
 
+		"In {0}, fighting {1}",
 		rich_presence_lookup("StageName", stage(), stageNamesLookup),
 		enemyNamesLookup[enemyType]
 	)
@@ -397,7 +438,8 @@ for enemyType in enemyNamesLookup {
 // Rich Presence : In Gameplay
 rich_presence_conditional_display(
 	gameplayState() == GAMEPLAY_STATE_PLAYING,
-	"Walking in {0}",
+
+	"In {0}, walking.",
 	rich_presence_lookup("StageName", stage(), stageNamesLookup)
 )
 
