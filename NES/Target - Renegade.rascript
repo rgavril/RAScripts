@@ -152,6 +152,7 @@ function triggerPerfectBossFight(bossEntityId) {
 	cancelConditions =
 		never(frameGameOver())
 		&& never(frameEnergyDecreased())
+		&& never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
 
 	return primingConditions && goalConditions && cancelConditions
 }
@@ -179,6 +180,7 @@ function triggerAttackMastery(attackAction, totalKills) {
 	// Cancel Conditions
 	cancelConditions =
 		never(frameGameOver())
+		&& never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
 
 	return primingConditions && measured(goalConditions) && cancelConditions
 }
@@ -199,29 +201,9 @@ function triggerHeartsChallange(size) {
 
 	cancelConditions =
 		never(frameGameOver())
+		&& never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
 
 	return primingConditions && measured(goalConditions) && cancelConditions
-}
-
-// Trigger : Enemies Count
-function triggerEnemiesCount(totalKills) {
-	// Priming Conditions
-	primingConditions =
-		gameplayState() == GAMEPLAY_STATE_PLAYING
-
-	// Goal Conditions
-	goalConditions =
-		tally_of( range(1,4), totalKills, slot =>
-			any_of( ENTITY_TYPE["Enemy"], enemyName =>
-				frameEntityVanished(slot, ENTITY_TYPE["Enemy"][enemyName])
-			)
-		)
-
-	// Pause Conditions
-	pauseConditions =
-		unless(gameplayState() != GAMEPLAY_STATE_PLAYING)
-
-	return primingConditions && pauseConditions && measured(goalConditions)
 }
 
 // Achievement : Parking Garage 3F
@@ -282,7 +264,7 @@ achievement(
 achievement(
 	title = "The Pig Pen",
 	description = "Complete Stage 7",
-	points = 25,
+	points = 10,
 	type = "win_condition",
 	trigger = triggerStageCompleted(7)
 )
@@ -375,14 +357,7 @@ achievement (
 		&& once(stage() == 6 && frameStageCompleted())
 		&& once(stage() == 7 && frameStageCompleted())
 		&& never(frameGameOver())
-)
-
-// Achievement : Street Fight Champion
-achievement (
-	title = "Street Fight Champion",
-	description = "Defeat 150 enemies in a single gaming session.",
-	points = 10,
-	trigger = triggerEnemiesCount(150)
+		&& never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
 )
 
 // Rich Presence : Lookups
