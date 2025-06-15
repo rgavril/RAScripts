@@ -2,22 +2,41 @@
 // #ID = 2010
 
 // #region Memory Addresses
-function gameplayState() => byte(0x01fe)
-GAMEPLAY_STATE_PLAYING=0x20
-GAMEPLAY_STATE_INPUT_NAME=0x24
-GAMEPLAY_STATE_ATTRACT=0x1d
 
+// Addresses   : Gameplay State (0x01fe)
+// Current gameplay state, which can be one of the 3 values.
+function gameplayState() => byte(0x01fe)
+// #region Values 
+GAMEPLAY_STATE_PLAYING=0x20			// The game is currently started.
+GAMEPLAY_STATE_INPUT_NAME=0x24	    // The game is waiting for the player to input their name.
+GAMEPLAY_STATE_ATTRACT=0x1d		    // The game is in attract mode, showing the title screen and demo play.
+// #endregion
+
+// Addresses   : Stage (0x0091)
+// Current stage number, which internaly is zero-based but the function returns it as one-based.
 function stage() => byte(0x0091) + 1
 
+// Addresses : Game State (0x01fc)
+// Value varies throughout the gamplay but it can be used to determine the current state
+// by looking for transition between PLAYING and STAGE_COMPLETED or GAMEOVER.
 function gameState() => byte(0x01fc)
-GAMESTATE_PLAYING = 0x17
-GAMESTATE_STAGE_COMPLETED = 0x35
-GAMESTATE_GAMEOVER = 0x5d
+// #region Values
+GAMESTATE_PLAYING = 0x17			// The player is in a stage, actively playing.
+GAMESTATE_STAGE_COMPLETED = 0x35	// Happens for 1 frame, when the player completes a stage.
+GAMESTATE_GAMEOVER = 0x5d		    // Happens for 1 frame, when the player loses all energy.
+// #endregion
 
+// Addresses : Game Screen (0x008f)
+// Value varies throughout the gameplay, but it seams stable on specific screens:
 function gameScreen() => byte(0x008f)
-GAMESCREEN_LEVEL_BRIEFING = 0x1a
+// #region Values
+GAMESCREEN_LEVEL_BRIEFING = 0x1a	// Level briefing screen, at gamestart and in between stages.
+// #endregion
 
+// Addresses : Entity Slots (0x03da, 0x03d9, 0x03d8, 0x03d7)
+// The type of entity in the specified slot.
 function entityType(slot) => byte(0x03da-(slot-1))
+// #region Values
 ENTITY_TYPE = {
 	"Enemy" : {
 		"Sleazy Rider": 0x04,
@@ -52,20 +71,23 @@ ENTITY_TYPE = {
 	},
 	"Empty": 0xff
 }
+// #endregion
 
+// Addresses : Entity Timer (0x0411, 0x0410, 0x040f, 0x040e)
+// Number of frames left before the heart in the specified slot vanishes.
+//  - When the timer reaches 0x00, the heart vanishes automatically.
+//  - If the player picks up the heart, the timer will stop counting down.
 function entityTimer(slot) => byte(0x0411-(slot-1))
 
+// Addresses : Player Energy (0x00da)
+// Current player energy, which is a value between 0x00 and 0x40.
 function playerEnergy() => byte(0x00da)
 
-function entityInteraction() => byte(0x03ef)
-ENTITY_INTERACTION = {
-    "Holding Extinguisher": 0x04,
-    "Holding Baseball Bat": 0x08,
-	"Holding Trash Bin": 0x0c,
-	"None": 0x00
-}
-
+// Addresses : Player Last Action (0x00e0)
+// Returns the last action performed by the player.
+// The value is persisted between frames, once set it will not change until the player performs a new action.
 function playerLastAction() => byte(0x00e0)
+// #region Values
 PLAYER_LAST_ACTION = {
 	"Punch 1": 0x02b,
 	"Punch 2": 0x30,
@@ -75,34 +97,47 @@ PLAYER_LAST_ACTION = {
 	"Swing Baseball Bat": 0x5e,
 	"Throw Trash Bin": 0x63
 }
+// #endregion
 
+// Addresses : Player Death Count (0x041b)
+// Gets incremented each time the player dies, and resets to 0 when the game is started.
+// This can be used to determine if the player has used a continue or not.
 function playerDeathCount() => byte(0x041b)
+
 // #endregion Memory Addresses
 
 // #region Frame Functions
+
+// Frame : Stage Completed
 function frameStageCompleted() {
 	return
 		prev(gameState()) == GAMESTATE_PLAYING
 		&& gameState() == GAMESTATE_STAGE_COMPLETED
 }
 
+// Frame : Game Over
 function frameGameOver() {
 	return
 		prev(gameState()) == GAMESTATE_PLAYING
 		&& gameState() == GAMESTATE_GAMEOVER
 }
 
-function frameEnergyDecreased() {
+// Frame : Player Energy Decreased
+function framePlayerEnergyDecreased() {
 	return
 		playerEnergy() < prev(playerEnergy())
 }
 
+// Frame : Entity Appeared
+// If a specific entity type has appeared in the specified slot.
 function frameEntityAppeared(slot, entityType) {
 	return
 		prev(entityType(slot)) != entityType
 		&& entityType(slot) == entityType
 }
 
+// Frame : Entity Vanished
+// If a specific entity type has vanished from the specified slot.
 function frameEntityVanished(slot, entityType) {
 	return
 		prev(entityType(slot)) == entityType
@@ -113,11 +148,12 @@ function frameEntityVanished(slot, entityType) {
 // #endregion Frame Functions
 
 // #region Achievement Triggers
+
 // Trigger : Stage Completed
 // Complete a specific stage.
 function triggerStageCompleted(stageNumber) {
 	// Priming Conditions
-	primingConditions =
+	requiredConditions =
 		gameplayState() == GAMEPLAY_STATE_PLAYING
 		&& stage() == stageNumber
 
@@ -125,47 +161,47 @@ function triggerStageCompleted(stageNumber) {
 	goalConditions =
 		frameStageCompleted()
 
-	return primingConditions && goalConditions
+	return requiredConditions && goalConditions
 }
 
 // Trigger : Perfect Boss Fight
 // Defeat a specific boss without taking damage.
 function triggerPerfectBossFight(bossEntityId) {
-	// Priming Conditions
-	primingConditions =
+	// Required Conditions
+	requiredConditions =
 		gameplayState() == GAMEPLAY_STATE_PLAYING
 
-	// Init & Goal Conditions
-	goalConditions =
+	// Start & Trigger Conditions
+	startAndTriggerConditions =
 		// Look in any of the 4 entity slots
 		any_of(range(1,4), slot =>
-			// activate when the boss entity has appeared
+			// Start when the boss entity has appeared
 			once(frameEntityAppeared(slot, bossEntityId))
-			// and trigger when boss entity has vanished
+			// Trigger when the boss entity has vanished
 			&& trigger_when(frameEntityVanished(slot, bossEntityId))
 		)
 
 	// Cancel Conditions
 	cancelConditions =
 		never(frameGameOver())
-		&& never(frameEnergyDecreased())
+		&& never(framePlayerEnergyDecreased())
 		&& never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
 
-	return primingConditions && goalConditions && cancelConditions
+	return requiredConditions && startAndTriggerConditions && cancelConditions
 }
 
 // Trigger : Attack Mastery
 // Make a certain number of kills using a specific attack before game over.
 function triggerAttackMastery(attackAction, totalKills) {
-	// Priming Conditions
-	primingConditions =
+	// Required Conditions
+	requiredConditions =
 		gameplayState() == GAMEPLAY_STATE_PLAYING
 
 	// Goal Conditions
 	goalConditions =
 		// Count when in any of the 4 entity slots
 		tally_of( range(1,4), totalKills, slot =>
-			// any known enemy entity has vanished
+			// an enemy entity has vanished
 			any_of( ENTITY_TYPE["Enemy"], enemyName =>
 				frameEntityVanished(slot, ENTITY_TYPE["Enemy"][enemyName])
 			)
@@ -178,14 +214,14 @@ function triggerAttackMastery(attackAction, totalKills) {
 		never(frameGameOver())
 		&& never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
 
-	return primingConditions && measured(goalConditions) && resetConditions
+	return requiredConditions && measured(goalConditions) && resetConditions
 }
 
 // Trigger : Hearts Challenge
 // Pick up a certain number of hearts before game over.
 function triggerHeartsChallange(size) {
 	// Priming Conditions:
-	primingConditions =
+	requiredConditions =
 		gameplayState() == GAMEPLAY_STATE_PLAYING
 
 	// Goal Conditions:
@@ -195,6 +231,7 @@ function triggerHeartsChallange(size) {
 			// a heart entity has vanished before its timer ran out
 			frameEntityVanished(slot, ENTITY_TYPE["Prop"]["Heart"])
 			&& entityTimer(slot) != 0x00
+			
 			// and the player last action was a pickup
 			&& playerLastAction() == PLAYER_LAST_ACTION["Pickup"]
 		)
@@ -204,7 +241,7 @@ function triggerHeartsChallange(size) {
 		never(frameGameOver())
 		&& never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
 
-	return primingConditions && measured(goalCondition) && resetConditions
+	return requiredConditions && measured(goalCondition) && resetConditions
 }
 // #endregion Achievement Triggers
 
