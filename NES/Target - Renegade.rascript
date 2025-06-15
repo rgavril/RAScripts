@@ -1,6 +1,7 @@
 // Target : Renegade
 // #ID = 2010
 
+// #region Memory Addresses
 function gameplayState() => byte(0x01fe)
 GAMEPLAY_STATE_PLAYING=0x20
 GAMEPLAY_STATE_INPUT_NAME=0x24
@@ -76,7 +77,9 @@ PLAYER_LAST_ACTION = {
 }
 
 function playerDeathCount() => byte(0x041b)
+// #endregion Memory Addresses
 
+// #region Frame Functions
 function frameStageCompleted() {
 	return
 		prev(gameState()) == GAMESTATE_PLAYING
@@ -107,16 +110,11 @@ function frameEntityVanished(slot, entityType) {
 		// Strange, RATools complains when writing it like this :
 		// && entityType(slot) != entityType
 }
+// #endregion Frame Functions
 
+// #region Achievement Triggers
 // Trigger : Stage Completed
-// Used By :
-//	- Parking Garage 3F : stageNumber = 1
-//	- Parking Garage 2F : stageNumber = 2
-//	- Parking Garage 1F : stageNumber = 3
-//	- Downtown          : stageNumber = 4
-//	- The Park          : stageNumber = 5
-//	- Uptown            : stageNumber = 6
-//	- The Pig Pen       : stageNumber = 7
+// Complete a specific stage.
 function triggerStageCompleted(stageNumber) {
 	// Priming Conditions
 	primingConditions =
@@ -131,11 +129,7 @@ function triggerStageCompleted(stageNumber) {
 }
 
 // Trigger : Perfect Boss Fight
-// Used By :
-// 	- Achiles Belly-Kick Ballet   : bossEntityId = ENTITY_TYPE["Boss"]["Achiles"]
-// 	- Siggy's Hysteria Treatment  : bossEntityId = ENTITY_TYPE["Boss"]["Siggy"]
-// 	- Big Bob's Abs Check         : bossEntityId = ENTITY_TYPE["Boss"]["Big Bob"]
-// 	- Mr. Big Disapointment       : bossEntityId = ENTITY_TYPE["Boss"]["Mr. Big"]
+// Defeat a specific boss without taking damage.
 function triggerPerfectBossFight(bossEntityId) {
 	// Priming Conditions
 	primingConditions =
@@ -143,8 +137,11 @@ function triggerPerfectBossFight(bossEntityId) {
 
 	// Init & Goal Conditions
 	goalConditions =
+		// Look in any of the 4 entity slots
 		any_of(range(1,4), slot =>
+			// activate when the boss entity has appeared
 			once(frameEntityAppeared(slot, bossEntityId))
+			// and trigger when boss entity has vanished
 			&& trigger_when(frameEntityVanished(slot, bossEntityId))
 		)
 
@@ -158,11 +155,7 @@ function triggerPerfectBossFight(bossEntityId) {
 }
 
 // Trigger : Attack Mastery
-// Used By :
-//	- Headbutt Sensei    : attackAction = "Headbutt"          , totalKills = 15
-//	- Baseball Superstar : attackAction = "Swing Baseball Bat", totalKills = 10
-//	- Master Firefighter : attackAction = "Throw Extinguisher", totalKills =  5
-//	- Skilled Trashman   : attackAction = "Throw Trash Bin"   , totalKills =  3
+// Make a certain number of kills using a specific attack before game over.
 function triggerAttackMastery(attackAction, totalKills) {
 	// Priming Conditions
 	primingConditions =
@@ -170,42 +163,52 @@ function triggerAttackMastery(attackAction, totalKills) {
 
 	// Goal Conditions
 	goalConditions =
+		// Count when in any of the 4 entity slots
 		tally_of( range(1,4), totalKills, slot =>
+			// any known enemy entity has vanished
 			any_of( ENTITY_TYPE["Enemy"], enemyName =>
 				frameEntityVanished(slot, ENTITY_TYPE["Enemy"][enemyName])
-				&& playerLastAction() == PLAYER_LAST_ACTION[attackAction]
 			)
+			// and the player last action was the specified attack action
+			&& playerLastAction() == PLAYER_LAST_ACTION[attackAction]
 		)
 
 	// Cancel Conditions
-	cancelConditions =
+	resetConditions =
 		never(frameGameOver())
 		&& never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
 
-	return primingConditions && measured(goalConditions) && cancelConditions
+	return primingConditions && measured(goalConditions) && resetConditions
 }
 
-// Trigger : Heart Challange
-// Used By :
-//	- Heart Collector : size = 10
+// Trigger : Hearts Challenge
+// Pick up a certain number of hearts before game over.
 function triggerHeartsChallange(size) {
+	// Priming Conditions:
 	primingConditions =
 		gameplayState() == GAMEPLAY_STATE_PLAYING
 
-	goalConditions =
+	// Goal Conditions:
+	goalCondition =
+		// Count when in any of the 4 entity slots
 		tally_of(range(1,4), size, slot =>
-			playerLastAction() == PLAYER_LAST_ACTION["Pickup"]
-			&& frameEntityVanished(slot, ENTITY_TYPE["Prop"]["Heart"])
+			// a heart entity has vanished before its timer ran out
+			frameEntityVanished(slot, ENTITY_TYPE["Prop"]["Heart"])
 			&& entityTimer(slot) != 0x00
+			// and the player last action was a pickup
+			&& playerLastAction() == PLAYER_LAST_ACTION["Pickup"]
 		)
 
-	cancelConditions =
+	// Reset Conditions:
+	resetConditions =
 		never(frameGameOver())
 		&& never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
 
-	return primingConditions && measured(goalConditions) && cancelConditions
+	return primingConditions && measured(goalCondition) && resetConditions
 }
+// #endregion Achievement Triggers
 
+// #region Achievement Definitions
 // Achievement : Parking Garage 3F
 achievement(
 	title = "Parking Garage 3F",
@@ -359,7 +362,9 @@ achievement (
 		&& never(frameGameOver())
 		&& never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
 )
+// #endregion Achievement Definitions
 
+// #region Rich Presence
 // Rich Presence : Lookups
 stageNamesLookup = {
 	0x01: "parking garage",
@@ -422,3 +427,4 @@ rich_presence_conditional_display(
 rich_presence_display(
 	"Getting ready to rumble."
 )
+// #endregion Rich Presence
