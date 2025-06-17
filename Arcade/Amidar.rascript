@@ -1,7 +1,7 @@
 // Amidar
 // #ID = 11847
 
-// # region Memory Addresses
+// #region Memory Addresses
     // Address : In Game
     // Indicates if the game is currently being played.
     function inGame() => byte(0x0006)
@@ -87,9 +87,9 @@
     function amidar1Sprite() => byte(0x0069)
     SPRITE_BANANA = 0x21        // Banana sprite.
     SPRITE_5000_POINTS = 0x3c   // 5000 Points sprite.
-// # endregion Memory Addresses
+// #endregion Memory Addresses
 
-// # region Frame Functions
+// #region Frame Functions
     // Frame : Maze Completed
     // Happens when a maze was completed successfully.
     function frameMazeCompleted() {
@@ -193,7 +193,7 @@
             prev(inGame()) == TRUE
             && player1Score() < prev(player1Score())
     }
-// # endregion Frame Functions
+// #endregion Frame Functions
 
 // #region Achievement Triggers
     // Trigger : Stages Completed
@@ -348,234 +348,234 @@
     }
 // #endregion Achievement Triggers
 
-// Leaderboard Start : Hiscore
-// Used By :
-//  - Hiscore 3 Lives : lives = 3
-//  - Hiscore 5 Lives : lives = 5
-function startHiscoreLeaderboard(lives) {
-    return
-        dipSwitchLives() == lives
-        && (once(framePlayer1LivesZeroed()) || once(framePlayer1ScoreOverflowed()) )
-        && never(inGame() == FALSE)
-}
+// #region Achievement Definitions
+    // Achievement : Navigating the Basics
+    achievement(
+        id = 514157,
+        title = "Navigating the Basics",
+        points = 5,
+        type = "progression",
+        description = "Complete stages 1 and 2 with the Lives DIP switch set to 5 or fewer.",
+        trigger = triggerStagesCompleted(startStage=1, endStage=2)
+    )
 
-// Leaderboard Value : Hiscore
-// Used By :
-//  - Hiscore 3 Lives
-//  - Hiscore 5 Lives
-function valueHiscoreLeaderboard() {
-    reset =
-        never(inGame() == FALSE) &&
-        measured( tally(0, always_false()) )
+    // Achievement : Intermediate Grid Runner
+    achievement(
+        id = 514158,
+        title = "Intermediate Grid Runner",
+        points = 10,
+        type = "progression",
+        description = "Complete stages 3 and 4 with the Lives DIP switch set to 5 or fewer.",
+        trigger = triggerStagesCompleted(startStage=3, endStage=4)
+    )
 
-    overflow_none = measured( player1Score())
-    overflow_1st  = measured( player1Score() + 1000000, when = repeated(1, framePlayer1ScoreOverflowed()) )
-    overflow_2nd  = measured( player1Score() + 2000000, when = repeated(2, framePlayer1ScoreOverflowed()) )
-    overflow_3rd  = measured( player1Score() + 3000000, when = repeated(3, framePlayer1ScoreOverflowed()) )
+    // Achievement : Advanced Grid Tactics
+    achievement(
+        id = 514159,
+        title = "Advanced Grid Tactics",
+        points = 25,
+        type = "progression",
+        description = "Complete stages 5 and 6 with the Lives DIP switch set to 5 or fewer.",
+        trigger = triggerStagesCompleted(startStage=5, endStage=6)
+    )
 
-    return max_of(reset, overflow_none, overflow_1st, overflow_2nd, overflow_3rd)
-}
+    // Achievement : Expert Grid Navigator
+    achievement(
+        id = 514160,
+        title = "Expert Grid Navigator",
+        points = 25,
+        type = "win_condition",
+        description = "Complete stages 7 and 8 with the Lives DIP switch set to 5 or fewer.",
+        trigger = triggerStagesCompleted(startStage=7 , endStage=8)
+    )
 
-// Achievement : Navigating the Basics
-achievement(
-    id = 514157,
-    title = "Navigating the Basics",
-    points = 5,
-    type = "progression",
-    description = "Complete stages 1 and 2 with the Lives DIP switch set to 5 or fewer.",
-    trigger = triggerStagesCompleted(startStage=1, endStage=2)
-)
+    // Achievement : Breaking the Score Barrier
+    achievement(
+        id = 514148,
+        title = "Breaking the Score Barrier",
+        points = 1,
+        description = "Score 10,000 points with the Lives DIP switch set to 3.",
+        trigger = triggerScoreMilestone(10000)
+    )
 
-// Achievement : Intermediate Grid Runner
-achievement(
-    id = 514158,
-    title = "Intermediate Grid Runner",
-    points = 10,
-    type = "progression",
-    description = "Complete stages 3 and 4 with the Lives DIP switch set to 5 or fewer.",
-    trigger = triggerStagesCompleted(startStage=3, endStage=4)
-)
+    // Achievement : A Life's Worth of Points
+    achievement(
+        id = 514149,
+        title = "A Life's Worth of Points",
+        points = 5,
+        description = "Score 30,000 points with the Lives DIP switch set to 3.",
+        trigger = triggerScoreMilestone(30000)
+    )
 
-// Achievement : Advanced Grid Tactics
-achievement(
-    id = 514159,
-    title = "Advanced Grid Tactics",
-    points = 25,
-    type = "progression",
-    description = "Complete stages 5 and 6 with the Lives DIP switch set to 5 or fewer.",
-    trigger = triggerStagesCompleted(startStage=5, endStage=6)
-)
+    // Achievement : Century Scorer
+    achievement(
+        id = 514150,
+        title = "Century Scorer",
+        points = 25,
+        description = "Score 100,000 points with the Lives DIP switch set to 3.",
+        trigger = triggerScoreMilestone(100000)
+    )
 
-// Achievement : Expert Grid Navigator
-achievement(
-    id = 514160,
-    title = "Expert Grid Navigator",
-    points = 25,
-    type = "win_condition",
-    description = "Complete stages 7 and 8 with the Lives DIP switch set to 5 or fewer.",
-    trigger = triggerStagesCompleted(startStage=7 , endStage=8)
-)
+    // Achievement : Grounded Gorilla
+    achievement(
+        id = 514154,
+        title = "Grounded Gorilla",
+        points = 10,
+        description = "Finish a gorilla stage without using any jumps or losing a life.",
+        trigger = triggerNoJumpChallange(STAGE_TYPE_APE)
+    )
 
-// Achievement : Breaking the Score Barrier
-achievement(
-    id = 514148,
-    title = "Breaking the Score Barrier",
-    points = 1,
-    description = "Score 10,000 points with the Lives DIP switch set to 3.",
-    trigger = triggerScoreMilestone(10000)
-)
+    // Achievement : Silent Roller
+    achievement(
+        id = 514155,
+        title = "Silent Roller",
+        points = 10,
+        description = "Finish a paint stage without using any jumps or losing a life.",
+        trigger = triggerNoJumpChallange(STAGE_TYPE_PAINT)
+    )
 
-// Achievement : A Life's Worth of Points
-achievement(
-    id = 514149,
-    title = "A Life's Worth of Points",
-    points = 5,
-    description = "Score 30,000 points with the Lives DIP switch set to 3.",
-    trigger = triggerScoreMilestone(30000)
-)
+    // Achievement : Commited Painter
+    achievement(
+        id = 514156,
+        title = "Commited Painter",
+        points = 10,
+        description = "Finish a paint stage without canceling any painted lines or losing a life.",
+        trigger = triggerPaintChallange()
+    )
 
-// Achievement : Century Scorer
-achievement(
-    id = 514150,
-    title = "Century Scorer",
-    points = 25,
-    description = "Score 100,000 points with the Lives DIP switch set to 3.",
-    trigger = triggerScoreMilestone(100000)
-)
+    // Achievement : Light Attack Combo
+    achievement(
+        id = 514161,
+        title = "Light Attack Combo",
+        points = 5,
+        description = "Attack five enemies in a row and earn a 1600 bonus.",
+        trigger = triggerAttackCombo(5)
+    )
 
-// Achievement : Grounded Gorilla
-achievement(
-    id = 514154,
-    title = "Grounded Gorilla",
-    points = 10,
-    description = "Finish a gorilla stage without using any jumps or losing a life.",
-    trigger = triggerNoJumpChallange(STAGE_TYPE_APE)
-)
+    // Achievement : Heavey Attack Combo
+    achievement(
+        id = 514162,
+        title = "Heavy Attack Combo",
+        points = 10,
+        description = "Attack seven enemies in a row and earn a 3200 bonus.",
+        trigger = triggerAttackCombo(7)
+    )
 
-// Achievement : Silent Roller
-achievement(
-    id = 514155,
-    title = "Silent Roller",
-    points = 10,
-    description = "Finish a paint stage without using any jumps or losing a life.",
-    trigger = triggerNoJumpChallange(STAGE_TYPE_PAINT)
-)
+    // Achievement : Banana Bite
+    achievement(
+        id = 514151,
+        title = "Banana Bite",
+        points = 1,
+        description = "Win a bonus stage having the Lives DIP switch set to 3.",
+        trigger = triggerBananaEatingChallange(1)
+    )
 
-// Achievement : Commited Painter
-achievement(
-    id = 514156,
-    title = "Commited Painter",
-    points = 10,
-    description = "Finish a paint stage without canceling any painted lines or losing a life.",
-    trigger = triggerPaintChallange()
-)
+    // Achievement : Banana Binge
+    achievement(
+        id = 514152,
+        title = "Banana Binge",
+        points = 3,
+        description = "Win two bonus stages on one credit having the Lives DIP switch set to 3.",
+        trigger = triggerBananaEatingChallange(2)
+    )
 
-// Achievement : Light Attack Combo
-achievement(
-    id = 514161,
-    title = "Light Attack Combo",
-    points = 5,
-    description = "Attack five enemies in a row and earn a 1600 bonus.",
-    trigger = triggerAttackCombo(5)
-)
+    // Achievement : Banana Overload
+    achievement(
+        id = 514153,
+        title = "Banana Overload",
+        points = 5,
+        description = "Win three bonus stages on one credit having the Lives DIP switch set to 3.",
+        trigger = triggerBananaEatingChallange(3)
+    )
+// #endregion Achievement Definitions
 
-// Achievement : Heavey Attack Combo
-achievement(
-    id = 514162,
-    title = "Heavy Attack Combo",
-    points = 10,
-    description = "Attack seven enemies in a row and earn a 3200 bonus.",
-    trigger = triggerAttackCombo(7)
-)
+// #region Leaderboards
+    // Leaderboard Start : Hiscore
+    function startHiscoreLeaderboard(lives) {
+        return
+            dipSwitchLives() == lives
+            && (once(framePlayer1LivesZeroed()) || once(framePlayer1ScoreOverflowed()) )
+            && never(inGame() == FALSE)
+    }
 
-// Achievement : Banana Bite
-achievement(
-    id = 514151,
-    title = "Banana Bite",
-    points = 1,
-    description = "Win a bonus stage having the Lives DIP switch set to 3.",
-    trigger = triggerBananaEatingChallange(1)
-)
+    // Leaderboard Value : Hiscore
+    function valueHiscoreLeaderboard() {
+        reset =
+            never(inGame() == FALSE) &&
+            measured( tally(0, always_false()) )
 
-// Achievement : Banana Binge
-achievement(
-    id = 514152,
-    title = "Banana Binge",
-    points = 3,
-    description = "Win two bonus stages on one credit having the Lives DIP switch set to 3.",
-    trigger = triggerBananaEatingChallange(2)
-)
+        overflow_none = measured( player1Score())
+        overflow_1st  = measured( player1Score() + 1000000, when = repeated(1, framePlayer1ScoreOverflowed()) )
+        overflow_2nd  = measured( player1Score() + 2000000, when = repeated(2, framePlayer1ScoreOverflowed()) )
+        overflow_3rd  = measured( player1Score() + 3000000, when = repeated(3, framePlayer1ScoreOverflowed()) )
 
-// Achievement : Banana Overload
-achievement(
-    id = 514153,
-    title = "Banana Overload",
-    points = 5,
-    description = "Win three bonus stages on one credit having the Lives DIP switch set to 3.",
-    trigger = triggerBananaEatingChallange(3)
-)
+        return max_of(reset, overflow_none, overflow_1st, overflow_2nd, overflow_3rd)
+    }
 
-// Leaderboard : Hiscore 3 Lives
-leaderboard(
-    id = 128966,
-    title = "Hiscore 3 Lives",
-    description = "Highest score on 3 lives game.",
-    format = "SCORE",
-    start =
-        startHiscoreLeaderboard(lives=3),
-    cancel =
-        always_false(),
-    submit =
-        framePlayer1LivesZeroed(),
-    value =
-        valueHiscoreLeaderboard()
-)
+    // Leaderboard : Hiscore 3 Lives
+    leaderboard(
+        id = 128966,
+        title = "Hiscore 3 Lives",
+        description = "Highest score on 3 lives game.",
+        format = "SCORE",
+        start =
+            startHiscoreLeaderboard(lives=3),
+        cancel =
+            always_false(),
+        submit =
+            framePlayer1LivesZeroed(),
+        value =
+            valueHiscoreLeaderboard()
+    )
 
-// Leaderboard : Hiscore 5 Lives
-leaderboard(
-    id = 128967,
-    title = "Hiscore 5 Lives",
-    description = "Highest score on 5 lives game.",
-    format = "SCORE",
-    start =
-        startHiscoreLeaderboard(lives=5),
-    cancel =
-        always_false(),
-    submit =
-        framePlayer1LivesZeroed(),
-    value =
-        valueHiscoreLeaderboard()
-)
+    // Leaderboard : Hiscore 5 Lives
+    leaderboard(
+        id = 128967,
+        title = "Hiscore 5 Lives",
+        description = "Highest score on 5 lives game.",
+        format = "SCORE",
+        start =
+            startHiscoreLeaderboard(lives=5),
+        cancel =
+            always_false(),
+        submit =
+            framePlayer1LivesZeroed(),
+        value =
+            valueHiscoreLeaderboard()
+    )
 
-// Leaderboard : Highest Stage
-leaderboard(
-    id = 129461,
-    title = "Highest Stage",
-    description = "Highest stage reached with 5 lives or less.",
-    format = "VALUE",
-    start =
-        dipSwitchLives() <= 5
-        && framePlayer1LivesZeroed(),
-    cancel =
-        inGame() == FALSE,
-    submit =
-        always_true(),
-    value =
-        player1Stage()
-)
+    // Leaderboard : Highest Stage
+    leaderboard(
+        id = 129461,
+        title = "Highest Stage",
+        description = "Highest stage reached with 5 lives or less.",
+        format = "VALUE",
+        start =
+            dipSwitchLives() <= 5
+            && framePlayer1LivesZeroed(),
+        cancel =
+            inGame() == FALSE,
+        submit =
+            always_true(),
+        value =
+            player1Stage()
+    )
+// #endregion Leaderboards
 
-// Rich Presence : When Game is Started
-rich_presence_conditional_display(
-    inGame() == TRUE,
+// #region Rich Presence
+    // Rich Presence : When Game is Started
+    rich_presence_conditional_display(
+        inGame() == TRUE,
 
-    "Stage: {0} | Lives: {1} | Score: {2}",
-    rich_presence_macro("Number", player1Stage()),
-    rich_presence_macro("Number", player1Lives()),
-    rich_presence_macro("Score", player1Score())
-)
+        "Stage: {0} | Lives: {1} | Score: {2}",
+        rich_presence_macro("Number", player1Stage()),
+        rich_presence_macro("Number", player1Lives()),
+        rich_presence_macro("Score", player1Score())
+    )
 
-// Rich Presence : Default
-rich_presence_display(
-    "In Attract Mode with {0} Credits.",
-    rich_presence_macro("Number", credits())
-)
+    // Rich Presence : Default
+    rich_presence_display(
+        "In Attract Mode with {0} Credits.",
+        rich_presence_macro("Number", credits())
+    )
+// #endregion Rich Presence
