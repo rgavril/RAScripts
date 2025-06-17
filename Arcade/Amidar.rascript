@@ -1,289 +1,352 @@
 // Amidar
 // #ID = 11847
 
+// # region Memory Addresses
+    // Address : In Game
+    // Indicates if the game is currently being played.
+    function inGame() => byte(0x0006)
+    TRUE = 0x01
+    FALSE = 0x00
 
-function inGame() => byte(0x0006)
-TRUE = 0x01
-FALSE = 0x00
+    // Address : Credits
+    // Indicates the number of credits inserted.
+    function credits() => byte(0x0002)
 
-function credits() => byte(0x0002)
+    // Address : DIP Switche Lives
+    // Indicates then number of lives set by the DIP switch.
+    function dipSwitchLives() => byte(0x007)
 
-function dipSwitchLives() => byte(0x007)
+    // Address : Active Player
+    // Indicates which player is currently active.
+    function activePlayer() => byte(0x001e)
+    ACTIVE_PLAYER_1 = 0x00  // Player 1 is active.
+    ACTIVE_PLAYER_2 = 0x01  // Player 2 is active.
 
-function activePlayer() => byte(0x001e)
-ACTIVE_PLAYER_1 = 0x00
-ACTIVE_PLAYER_2 = 0x01
+    // Address : Stage Type
+    // Inidicates the type of stage currently being played.
+    // Game alternates between two types, ape and paint, by looking if the stage is odd or even, we can determine the type.
+    function stageType() => bit0(0x0380)
+    STAGE_TYPE_APE = 0x00
+    STAGE_TYPE_PAINT = 0x01
 
-function stageType() => bit0(0x0380)
-STAGE_TYPE_APE = 0x00
-STAGE_TYPE_PAINT = 0x01
+    // Address : Current Stage
+    // Current stage number, internally stored as zero-based but returned as one-based.
+    function currentStage() => byte(0x0280) + 1
 
-function currentStage() => byte(0x0280) + 1
+    // Address : Player 1 Stage
+    // Indicates Player 1's current stage number.
+    // Internally stored as zero-based but returned as one-based.
+    function player1Stage() => byte(0x0380) + 1
 
-function player1Stage() => byte(0x0380) + 1
+    // Address : Player 1 Lives
+    // Indicates number of lives remaining for Player 1.
+    function player1Lives() => byte(0x0388)
 
-function player1Lives() => byte(0x0388)
+    // Address : Player 1 Score
+    // Indicates Player 1's current score.
+    function player1Score() => bcd(tbyte(0x00a2))
 
-function player1Score() => bcd(tbyte(0x00a2))
+    // Address : Jumps Remaining
+    // Indicates number of jumps remaining.
+    // Default is 3 and decreases by 1 each time a jump is used.
+    function jumpsRemaining() => byte(0x285)
 
-function jumpsRemaining() => byte(0x285)
+    // Address : Game State
+    // Indicates the current state of the game.
+    function gameState() => byte(0x000a)
+    GAME_STATE_MAZE_STARTING = 0x01     // The maze is starting.
+    GAME_STATE_MAZE_PLAYING = 0x04      // The maze is currently being played.
+    GAME_STATE_MAZE_COMPLETED = 0x05    // The maze has been completed.
+    GAME_STATE_MAZE_DYING = 0x07        // The player is dying.
+    GAME_STATE_BONUS_RESULTS = 0x15     // The results of the bonus game are being displayed.
 
-function gameState() => byte(0x000a)
-GAME_STATE_MAZE_STARTING = 0x01
-GAME_STATE_MAZE_PLAYING = 0x04
-GAME_STATE_MAZE_COMPLETED = 0x05
-GAME_STATE_MAZE_DYING = 0x07
-GAME_STATE_BONUS_RESULTS = 0x15
+    // Address : Attack Mode
+    // Indicates if the attack mode is currently active.
+    function attackMode() => byte(0x01f5)
+    ATTACK_MODE_ON = 0xff
+    ATTACK_MODE_OFF = 0x00
 
-function attackMode() => byte(0x01f5)
-ATTACK_MODE_ON = 0xff
-ATTACK_MODE_OFF = 0x00
+    // Address : Attack Streak Length
+    // Count of enemies killed in a attack.
+    // This value only goes up to 6, then it rolls back to zero.
+    // Best way to count a streak is to check how many times this value changed.
+    function attackStreakLength() => byte(0x1f7)
 
-function attackStreakLength() => byte(0x1f7)
+    // Address : Painbrussh Status
+    // Indicates the status of the paintbrush.
+    // This value is used to determine if the player is painting a new trace or not.
+    function paintbrushStatus() => byte(0x0352)
+    BRUSH_PAINTING_OLD_TRACE = 0x00     // The brush is painting an old trace.
+    BRUSH_NOT_PAITING = 0x01            // The brush is not painting.
+    BRUSH_PAINTING_NEW_TRACE = 0xff     // The brush is painting a new trace.
 
-function paintbrushStatus() => byte(0x0352)
-BRUSH_PAINTING_OLD_TRACE = 0x00
-BRUSH_NOT_PAITING = 0x01
-BRUSH_PAINTING_NEW_TRACE = 0xff
+    // Address : Amidar 1 Sprite
+    // This address is used to determine the sprite being displayed for Amidar 1.
+    // Because is also used in a bonus game to display the target sprite,
+    // we can use it to determine if the bonus game was won or not.
+    function amidar1Sprite() => byte(0x0069)
+    SPRITE_BANANA = 0x21        // Banana sprite.
+    SPRITE_5000_POINTS = 0x3c   // 5000 Points sprite.
+// # endregion Memory Addresses
 
-function amidar1Sprite() => byte(0x0069)
-SPRITE_BANANA = 0x21
-SPRITE_5000_POINTS = 0x3c
+// # region Frame Functions
+    // Frame : Maze Completed
+    // Happens when a maze was completed successfully.
+    function frameMazeCompleted() {
+        return
+            prev(gameState()) == GAME_STATE_MAZE_PLAYING
+            && gameState() == GAME_STATE_MAZE_COMPLETED
+    }
 
-function frameMazeCompleted() {
-    return
-        prev(gameState()) == GAME_STATE_MAZE_PLAYING  &&
-        gameState() == GAME_STATE_MAZE_COMPLETED
-}
+    // Frame : Player 1 Advanced to Stage
+    // Happens when Player 1 has advanced to a specific stage.
+    function framePlayer1AdvancedToStage(stage) {
+        return
+            inGame() == TRUE
+            && prev(player1Stage()) == stage-1
+            && player1Stage() == stage
+    }
 
-function framePlayer1AdvancedToStage(stage) {
-    return
-        inGame() == TRUE
-        && prev(player1Stage()) == stage-1
-        && player1Stage() == stage
-}
+    // Frame : Player 1 Lives Zeroed
+    // Happens when Player 1 has lost all lives.
+    function framePlayer1LivesZeroed() {
+        return
+            inGame() == TRUE
+            && prev(player1Lives()) == 1
+            && player1Lives() == 0
+    }
 
-function framePlayer1LivesZeroed() {
-    return
-        inGame() == TRUE
-        && prev(player1Lives()) == 1
-        && player1Lives() == 0
-}
+    // Frame : Game Started
+    function frameGameStarted() {
+        return
+            prev(inGame()) == FALSE
+            && inGame() == TRUE
+    }
 
-function frameGameStarted() {
-    return
-        prev(inGame()) == FALSE
-        && inGame() == TRUE
-}
+    // Frame : Maze Completed on Stage
+    // Happens when the maze has been completed on a specific stage.
+    function frameMazeCompletedOnStage(stage) {
+        return
+            currentStage() == stage
+            && frameMazeCompleted()
+    }
 
-function frameMazeCompletedOnStage(stage) {
-    return
-        currentStage() == stage
-        && frameMazeCompleted()
-}
+    // Frame : Player 1 Score Exceeded
+    // Happens when when Player 1's score has exceeded a specific value.
+    function framePlayer1ScoreExceeded(score) {
+        return
+            prev(player1Score()) < score
+            && player1Score() >= score
+    }
 
-function framePlayer1ScoreExceeded(score) {
-    return
-        prev(player1Score()) < score
-        && player1Score() >= score
-}
+    // Frame : Maze Started After Bonus
+    // Happens when player first started a maze after the bonus game has been played.
+    function frameMazeStartedAfterBonus() {
+        return
+            prev(gameState()) == GAME_STATE_BONUS_RESULTS
+            && gameState() == GAME_STATE_MAZE_STARTING
+    }
 
-function frameMazeStartedAfterBonus() {
-    return
-        prev(gameState()) == GAME_STATE_BONUS_RESULTS
-        && gameState() == GAME_STATE_MAZE_STARTING
-}
+    // Frame : Ape Maze Started After Bonus
+    function frameApeMazeStartedAfterBonus() {
+        return
+            frameMazeStartedAfterBonus() &&
+            stageType() == STAGE_TYPE_APE
+    }
 
-function frameApeMazeStartedAfterBonus() {
-    return
-        frameMazeStartedAfterBonus() &&
-        stageType() == STAGE_TYPE_APE
-}
+    // Frame : Paint Maze Started After Bonus
+    function framePaintMazeStartedAfterBonus() {
+        return
+            frameMazeStartedAfterBonus() &&
+            stageType() == STAGE_TYPE_PAINT
+    }
 
-function framePaintMazeStartedAfterBonus() {
-    return
-        frameMazeStartedAfterBonus() &&
-        stageType() == STAGE_TYPE_PAINT
-}
+    // Frame : Jump Used
+    // Happens when a jump has been used during a maze game.
+    function frameJumpUsed() {
+        return
+            gameState() == GAME_STATE_MAZE_PLAYING
+            && jumpsRemaining() < prev(jumpsRemaining())
+    }
 
-function frameJumpUsed() {
-    return
-        gameState() == GAME_STATE_MAZE_PLAYING
-        && jumpsRemaining() < prev(jumpsRemaining())
-}
+    // Frame : Amidar Attacked
+    // Happens when an Amidar has attacked by the player.
+    function frameAmidarAttacked() {
+        return
+            attackMode() == ATTACK_MODE_ON
+            && prev(attackStreakLength()) != attackStreakLength()
+    }
 
-function frameAmidarAttacked() {
-    return
-        attackMode() == ATTACK_MODE_ON
-        && prev(attackStreakLength()) != attackStreakLength()
-}
+    // Frame : Bonus Game Won
+    // Happens when player has won the bonus game.
+    function frameBonusGameWon() {
+        return
+            gameState() == GAME_STATE_BONUS_RESULTS
+            && prev(amidar1Sprite()) == SPRITE_BANANA
+            && amidar1Sprite() == SPRITE_5000_POINTS
+    }
 
-function frameBonusGameWon() {
-    return
-        gameState() == GAME_STATE_BONUS_RESULTS
-        && prev(amidar1Sprite()) == SPRITE_BANANA
-        && amidar1Sprite() == SPRITE_5000_POINTS
-}
+    // Frame : Player 1 Score Overflowed
+    // Happens when Player 1's score has overflowed and rolled over to zero.
+    function framePlayer1ScoreOverflowed() {
+        return
+            prev(inGame()) == TRUE
+            && player1Score() < prev(player1Score())
+    }
+// # endregion Frame Functions
 
-function framePlayer1ScoreOverflowed() {
-    return
-        prev(inGame()) == TRUE
-        && player1Score() < prev(player1Score())
-}
+// #region Achievement Triggers
+    // Trigger : Stages Completed
+    // Complete a range of stages.
+    function triggerStagesCompleted(startStage, endStage) {
+        // Required Conditions
+        requiredConditions =
+            inGame() == TRUE
+            && dipSwitchLives() <= 5
+            && activePlayer() == ACTIVE_PLAYER_1
 
-// Trigger : Stages Completed
-// Used By :
-//  - Navigating the Basics    : startStage=1, endStage=2
-//  - Intermediate Grid Runner : startStage=3, endStage=4
-//  - Advanced Grid Tactics    : startStage=5, endStage=6
-//  - Expert Grid Navigator    : startStage=7, endStage=8
-function triggerStagesCompleted(startStage, endStage) {
-    // Priming Conditions
-    primingConditions =
-        inGame() == TRUE
-        && dipSwitchLives() <= 5
-        && activePlayer() == ACTIVE_PLAYER_1
+        // Start Condition
+        if (startStage == 1)
+            // If startStage is 1, we start the challange when the game starts.
+            startCondition = once(frameGameStarted())
+        else
+            // Otherwise, we start the challange when Player 1 has advanced to the startStage.
+            startCondition = once(framePlayer1AdvancedToStage(startStage))
 
-        if (startStage == 1) primingConditions = primingConditions
-        && once(frameGameStarted())
+        // Goal Conditions
+        goalConditions =
+            frameMazeCompletedOnStage(endStage)
 
-        if (startStage > 1) primingConditions = primingConditions
-        && once(framePlayer1AdvancedToStage(startStage))
+        // Cancel Conditions
+        cancelCondition =
+            never(inGame() == FALSE)
 
-    // Goal Conditions
-    goalConditions =
-        frameMazeCompletedOnStage(endStage)
+        return requiredConditions && startCondition && goalConditions && cancelCondition
+    }
 
-    // Cancel Conditions
-    cancelConditions =
-        never(inGame() == FALSE)
+    // Trigger : No Jump Challange
+    // Complete a specific maze type without using any jumps.
+    function triggerNoJumpChallange(targetStageType) {
+        // Required Conditions
+        requiredConditions =
+            inGame() == TRUE
+            && activePlayer() == ACTIVE_PLAYER_1
 
-    return primingConditions && goalConditions && cancelConditions
-}
+        // Start Conditions
+        if (targetStageType == STAGE_TYPE_APE)
+            // Since the game starts with an ape stage, on ape stage challanges
+            // we can start the challange when the game starts
+            // or when the player has advanced to a new ape stage.
+            startCondition =
+                once(frameApeMazeStartedAfterBonus())
+                || once(frameGameStarted())
+        else
+            // For paint stages, we start the challange when 
+            // the player has advanced to a new paint stage.
+            startCondition = 
+                once(framePaintMazeStartedAfterBonus())
 
-// Trigger : No Jump Challange
-// Used By :
-//  - Grounded Gorilla : targetStageType = STAGE_TYPE_APE
-//  - Silent Roller    : targetStageType = STAGE_TYPE_PAINT
-function triggerNoJumpChallange(targetStageType) {
-    // Priming Conditions
-    primingConditions =
-        inGame() == TRUE
-        && activePlayer() == ACTIVE_PLAYER_1
+        // Goal Conditions
+        goalConditions =
+            frameMazeCompleted()
 
-        if (targetStageType == STAGE_TYPE_APE) primingConditions = primingConditions
-        && (once(frameApeMazeStartedAfterBonus()) || once(frameGameStarted()))
+        // Cancel Conditions
+        cancelCondition =
+            never(frameJumpUsed())
+            && never(gameState() == GAME_STATE_MAZE_DYING)
 
-        if (targetStageType == STAGE_TYPE_PAINT) primingConditions = primingConditions
-        && once(framePaintMazeStartedAfterBonus())
+        return requiredConditions && startCondition && trigger_when(goalConditions) && cancelCondition
+    }
 
-    // Goal Conditions
-    goalConditions =
-        frameMazeCompleted()
+    // Trigger : Score Milestone
+    // Score more than a specific number of points.
+    function triggerScoreMilestone(score) {
+        // Required Conditions
+        requiredConditions =
+            inGame() == TRUE
+            && dipSwitchLives() == 3
+            && activePlayer() == ACTIVE_PLAYER_1
 
-    // Cancel Conditions
-    cancelCondition =
-        never(frameJumpUsed())
-        && never(gameState() == GAME_STATE_MAZE_DYING)
+        // Goal Conditions
+        goalConditions =
+            framePlayer1ScoreExceeded(score)
 
-    return primingConditions && trigger_when(goalConditions) && cancelCondition
-}
+        return requiredConditions && goalConditions
+    }
 
-// Trigger : Score Milestone
-// Used By :
-//  - Breaking the Score Barrier : score =  10000
-//  - A Life's Worth of Points   : score =  30000
-//  - Century Scorer             : score = 100000
-function triggerScoreMilestone(score) {
-    // Priming Conditions
-    primingConditions =
-        inGame() == TRUE
-        && dipSwitchLives() == 3
-        && activePlayer() == ACTIVE_PLAYER_1
+    // Trigger : Attack Combo
+    // Attack a specific number of Amidars in a single maze.
+    function triggerAttackCombo(comboSize) {
+        // Priming Conditions
+        primingConditions =
+            inGame() == TRUE
+            && activePlayer() == ACTIVE_PLAYER_1
+            && gameState() == GAME_STATE_MAZE_PLAYING
+            && attackMode() == ATTACK_MODE_ON
 
-    // Goal Conditions
-    goalConditions =
-        framePlayer1ScoreExceeded(score)
+            // Until stage 3, there are less than 6 Amidars in the maze
+            if (comboSize == 6) primingConditions = primingConditions
+            && currentStage() >= 3
 
-    return primingConditions && goalConditions
-}
+            // Until stage 4, there are less than 7 Amidars in the maze.
+            if (comboSize == 7) primingConditions = primingConditions
+            && currentStage() >= 4
 
-// Trigger : Attack Combo
-// Used By :
-//  - Light Attack Combo : comboSize = 5
-//  - Heavy Attack Combo : comboSize = 7
-function triggerAttackCombo(comboSize) {
-    // Priming Conditions
-    primingConditions =
-        inGame() == TRUE
-        && activePlayer() == ACTIVE_PLAYER_1
-        && gameState() == GAME_STATE_MAZE_PLAYING
-        && attackMode() == ATTACK_MODE_ON
+        // Goal Conditions
+        goalConditions =
+            repeated(comboSize,
+                activePlayer() == ACTIVE_PLAYER_1
+                && frameAmidarAttacked()
+            )
 
-        if (comboSize == 6) primingConditions = primingConditions
-        && currentStage() >= 3
+        // Reset Conditions
+        resetConditions =
+            never(attackMode() == ATTACK_MODE_OFF)
 
-        if (comboSize == 7) primingConditions = primingConditions
-        && currentStage() >= 4
+        return primingConditions && resetConditions && (trigger_when(goalConditions) || measured(goalConditions))
+    }
 
-    // Goal Conditions
-    goalConditions =
-        repeated(comboSize,
-            activePlayer() == ACTIVE_PLAYER_1
-            && frameAmidarAttacked()
-        )
+    // Trigger : Paint Challange
+    // Complete a paint stage without canceling any painted lines.
+    function triggerPaintChallange() {
+        // Priming Conditions
+        primingConditions =
+            inGame() == TRUE
+            && activePlayer() == ACTIVE_PLAYER_1
+            && once(framePaintMazeStartedAfterBonus())
 
-    // Cancel Conditions
-    cancelConditions =
-        never(attackMode() == ATTACK_MODE_OFF)
+        // Goal Conditions
+        goalConditions =
+            frameMazeCompleted()
 
-    return primingConditions && cancelConditions && (trigger_when(goalConditions) || measured(goalConditions))
-}
+        // Cancel Conditions
+        cancelConditions =
+            never(paintbrushStatus() == BRUSH_NOT_PAITING)
+            && never(gameState() == GAME_STATE_MAZE_DYING)
 
-// Trigger : Paint Challange
-// Used By :
-//  - Commited Painter
-function triggerPaintChallange() {
-    // Priming Conditions
-    primingConditions =
-        inGame() == TRUE
-        && activePlayer() == ACTIVE_PLAYER_1
-        && once(framePaintMazeStartedAfterBonus())
+        return primingConditions && trigger_when(goalConditions) && cancelConditions
+    }
 
-    // Goal Conditions
-    goalConditions =
-        frameMazeCompleted()
+    // Trigger : Banana Eating Challange
+    // Win a specific number of bonus games on a single credit.
+    function triggerBananaEatingChallange(quantity) {
+        // Goal Conditions
+        goalConditions =
+            inGame() == TRUE
+            && dipSwitchLives() == 3
+            && activePlayer() == ACTIVE_PLAYER_1
+            && frameBonusGameWon()
 
-    // Cancel Conditions
-    cancelConditions =
-        never(paintbrushStatus() == BRUSH_NOT_PAITING)
-        && never(gameState() == GAME_STATE_MAZE_DYING)
+        // Cancel Conditions
+        cancelConditions =
+            never(inGame() == FALSE)
 
-    return primingConditions && trigger_when(goalConditions) && cancelConditions
-}
-
-// Trigger : Banana Easting Challange
-// Used By :
-//  - Banana Bite     : quantity = 1
-//  - Banana Binge    : quantity = 2
-//  - Banana Overload : quantity = 3
-function triggerBananaEatingChallange(quantity) {
-    // Goal Conditions
-    goalConditions =
-        inGame() == TRUE
-        && dipSwitchLives() == 3
-        && activePlayer() == ACTIVE_PLAYER_1
-        && frameBonusGameWon()
-
-    // Cancel Conditions
-    cancelConditions =
-        never(inGame() == FALSE)
-
-    if (quantity > 1)
-        return measured(repeated(quantity, goalConditions)) && cancelConditions
-    else
-        return goalConditions
-}
+        if (quantity > 1)
+            return measured(repeated(quantity, goalConditions)) && cancelConditions
+        else
+            return goalConditions
+    }
+// #endregion Achievement Triggers
 
 // Leaderboard Start : Hiscore
 // Used By :
