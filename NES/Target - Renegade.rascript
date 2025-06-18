@@ -92,6 +92,22 @@
 	// Gets incremented each time the player dies, and resets to 0 when the game is started.
 	// This can be used to determine if the player has used a continue or not.
 	function playerDeathCount() => byte(0x041b)
+
+    // Address: Score Digit (0x00c8, 0x00c7, 0x00c6, 0x00c5, 0x00c4, 0x00c3)
+    // The score is stored in 6 digits, each digit is stored in a separate byte.
+    function scoreDigit(index) => byte(0x03c8-(index-1))
+
+    // Function: Score
+    // Returns the current score as a number.
+    function score() {
+        return
+              scoreDigit(6) * 100000
+            + scoreDigit(5) * 10000
+            + scoreDigit(4) * 1000
+            + scoreDigit(3) * 100
+            + scoreDigit(2) * 10
+            + scoreDigit(1)
+    }
 // #endregion Memory Addresses
 
 // #region Frame Functions
@@ -229,6 +245,39 @@
             && never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
 
         return requiredConditions && measured(goalCondition) && resetConditions
+    }
+
+    // Trigger : One Credit Clear
+    // Complete the game without using a continue.
+    function triggerOneCreditClear() {
+        return 
+            gameplayState() == GAMEPLAY_STATE_PLAYING
+            && playerDeathCount() == 0
+            && once(stage() == 1 && frameStageCompleted())
+            && once(stage() == 2 && frameStageCompleted())
+            && once(stage() == 3 && frameStageCompleted())
+            && once(stage() == 4 && frameStageCompleted())
+            && once(stage() == 5 && frameStageCompleted())
+            && once(stage() == 6 && frameStageCompleted())
+            && once(stage() == 7 && frameStageCompleted())
+            && never(frameGameOver())
+            && never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
+    }
+
+    // Trigger : Score Challenge
+    // Score a certain number of points without using a continue.
+    function triggerScoreChallenge(targetScore) {
+        // Required Conditions
+        requiredConditions =
+            gameplayState() == GAMEPLAY_STATE_PLAYING
+            && playerDeathCount() == 0
+
+        // Goal Conditions
+        goalConditions =
+            prev(score()) < targetScore
+            && score() >= targetScore
+
+        return requiredConditions && goalConditions
     }
 // #endregion Achievement Triggers
 
@@ -373,18 +422,31 @@
         title = "One Credit Clear",
         description = "Complete the game without using a continue.",
         points = 25,
-        trigger =
-            gameplayState() == GAMEPLAY_STATE_PLAYING
-            && playerDeathCount() == 0
-            && once(stage() == 1 && frameStageCompleted())
-            && once(stage() == 2 && frameStageCompleted())
-            && once(stage() == 3 && frameStageCompleted())
-            && once(stage() == 4 && frameStageCompleted())
-            && once(stage() == 5 && frameStageCompleted())
-            && once(stage() == 6 && frameStageCompleted())
-            && once(stage() == 7 && frameStageCompleted())
-            && never(frameGameOver())
-            && never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
+        trigger = triggerOneCreditClear()
+    )
+
+    // Achivement : 5000 Points
+    achievement (
+        title = "5000 Points",
+        description = "Score 5000 points without using a continue.",
+        points = 5,
+        trigger = triggerScoreChallenge(5000)
+    )
+
+    // Achivement : 10000 Points
+    achievement (
+        title = "10000 Points",
+        description = "Score 10000 points without using a continue.",
+        points = 5,
+        trigger = triggerScoreChallenge(10000)
+    )
+
+    // Achivement : 20000 Points
+    achievement (
+        title = "20000 Points",
+        description = "Score 20000 points without using a continue.",
+        points = 10,
+        trigger = triggerScoreChallenge(20000)
     )
 // #endregion Achievement Definitions
 
