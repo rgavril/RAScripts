@@ -491,14 +491,16 @@
 
 // #region Leaderboards
     // Leaderboard Start : Hiscore
+    // Start condition for the Hiscore leaderboards.
     function startHiscoreLeaderboard(lives) {
         return
             dipSwitchLives() == lives
-            && (once(framePlayer1LivesZeroed()) || once(framePlayer1ScoreOverflowed()) )
+            && (once(framePlayer1LivesZeroed()) || once(framePlayer1ScoreOverflowed()))
             && never(inGame() == FALSE)
     }
 
     // Leaderboard Value : Hiscore
+    // Value function for the Hiscore leaderboards.
     function valueHiscoreLeaderboard() {
         reset =
             never(inGame() == FALSE) &&
