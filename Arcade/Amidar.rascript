@@ -45,6 +45,7 @@
     // Address : Player 1 Score
     // Indicates Player 1's current score.
     function player1Score() => bcd(tbyte(0x00a2))
+    function player1Score_XX0000() => byte(0x00a4)
 
     // Address : Jumps Remaining
     // Indicates number of jumps remaining.
@@ -190,8 +191,9 @@
     // Happens when Player 1's score has overflowed and rolled over to zero.
     function framePlayer1ScoreOverflowed() {
         return
-            prev(inGame()) == TRUE
-            && player1Score() < prev(player1Score())
+            inGame() == TRUE
+            && prev(player1Score_XX0000()) == 0x99
+            && player1Score_XX0000() == 0x00
     }
 // #endregion Frame Functions
 
