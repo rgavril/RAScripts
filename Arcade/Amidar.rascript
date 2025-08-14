@@ -198,32 +198,20 @@
 // #endregion Frame Functions
 
 // #region Achievement Triggers
-    // Trigger : Stages Completed
-    // Complete a range of stages.
-    function triggerStagesCompleted(startStage, endStage) {
+    // Trigger : Stage Completed
+    // Complete a specific stages.
+    function triggerStageCompleted(endStage) {
         // Required Conditions
         requiredConditions =
             inGame() == TRUE
             && dipSwitchLives() <= 5
             && activePlayer() == ACTIVE_PLAYER_1
 
-        // Start Condition
-        if (startStage == 1)
-            // If startStage is 1, we start the challange when the game starts.
-            startCondition = once(frameGameStarted())
-        else
-            // Otherwise, we start the challange when Player 1 has advanced to the startStage.
-            startCondition = once(framePlayer1AdvancedToStage(startStage))
-
         // Goal Conditions
         goalConditions =
             frameMazeCompletedOnStage(endStage)
 
-        // Cancel Conditions
-        cancelCondition =
-            never(inGame() == FALSE)
-
-        return requiredConditions && startCondition && goalConditions && cancelCondition
+        return requiredConditions && goalConditions
     }
 
     // Trigger : No Jump Challange
@@ -358,7 +346,7 @@
         points = 5,
         type = "progression",
         description = "Complete stages 1 and 2 with the Lives DIP switch set to 5 or fewer.",
-        trigger = triggerStagesCompleted(startStage=1, endStage=2)
+        trigger = triggerStageCompleted(2)
     )
 
     // Achievement : Intermediate Grid Runner
@@ -368,17 +356,17 @@
         points = 10,
         type = "progression",
         description = "Complete stages 3 and 4 with the Lives DIP switch set to 5 or fewer.",
-        trigger = triggerStagesCompleted(startStage=3, endStage=4)
+        trigger = triggerStageCompleted(4)
     )
 
     // Achievement : Advanced Grid Tactics
     achievement(
         id = 514159,
         title = "Advanced Grid Tactics",
-        points = 25,
+        points = 10,
         type = "progression",
         description = "Complete stages 5 and 6 with the Lives DIP switch set to 5 or fewer.",
-        trigger = triggerStagesCompleted(startStage=5, endStage=6)
+        trigger = triggerStageCompleted(6)
     )
 
     // Achievement : Expert Grid Navigator
@@ -388,7 +376,7 @@
         points = 25,
         type = "win_condition",
         description = "Complete stages 7 and 8 with the Lives DIP switch set to 5 or fewer.",
-        trigger = triggerStagesCompleted(startStage=7 , endStage=8)
+        trigger = triggerStageCompleted(8)
     )
 
     // Achievement : Breaking the Score Barrier
@@ -422,7 +410,7 @@
     achievement(
         id = 514154,
         title = "Grounded Gorilla",
-        points = 10,
+        points = 5,
         description = "Finish a gorilla stage without using any jumps or losing a life.",
         trigger = triggerNoJumpChallange(STAGE_TYPE_APE)
     )
@@ -431,7 +419,7 @@
     achievement(
         id = 514155,
         title = "Silent Roller",
-        points = 10,
+        points = 5,
         description = "Finish a paint stage without using any jumps or losing a life.",
         trigger = triggerNoJumpChallange(STAGE_TYPE_PAINT)
     )
@@ -512,8 +500,10 @@
         overflow_1st  = measured( player1Score() + 1000000, when = repeated(1, framePlayer1ScoreOverflowed()) )
         overflow_2nd  = measured( player1Score() + 2000000, when = repeated(2, framePlayer1ScoreOverflowed()) )
         overflow_3rd  = measured( player1Score() + 3000000, when = repeated(3, framePlayer1ScoreOverflowed()) )
+        overflow_4th  = measured( player1Score() + 4000000, when = repeated(4, framePlayer1ScoreOverflowed()) )
+        overflow_5th  = measured( player1Score() + 5000000, when = repeated(5, framePlayer1ScoreOverflowed()) )
 
-        return max_of(reset, overflow_none, overflow_1st, overflow_2nd, overflow_3rd)
+        return max_of(reset, overflow_none, overflow_1st, overflow_2nd, overflow_3rd, overflow_4th, overflow_5th)
     }
 
     // Leaderboard : Hiscore 3 Lives
