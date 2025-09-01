@@ -2,6 +2,14 @@
 // #ID = 11902
 
 // #region Memory Addresses
+    // Adddress: Dip Switch Lives
+    // Indicates the number of lives per player based on dip switch settings
+    function dipSwitchLives() => byte(0x01c1)
+
+    // Address: Dip Switch Difficulty
+    // Indicates the game difficulty based on dip switch settings
+    function dipSwitchDifficulty() => byte(0x01c4) + 1
+
     // Address: Game State
     // Inidicates whether the game is in demo mode or playing mode
     function gameState() => byte(0x0530)
@@ -39,6 +47,57 @@
     // Indicates the number of credits currently available
     function credits() => byte(0x186)
 // #endregion
+
+// #region Frame Functions
+    // Frame : Game Started
+    // Happens on a new game is started
+    function frameGameStarted() {
+        return
+            prev(gameState() == GAME_STATE_DEMO)
+            && (gameState() == GAME_STATE_PLAYING)
+    }
+
+    // Frame : Player 1 Game Over
+    // Happens when player 1 loses their last life
+    function framePlayer1GameOver() {
+        return
+            activePlayer() == ACTIVE_PLAYER_1
+            && prev(currentPlayerLives() > 0)
+            && (currentPlayerLives() == 0)
+    }
+// #endregion Frame Functions
+
+// #region Leaderboards
+    // Leaderboard Start : Hiscore
+    // Start condition for the Hiscore leaderboards.
+    function startHighscoreLeaderboard() {
+        return
+            frameGameStarted()
+            && dipSwitchLives() == 3
+            && dipSwitchDifficulty() == 4
+        // return
+        //     dipSwitchLives() == 3
+        //     && (once(framePlayer1GameOver()))
+        //     && never(gameState() == GAME_STATE_DEMO)
+    }
+
+    // Leaderboard Value : Hiscore
+    // Value function for the Hiscore leaderboards.
+    function valueHighscoreLeaderboard() {
+      return player1Score()
+    }
+
+    // Leaderboard: Player 1 Score
+    leaderboard(
+        title = "Hiscore Arcade Mode",
+        description = "Highest score using default settings",
+        format = "SCORE",
+        start = startHighscoreLeaderboard(),
+        cancel = always_false(),
+        submit = framePlayer1GameOver(),
+        value = valueHighscoreLeaderboard()
+    )
+// #endregion Leaderboards
 
 // #region Rich Presence
     // Rich Presence : When Game is Started
