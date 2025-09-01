@@ -43,6 +43,21 @@
     ACTIVE_PLAYER_1 = 0x00
     ACTIVE_PLAYER_2 = 0x01
 
+    // Address: Enemy Kills Remaining
+    // Indicates the number of enemies remaining until the boss appears
+    function enemyKillsRemaining() => byte(0x0502)
+
+    // Address: Boss Spawned
+    // Indicates whether the boss has spawned or not
+    function bossSpawned() => byte(0x050d)
+    BOSS_NOT_SPAWNED = 0x00
+    BOSS_SPAWNED = 0xff
+
+    function bossStatus() => byte(0x00a0)
+    PLANE_ON_SCREEN = 0xff
+    PLANE_GOT_HIT = 0xf0
+    PLANE_NOT_ON_SCREEN = 0x00
+
     // Address: Credits
     // Indicates the number of credits currently available
     function credits() => byte(0x186)
@@ -65,7 +80,78 @@
             && prev(currentPlayerLives() > 0)
             && (currentPlayerLives() == 0)
     }
+
+    // Frame : Stage Completed
+    // Happens when the current stage is completed
+    function frameStageCompleted() {
+        return
+            enemyKillsRemaining() == 0
+            && bossSpawned() == BOSS_SPAWNED
+            && prev(bossStatus() == PLANE_GOT_HIT)
+            && bossStatus() > 0x00 && bossStatus() < 0xf0
+    }
 // #endregion Frame Functions
+
+// #region Achievement Triggers
+    // Trigger: Age Completed
+    // Triggers when the specified age is completed
+    function triggerAgeCompleted(age) {
+        return
+            activePlayer() == ACTIVE_PLAYER_1
+            && gameState() == GAME_STATE_PLAYING
+            && dipSwitchDifficulty() == 4
+            && dipSwitchLives() == 3
+            && currentAge() == age
+            && frameStageCompleted()
+    }
+// #endregion Achievement Triggers
+
+// #region Achievements
+    // Achievement: Age of the Biplane
+    achievement(
+        title = "Age of the Biplane",
+        description = "Complete the A.D. 1910 stage using the default settings.",
+        points = 3,
+        type = "progression",
+        trigger = triggerAgeCompleted(AGE_1910)
+    )
+
+    // Achievement: Age of the Monoplane
+    achievement(
+        title = "Age of the Monoplane",
+        description = "Complete the A.D. 1940 stage using the default settings.",
+        points = 5,
+        type = "progression",
+        trigger = triggerAgeCompleted(AGE_1940)
+    )
+
+    // Achievement: Age of the Helicopter
+    achievement(
+        title = "Age of the Helicopter",
+        description = "Complete the A.D. 1970 stage using the default settings.",
+        points = 5,
+        type = "progression",
+        trigger = triggerAgeCompleted(AGE_1970)
+    )
+
+    // Achievement: Age of the Jet Plane
+    achievement(
+        title = "Age of the Jet Plane",
+        description = "Complete the A.D. 1982 stage using the default settings.",
+        points = 10,
+        type = "progression",
+        trigger = triggerAgeCompleted(AGE_1982)
+    )
+
+    // Achievement: Age of the UFO
+    achievement(
+        title = "Age of the UFO",
+        description = "Complete the A.D. 2001 stage using the default settings.",
+        points = 25,
+        type = "win_condition",
+        trigger = triggerAgeCompleted(AGE_2001)
+    )
+// endregion Achievements
 
 // #region Leaderboards
     // Leaderboard Start : Hiscore
