@@ -43,6 +43,10 @@
     ACTIVE_PLAYER_1 = 0x00
     ACTIVE_PLAYER_2 = 0x01
 
+    // Address: Player Status
+    // Indicates the current status of the player (on screen, got hit, not on screen)
+    function playerStatus() => byte(0x0000)
+
     // Address: Enemy Kills Remaining
     // Indicates the number of enemies remaining until the boss appears
     function enemyKillsRemaining() => byte(0x0502)
@@ -81,6 +85,14 @@
             && (currentPlayerLives() == 0)
     }
 
+    // Frame : Player Got Hit
+    // Happens when player gets hit and loses a life
+    function framePlayerGotHit() {
+        return
+            prev(playerStatus() == PLANE_ON_SCREEN)
+            && (playerStatus() == PLANE_GOT_HIT)
+    }
+
     // Frame : Stage Completed
     // Happens when the current stage is completed
     function frameStageCompleted() {
@@ -103,6 +115,35 @@
             && dipSwitchLives() == 3
             && currentAge() == age
             && frameStageCompleted()
+    }
+
+    // Trigger: No Death Till Stage
+    // Triggers when the player reaches the specified stage without losing a life
+    function triggerNoDeathTillStage(stage) {
+        // Required Conditions
+        requiredConditions =
+            activePlayer() == ACTIVE_PLAYER_1
+            && gameState() == GAME_STATE_PLAYING
+            && dipSwitchDifficulty() >= 4
+
+        // Start Conditions
+        startConditions =
+            frameGameStarted()
+
+        // Canclel Conditions
+        cancelConditions =
+            framePlayerGotHit()
+
+        // Goal Conditions
+        goalConditions =
+            currentStage() == stage
+            && prev(currentStage()) == stage-1
+
+        return
+            requiredConditions
+            && once(startConditions)
+            && trigger_when(goalConditions)
+            && never(cancelConditions)
     }
 // #endregion Achievement Triggers
 
@@ -150,6 +191,22 @@
         points = 25,
         type = "win_condition",
         trigger = triggerAgeCompleted(AGE_2001)
+    )
+
+    // Achievement: Perfect First Flight
+    achievement(
+        title = "Perfect First Flight",
+        description = "Reach 1940 without getting hit on default of higher difficulty.",
+        points = 5,
+        trigger = triggerNoDeathTillStage(2)
+    )
+
+    // Achievement: Immortal Pilot
+    achievement(
+        title = "Immortal Pilot",
+        description = "Reach 2001 without getting hit on default of higher difficulty.",
+        points = 25,
+        trigger = triggerNoDeathTillStage(5)
     )
 // endregion Achievements
 
