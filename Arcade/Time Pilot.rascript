@@ -12,9 +12,20 @@
 
     // Address: Game State
     // Inidicates whether the game is in demo mode or playing mode
-    function gameState() => byte(0x0530)
-    GAME_STATE_PLAYING = 0xff
-    GAME_STATE_DEMO = 0x00
+    function attractMode() => byte(0x0530)
+    ATTRACT_OFF = 0xff
+    ATTRACT_ON = 0x00
+
+    // Address: Gameplay State
+    // Indicates the current gameplay state
+    function gameState() => byte(0x01ac)
+    STATE_NEW_LIFE_READY_MESSAGE = 0x05
+    STATE_PRE_GAMEPLAY_TRANSITION = 0x06
+    STATE_IN_GAMEPLAY = 0x07
+    STATE_GAME_OVER = 0x08
+    STATE_STAGE_COMPLETED = 0x0d
+    STATE_NEXT_STAGE_STARTED = 0x0e
+
 
     // Address: Player 1 Score
     // Indicates the current score of player 1
@@ -47,6 +58,17 @@
     // Indicates the current status of the player (on screen, got hit, not on screen)
     function playerStatus() => byte(0x0000)
 
+    // Address: Queued Player Bullets
+    // Indicates the number of bullets currently queued to be fired by the player
+    function queuedPlayerBullets() => byte(0x0281)
+
+    // Address: Parachute Status
+    // Indicates the current status of the parachuting pilot
+    function parachuteStatus() => byte(0x00f0)
+    PARACHUTE_NOT_ON_SCREEN = 0x00
+    PARACHUTE_ON_SCREEN = 0xff
+    PARACHUTE_RESCUED = 0xf0
+
     // Address: Enemy Kills Remaining
     // Indicates the number of enemies remaining until the boss appears
     function enemyKillsRemaining() => byte(0x0502)
@@ -57,6 +79,8 @@
     BOSS_NOT_SPAWNED = 0x00
     BOSS_SPAWNED = 0xff
 
+    // Address: Boss Status
+    // Indicates the current status of the boss
     function bossStatus() => byte(0x00a0)
     PLANE_ON_SCREEN = 0xff
     PLANE_GOT_HIT = 0xf0
@@ -72,8 +96,8 @@
     // Happens on a new game is started
     function frameGameStarted() {
         return
-            prev(gameState() == GAME_STATE_DEMO)
-            && (gameState() == GAME_STATE_PLAYING)
+            prev(attractMode() == ATTRACT_ON)
+            && (attractMode() == ATTRACT_OFF)
     }
 
     // Frame : Player 1 Game Over
@@ -93,6 +117,31 @@
             && (playerStatus() == PLANE_GOT_HIT)
     }
 
+    // Frame : Player Fired Bullet
+    // Happens when player fires a bullet
+    function framePlayerFiredBullet() {
+        return 
+            prev(queuedPlayerBullets() == 0)
+            && (queuedPlayerBullets() > 0)
+            
+    }
+
+    // Frame : Parachute Rescued
+    // Happens when a parachute is rescued
+    function frameParachuteRescued() {
+        return
+            prev(parachuteStatus() == PARACHUTE_ON_SCREEN)
+            && (parachuteStatus() == PARACHUTE_RESCUED)      
+    }
+
+    // Frame : Life Started
+    // Happens when a new life starts
+    function frameLifeStarted() {
+        return
+            prev(gameState() == STATE_NEW_LIFE_READY_MESSAGE)
+            && (gameState() == STATE_PRE_GAMEPLAY_TRANSITION)
+    }
+
     // Frame : Stage Completed
     // Happens when the current stage is completed
     function frameStageCompleted() {
@@ -110,7 +159,7 @@
     function triggerAgeCompleted(age) {
         return
             activePlayer() == ACTIVE_PLAYER_1
-            && gameState() == GAME_STATE_PLAYING
+            && attractMode() == ATTRACT_OFF
             && dipSwitchDifficulty() == 4
             && dipSwitchLives() == 3
             && currentAge() == age
@@ -123,7 +172,7 @@
         // Required Conditions
         requiredConditions =
             activePlayer() == ACTIVE_PLAYER_1
-            && gameState() == GAME_STATE_PLAYING
+            && attractMode() == ATTRACT_OFF
             && dipSwitchDifficulty() >= 4
 
         // Start Conditions
@@ -145,6 +194,30 @@
             && trigger_when(goalConditions)
             && never(cancelConditions)
     }
+
+    // Trigger: Rescue Mission
+    // Triggers when the player rescues a specified number of parachutes in a single life
+    // without shooting any bullets
+    function triggerRescueMission(year, count) {
+        primingConditions =
+            dipSwitchLives() == 3
+            && dipSwitchDifficulty() >= 4
+            && never(activePlayer() != ACTIVE_PLAYER_1)
+            && never(attractMode() != ATTRACT_OFF)
+            && never(currentAge() != year)
+            && never(framePlayerGotHit())
+            && never(framePlayerFiredBullet())
+            && once(frameLifeStarted())
+            && disable_when(framePlayerFiredBullet(), until=frameLifeStarted())
+
+        goalConditions =
+            repeated(count, frameParachuteRescued() && never(framePlayerFiredBullet()))
+
+        return 
+            primingConditions
+            && trigger_when(measured(goalConditions))
+    }
+
 // #endregion Achievement Triggers
 
 // #region Achievements
@@ -208,6 +281,38 @@
         points = 25,
         trigger = triggerNoDeathTillStage(5)
     )
+
+    // Achievement: Carnegie Hero Medal
+    achievement(
+        title = "Carnegie Hero Medal",
+        description = "Rescue 5 parachutes from 1910 in a single life, without opening fire, on default or higher difficulty.",
+        points = 10,
+        trigger = triggerRescueMission(year = AGE_1910, count = 5)
+    )
+
+    // Achievement: Navy and Marine Corps Medal
+    achievement(
+        title = "Navy and Marine Corps Medal",
+        description = "Rescue 4 parachutes from 1940 in a single life, without opening fire, on default or higher difficulty.",
+        points = 10,
+        trigger = triggerRescueMission(year = AGE_1940, count = 4)
+    )
+
+    // Achievement: Silver Lifesaving Medal
+    achievement(
+        title = "Silver Lifesaving Medal",
+        description = "Rescue 3 parachutes from 1970 in a single life, without opening fire, on default or higher difficulty.",
+        points = 10,
+        trigger = triggerRescueMission(year = AGE_1970, count = 3)
+    )
+
+    // Achievement: Gold Lifesaving Medal
+    achievement(
+        title = "Gold Lifesaving Medal",
+        description = "Rescue 2 parachutes from 1982 in a single life, without opening fire, on default or higher difficulty.",
+        points = 10,
+        trigger = triggerRescueMission(year = AGE_1982, count = 2)
+    )
 // endregion Achievements
 
 // #region Leaderboards
@@ -221,7 +326,7 @@
         // return
         //     dipSwitchLives() == 3
         //     && (once(framePlayer1GameOver()))
-        //     && never(gameState() == GAME_STATE_DEMO)
+        //     && never(attractMode() == ATTRACT_ON)
     }
 
     // Leaderboard Value : Hiscore
@@ -245,7 +350,7 @@
 // #region Rich Presence
     // Rich Presence : When Game is Started
     rich_presence_conditional_display(
-        gameState() == GAME_STATE_PLAYING,
+        attractMode() == ATTRACT_OFF,
 
         "Fighting {3} ( Stage: {0} | Lives: {1} | Score: {2} )",
         rich_presence_macro("Number", currentStage()),
