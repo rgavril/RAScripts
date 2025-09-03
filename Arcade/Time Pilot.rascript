@@ -89,6 +89,14 @@
     // Address: Credits
     // Indicates the number of credits currently available
     function credits() => byte(0x186)
+
+    // Address: Enemy Formation Size
+    // Indicates the number of enemies currently in the formation
+    function enemyFormationSize() => byte(0x0011)
+
+    // Address: Enemy Formation Timer
+    // Indicates how long the current enemy formation is still active
+    function enemyFormationTimer() => byte(0x0012)
 // #endregion
 
 // #region Frame Functions
@@ -150,6 +158,15 @@
             && bossSpawned() == BOSS_SPAWNED
             && prev(bossStatus() == PLANE_GOT_HIT)
             && bossStatus() > 0x00 && bossStatus() < 0xf0
+    }
+
+    // Frame : Enemy Formation Killed
+    // Happens when an entire enemy formation is destroyed
+    function frameFormationKill() {
+        return
+            prev(enemyFormationSize() > 0)
+            && enemyFormationSize() == 0
+            && enemyFormationTimer() > 0
     }
 // #endregion Frame Functions
 
@@ -217,6 +234,23 @@
             primingConditions
             && trigger_when(measured(goalConditions))
     }
+
+    // Trigger: Formation Kills
+    // Triggers when the player destroys an entire enemy formation a specified number of times
+    function triggerForationKills(count) {
+        requiredConditions =
+            dipSwitchLives() == 3
+            && dipSwitchDifficulty() >= 4
+            && never(activePlayer() != ACTIVE_PLAYER_1)
+            && never(attractMode() != ATTRACT_OFF)
+
+        goalCondition =
+            repeated(count, frameFormationKill())
+        
+        return
+            requiredConditions
+            && measured(goalCondition)
+    }   
 
 // #endregion Achievement Triggers
 
@@ -292,7 +326,7 @@
 
     // Achievement: Navy and Marine Corps Medal
     achievement(
-        title = "Navy and Marine Corps Medal",
+        title = "Navy and Marine Corps Medal", // Savior of Dunkirk
         description = "Rescue 4 parachutes from 1940 in a single life, without opening fire, on default or higher difficulty.",
         points = 10,
         trigger = triggerRescueMission(year = AGE_1940, count = 4)
@@ -300,7 +334,7 @@
 
     // Achievement: Silver Lifesaving Medal
     achievement(
-        title = "Silver Lifesaving Medal",
+        title = "Silver Lifesaving Medal", // Son Tay Savior
         description = "Rescue 3 parachutes from 1970 in a single life, without opening fire, on default or higher difficulty.",
         points = 10,
         trigger = triggerRescueMission(year = AGE_1970, count = 3)
@@ -308,10 +342,18 @@
 
     // Achievement: Gold Lifesaving Medal
     achievement(
-        title = "Gold Lifesaving Medal",
+        title = "Gold Lifesaving Medal", // Falklands Rescue
         description = "Rescue 2 parachutes from 1982 in a single life, without opening fire, on default or higher difficulty.",
         points = 10,
         trigger = triggerRescueMission(year = AGE_1982, count = 2)
+    )
+
+    // Achievement: Squadon Sweap
+    achievement(
+        title = "Squadon Sweap",
+        description = "Destroy an entire enemy formation 5 times in a single game, using the default settings.",
+        points = 3,
+        trigger = triggerForationKills(count = 5)
     )
 // endregion Achievements
 
