@@ -88,7 +88,9 @@
 
     // Address: Special Enemy Status
     // Indicates the current status of the special enemy
-    function specialEnemyStatus() => byte(0x00c0)
+    function specialEnemy1Status() => byte(0x00c0)
+    function specialEnemy2Status() => byte(0x00d0)
+    function specialEnemy3Status() => byte(0x00e0)
 
     // Address: Credits
     // Indicates the number of credits currently available
@@ -173,14 +175,15 @@
             && enemyFormationTimer() > 0
     }
 
-    // Frame : Mid-Size Bomber Killed
-    // Happens when a mid-size bomber from 1940 is destroyed
-    function frameBomberKilled() {
+    // Frame : Enemy Killed
+    // Happens when a specified enemy is destroyed
+    function frameEnemyKilled(enemyStatusAddress) {
         return
-            currentAge() == AGE_1940
-            && prev(specialEnemyStatus() == OBJECT_IS_HIT)
-            && specialEnemyStatus() > 0x00 && specialEnemyStatus() < 0xf0
-
+            // Object was hit
+            prev(enemyStatusAddress == OBJECT_IS_HIT)
+            // Object kill animation timer started
+            && enemyStatusAddress > 0x00
+            && enemyStatusAddress < 0xf0
     }
 // #endregion Frame Functions
 
@@ -276,8 +279,33 @@
             && never(attractMode() != ATTRACT_OFF)
 
         goalCondition =
-            repeated(count, frameBomberKilled())
+            repeated(5, currentAge() == AGE_1940 && frameEnemyKilled(specialEnemy1Status()))
         
+        return
+            requiredConditions
+            && measured(goalCondition)
+    }
+
+    // Trigger: Missle Kills
+    // Triggers when the player destroys a specified number of homming missles
+    function triggerMissleKills(count) {
+        requiredConditions =
+            dipSwitchLives() == 3
+            && dipSwitchDifficulty() >= 4
+            && never(activePlayer() != ACTIVE_PLAYER_1)
+            && never(attractMode() != ATTRACT_OFF)
+
+        goalCondition =
+            tally(count,
+                currentAge() == AGE_1970 && frameEnemyKilled(specialEnemy1Status()),
+                currentAge() == AGE_1970 && frameEnemyKilled(specialEnemy2Status()),
+                currentAge() == AGE_1970 && frameEnemyKilled(specialEnemy3Status()),
+
+                currentAge() == AGE_1982 && frameEnemyKilled(specialEnemy1Status()),
+                currentAge() == AGE_1982 && frameEnemyKilled(specialEnemy2Status()),
+                currentAge() == AGE_1982 && frameEnemyKilled(specialEnemy3Status())
+            )
+
         return
             requiredConditions
             && measured(goalCondition)
@@ -389,9 +417,17 @@
     // Achievement: Bomber Barrage
     achievement(
         title = "Bomber Barrage",
-        description = "Destroy five mid-size bombers from 1940 in one life, with difficulty set to 4 or higher.",
+        description = "Destroy 5 mid-size bombers from 1940 in a single game, using the default settings.",
         points = 5,
         trigger = triggerBomberKills(count = 5)
+    )
+
+    // Achievement: Missle Anihilator
+    achievement(
+        title = "Missle Anihilator",
+        description = "Destroy 50 homming missles in a single game, using the default settings.",
+        points = 10,
+        trigger = triggerMissleKills(count = 50)
     )
 // endregion Achievements
 
