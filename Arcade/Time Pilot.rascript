@@ -82,9 +82,13 @@
     // Address: Boss Status
     // Indicates the current status of the boss
     function bossStatus() => byte(0x00a0)
-    PLANE_ON_SCREEN = 0xff
-    PLANE_GOT_HIT = 0xf0
-    PLANE_NOT_ON_SCREEN = 0x00
+    OBJECT_ON_SCREEN = 0xff
+    OBJECT_IS_HIT = 0xf0
+    OBJECT_NOT_SPAWNED = 0x00
+
+    // Address: Special Enemy Status
+    // Indicates the current status of the special enemy
+    function specialEnemyStatus() => byte(0x00c0)
 
     // Address: Credits
     // Indicates the number of credits currently available
@@ -121,8 +125,8 @@
     // Happens when player gets hit and loses a life
     function framePlayerGotHit() {
         return
-            prev(playerStatus() == PLANE_ON_SCREEN)
-            && (playerStatus() == PLANE_GOT_HIT)
+            prev(playerStatus() == OBJECT_ON_SCREEN)
+            && (playerStatus() == OBJECT_IS_HIT)
     }
 
     // Frame : Player Fired Bullet
@@ -156,7 +160,7 @@
         return
             enemyKillsRemaining() == 0
             && bossSpawned() == BOSS_SPAWNED
-            && prev(bossStatus() == PLANE_GOT_HIT)
+            && prev(bossStatus() == OBJECT_IS_HIT)
             && bossStatus() > 0x00 && bossStatus() < 0xf0
     }
 
@@ -167,6 +171,16 @@
             prev(enemyFormationSize() > 0)
             && enemyFormationSize() == 0
             && enemyFormationTimer() > 0
+    }
+
+    // Frame : Mid-Size Bomber Killed
+    // Happens when a mid-size bomber from 1940 is destroyed
+    function frameBomberKilled() {
+        return
+            currentAge() == AGE_1940
+            && prev(specialEnemyStatus() == OBJECT_IS_HIT)
+            && specialEnemyStatus() > 0x00 && specialEnemyStatus() < 0xf0
+
     }
 // #endregion Frame Functions
 
@@ -250,8 +264,24 @@
         return
             requiredConditions
             && measured(goalCondition)
-    }   
+    }
 
+    // Trigger: Bomber Kills
+    // Triggers when the player destroys a specified number of mid-size bombers from 1940
+    function triggerBomberKills(count) {
+        requiredConditions =
+            dipSwitchLives() == 3
+            && dipSwitchDifficulty() >= 4
+            && never(activePlayer() != ACTIVE_PLAYER_1)
+            && never(attractMode() != ATTRACT_OFF)
+
+        goalCondition =
+            repeated(count, frameBomberKilled())
+        
+        return
+            requiredConditions
+            && measured(goalCondition)
+    }
 // #endregion Achievement Triggers
 
 // #region Achievements
@@ -354,6 +384,14 @@
         description = "Destroy an entire enemy formation 5 times in a single game, using the default settings.",
         points = 3,
         trigger = triggerForationKills(count = 5)
+    )
+
+    // Achievement: Bomber Barrage
+    achievement(
+        title = "Bomber Barrage",
+        description = "Destroy five mid-size bombers from 1940 in one life, with difficulty set to 4 or higher.",
+        points = 5,
+        trigger = triggerBomberKills(count = 5)
     )
 // endregion Achievements
 
