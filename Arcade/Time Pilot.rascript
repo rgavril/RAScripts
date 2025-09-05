@@ -315,6 +315,7 @@
 // #region Achievements
     // Achievement: Age of the Biplane
     achievement(
+        id = 540954,
         title = "Age of the Biplane",
         description = "Complete the A.D. 1910 stage using the default settings.",
         points = 3,
@@ -324,6 +325,7 @@
 
     // Achievement: Age of the Monoplane
     achievement(
+        id = 540958,
         title = "Age of the Monoplane",
         description = "Complete the A.D. 1940 stage using the default settings.",
         points = 5,
@@ -333,6 +335,7 @@
 
     // Achievement: Age of the Helicopter
     achievement(
+        id = 540957,
         title = "Age of the Helicopter",
         description = "Complete the A.D. 1970 stage using the default settings.",
         points = 5,
@@ -342,6 +345,7 @@
 
     // Achievement: Age of the Jet Plane
     achievement(
+        id = 540956,
         title = "Age of the Jet Plane",
         description = "Complete the A.D. 1982 stage using the default settings.",
         points = 10,
@@ -351,6 +355,7 @@
 
     // Achievement: Age of the UFO
     achievement(
+        id = 540955,
         title = "Age of the UFO",
         description = "Complete the A.D. 2001 stage using the default settings.",
         points = 25,
@@ -360,6 +365,7 @@
 
     // Achievement: Perfect First Flight
     achievement(
+        id = 540994,
         title = "Perfect First Flight",
         description = "Reach 1940 without getting hit on default of higher difficulty.",
         points = 5,
@@ -368,6 +374,7 @@
 
     // Achievement: Immortal Pilot
     achievement(
+        id = 540995,
         title = "Immortal Pilot",
         description = "Reach 2001 without getting hit on default of higher difficulty.",
         points = 25,
@@ -376,6 +383,7 @@
 
     // Achievement: Carnegie Hero Medal
     achievement(
+        id = 541012,
         title = "Carnegie Hero Medal",
         description = "Rescue 5 parachutes from 1910 in a single life, without opening fire, on default or higher difficulty.",
         points = 10,
@@ -384,6 +392,7 @@
 
     // Achievement: Navy and Marine Corps Medal
     achievement(
+        id = 541013,
         title = "Navy and Marine Corps Medal", // Savior of Dunkirk
         description = "Rescue 4 parachutes from 1940 in a single life, without opening fire, on default or higher difficulty.",
         points = 10,
@@ -392,6 +401,7 @@
 
     // Achievement: Silver Lifesaving Medal
     achievement(
+        id = 541014,
         title = "Silver Lifesaving Medal", // Son Tay Savior
         description = "Rescue 3 parachutes from 1970 in a single life, without opening fire, on default or higher difficulty.",
         points = 10,
@@ -400,6 +410,7 @@
 
     // Achievement: Gold Lifesaving Medal
     achievement(
+        id = 541015,
         title = "Gold Lifesaving Medal", // Falklands Rescue
         description = "Rescue 2 parachutes from 1982 in a single life, without opening fire, on default or higher difficulty.",
         points = 10,
@@ -408,6 +419,7 @@
 
     // Achievement: Squadon Sweap
     achievement(
+        id = 541536,
         title = "Squadon Sweap",
         description = "Destroy an entire enemy formation 5 times in a single game, using the default settings.",
         points = 3,
@@ -416,6 +428,7 @@
 
     // Achievement: Bomber Barrage
     achievement(
+        id = 541644,
         title = "Bomber Barrage",
         description = "Destroy 5 mid-size bombers from 1940 in a single game, using the default settings.",
         points = 5,
@@ -424,6 +437,7 @@
 
     // Achievement: Missle Anihilator
     achievement(
+        id = 541649,
         title = "Missle Anihilator",
         description = "Destroy 50 homming missles in a single game, using the default settings.",
         points = 10,
