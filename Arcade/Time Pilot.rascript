@@ -254,12 +254,13 @@
 
     // Trigger: Formation Kills
     // Triggers when the player destroys an entire enemy formation a specified number of times
-    function triggerForationKills(count) {
+    function triggerForationKills(count, age) {
         requiredConditions =
             dipSwitchLives() == 3
             && dipSwitchDifficulty() >= 4
             && never(activePlayer() != ACTIVE_PLAYER_1)
             && never(attractMode() != ATTRACT_OFF)
+            && disable_when(currentAge() != age, currentAge() == age)
 
         goalCondition =
             repeated(count, frameFormationKill())
@@ -328,7 +329,7 @@
         id = 540958,
         title = "Age of the Monoplane",
         description = "Complete the A.D. 1940 stage using the default settings.",
-        points = 5,
+        points = 3,
         type = "progression",
         trigger = triggerAgeCompleted(AGE_1940)
     )
@@ -386,7 +387,7 @@
         id = 541012,
         title = "Carnegie Hero Medal",
         description = "Rescue 5 parachutes from 1910 in a single life, without opening fire, on default or higher difficulty.",
-        points = 10,
+        points = 5,
         trigger = triggerRescueMission(year = AGE_1910, count = 5)
     )
 
@@ -395,7 +396,7 @@
         id = 541013,
         title = "Navy and Marine Corps Medal", // Savior of Dunkirk
         description = "Rescue 4 parachutes from 1940 in a single life, without opening fire, on default or higher difficulty.",
-        points = 10,
+        points = 5,
         trigger = triggerRescueMission(year = AGE_1940, count = 4)
     )
 
@@ -420,10 +421,34 @@
     // Achievement: Squadon Sweap
     achievement(
         id = 541536,
-        title = "Squadon Sweap",
-        description = "Destroy an entire enemy formation 5 times in a single game, using the default settings.",
-        points = 3,
-        trigger = triggerForationKills(count = 5)
+        title = "Monoplane Formation Breaker",
+        description = "Destroy 4 monoplane formations from 1910 in a single game, using the default settings.",
+        points = 5,
+        trigger = triggerForationKills(age=AGE_1910, count = 4)
+    )
+
+    // Achievement: Biplane Squadron Crusher
+    achievement(
+        title = "Biplane Squadron Crusher",
+        description = "Destroy 4 biplane formations from 1940 in a single game, using the default settings.",
+        points = 5,
+        trigger = triggerForationKills(age=AGE_1940, count = 4)
+    )
+
+    // Achievement: Helicopter Group Purger
+    achievement(
+        title = "Helicopter Group Purger",
+        description = "Destroy 4 helicopter formations from 1970 in a single game, using the default settings.",
+        points = 10,
+        trigger = triggerForationKills(age=AGE_1970, count = 4)
+    )
+
+    // Achievement: Jet Plane Flight Terminator
+    achievement(
+        title = "Jet Plane Flight Terminator",
+        description = "Destroy 4 jet plane formations from 1982 in a single game, using the default settings.",
+        points = 10,
+        trigger = triggerForationKills(age=AGE_1982, count = 4)
     )
 
     // Achievement: Bomber Barrage
@@ -440,7 +465,7 @@
         id = 541649,
         title = "Missle Anihilator",
         description = "Destroy 50 homming missles in a single game, using the default settings.",
-        points = 10,
+        points = 5,
         trigger = triggerMissleKills(count = 50)
     )
 // endregion Achievements
