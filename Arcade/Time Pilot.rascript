@@ -557,6 +557,7 @@
 
     // Leaderboard: Player 1 Score
     leaderboard(
+        id = 138551,
         title = "Hiscore Arcade Mode",
         description = "Highest score using default settings",
         format = "SCORE",
@@ -584,6 +585,7 @@
 
     // Leaderboard: Speedrun 1910 A.D.
     leaderboard(
+        id = 138651,
         title = "Speedrun 1910 A.D.",
         description = "Fastest time to complete the A.D. 1910 stage on default difficulty",
         format = "TIME",
@@ -595,6 +597,7 @@
 
     // Leaderboard: Speedrun 1940 A.D.
     leaderboard(
+        id = 138652,
         title = "Speedrun 1940 A.D.",
         description = "Fastest time to complete the A.D. 1940 stage on default difficulty",
         format = "TIME",
@@ -606,6 +609,7 @@
 
     // Leaderboard: Speedrun 1970 A.D.
     leaderboard(
+        id = 138653,
         title = "Speedrun 1970 A.D.",
         description = "Fastest time to complete the A.D. 1970 stage on default difficulty",
         format = "TIME",
@@ -617,6 +621,7 @@
 
     // Leaderboard: Speedrun 1982 A.D.
     leaderboard(
+        id = 138654,
         title = "Speedrun 1982 A.D.",
         description = "Fastest time to complete the A.D. 1982 stage on default difficulty",
         format = "TIME",
@@ -628,6 +633,7 @@
 
     // Leaderboard: Speedrun 2001 A.D.
     leaderboard(
+        id = 138655,
         title = "Speedrun 2001 A.D.",
         description = "Fastest time to complete the A.D. 2001 stage on default difficulty",
         format = "TIME",
