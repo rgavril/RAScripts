@@ -16,6 +16,12 @@
     ATTRACT_OFF = 0xff
     ATTRACT_ON = 0x00
 
+    // Address: Type of Game
+    // Indicates whether it's a one player or two player game
+    function typeOfGame() => byte(0x531)
+    TYPE_OF_GAME_1P = 0x00
+    TYPE_OF_GAME_2P = 0xff
+
     // Address: Gameplay State
     // Indicates the current gameplay state
     function gameState() => byte(0x01ac)
@@ -185,6 +191,14 @@
             && enemyStatusAddress > 0x00
             && enemyStatusAddress < 0xf0
     }
+
+    // Frame : Score Went Over
+    // Happens when the player's score goes over a specified value
+    function frameScoreWentOver(score) {
+        return
+            prev(player1Score() < score)
+            && player1Score() >= score
+    }
 // #endregion Frame Functions
 
 // #region Achievement Triggers
@@ -310,6 +324,17 @@
         return
             requiredConditions
             && measured(goalCondition)
+    }
+
+    // Trigger: Highscore
+    // Triggers when the player reaches a specified score
+    function triggerHighscore(score) {
+        return
+            activePlayer() == ACTIVE_PLAYER_1
+            && attractMode() == ATTRACT_OFF
+            && dipSwitchDifficulty() == 4
+            && dipSwitchLives() == 3
+            && frameScoreWentOver(score)
     }
 // #endregion Achievement Triggers
 
@@ -468,6 +493,22 @@
         points = 5,
         trigger = triggerMissleKills(count = 50)
     )
+
+    // Achievement: Ace Cadet
+    achievement(
+        title = "Ace Cadet",
+        description = "Achieve a score of 100,000 points using the default settings.",
+        points = 10,
+        trigger = triggerHighscore(100000)
+    )
+
+    // Achievement: Ace Cadet
+    achievement(
+        title = "Master Pilot",
+        description = "Achieve a score of 200,000 points using the default settings.",
+        points = 25,
+        trigger = triggerHighscore(200000)
+    )
 // endregion Achievements
 
 // #region Leaderboards
@@ -500,6 +541,78 @@
         submit = framePlayer1GameOver(),
         value = valueHighscoreLeaderboard()
     )
+
+    function startSpeedrunLeaderboard(age) {
+        return
+            dipSwitchDifficulty() == 4
+            && attractMode() == ATTRACT_OFF
+            && typeOfGame() == TYPE_OF_GAME_1P
+            && currentAge() == age
+            && prev(gameState()) != STATE_NEW_LIFE_READY_MESSAGE
+            && gameState() == STATE_NEW_LIFE_READY_MESSAGE
+    }
+
+    function submitSpeedrunLeaderboard(age) {
+        return
+            prev(currentAge() == age)
+            && currentAge() != age
+    }
+
+    // Leaderboard: Speedrun 1910 A.D.
+    leaderboard(
+        title = "Speedrun 1910 A.D.",
+        description = "Fastest time to complete the A.D. 1910 stage on default difficulty",
+        format = "TIME",
+        start = startSpeedrunLeaderboard(AGE_1910),
+        cancel = gameState() == STATE_GAME_OVER,
+        submit = submitSpeedrunLeaderboard(AGE_1910),
+        value = measured(always_true())
+    )
+
+    // Leaderboard: Speedrun 1940 A.D.
+    leaderboard(
+        title = "Speedrun 1940 A.D.",
+        description = "Fastest time to complete the A.D. 1940 stage on default difficulty",
+        format = "TIME",
+        start = startSpeedrunLeaderboard(AGE_1940),
+        cancel = gameState() == STATE_GAME_OVER,
+        submit = submitSpeedrunLeaderboard(AGE_1940),
+        value = measured(always_true())
+    )
+
+    // Leaderboard: Speedrun 1970 A.D.
+    leaderboard(
+        title = "Speedrun 1970 A.D.",
+        description = "Fastest time to complete the A.D. 1970 stage on default difficulty",
+        format = "TIME",
+        start = startSpeedrunLeaderboard(AGE_1970),
+        cancel = gameState() == STATE_GAME_OVER,
+        submit = submitSpeedrunLeaderboard(AGE_1970),
+        value = measured(always_true())
+    )
+
+    // Leaderboard: Speedrun 1982 A.D.
+    leaderboard(
+        title = "Speedrun 1982 A.D.",
+        description = "Fastest time to complete the A.D. 1982 stage on default difficulty",
+        format = "TIME",
+        start = startSpeedrunLeaderboard(AGE_1982),
+        cancel = gameState() == STATE_GAME_OVER,
+        submit = submitSpeedrunLeaderboard(AGE_1982),
+        value = measured(always_true())
+    )
+
+    // Leaderboard: Speedrun 2001 A.D.
+    leaderboard(
+        title = "Speedrun 2001 A.D.",
+        description = "Fastest time to complete the A.D. 2001 stage on default difficulty",
+        format = "TIME",
+        start = startSpeedrunLeaderboard(AGE_2001),
+        cancel = gameState() == STATE_GAME_OVER,
+        submit = submitSpeedrunLeaderboard(AGE_2001),
+        value = measured(always_true())
+    )
+
 // #endregion Leaderboards
 
 // #region Rich Presence
