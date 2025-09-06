@@ -243,6 +243,21 @@
             && never(cancelConditions)
     }
 
+    // Trigger: Back to the Future
+    // Triggers when the player reaches 2010 in the second loop using default settings
+    function triggerBackToTheFuture() {
+        // Required Conditions
+        requiredConditions =
+            activePlayer() == ACTIVE_PLAYER_1
+            && attractMode() == ATTRACT_OFF
+            && dipSwitchDifficulty() == 4
+            && dipSwitchLives() == 3
+            && prev(currentStage() == 9)
+            && currentStage() == 10
+
+        return requiredConditions
+    }
+
     // Trigger: Rescue Mission
     // Triggers when the player rescues a specified number of parachutes in a single life
     // without shooting any bullets
@@ -407,6 +422,15 @@
         trigger = triggerNoDeathTillStage(5)
     )
 
+    // Achievement: Back to the Future
+    achievement(
+        id = 542121,
+        title = "Back to the Future",
+        description = "Reach 2001 in the second loop using the default settings.",
+        points = 25,
+        trigger = triggerBackToTheFuture()
+    )
+
     // Achievement: Carnegie Hero Medal
     achievement(
         id = 541012,
@@ -498,7 +522,7 @@
     achievement(
         title = "Ace Cadet",
         description = "Achieve a score of 100,000 points using the default settings.",
-        points = 10,
+        points = 5,
         trigger = triggerHighscore(100000)
     )
 
@@ -506,7 +530,7 @@
     achievement(
         title = "Master Pilot",
         description = "Achieve a score of 200,000 points using the default settings.",
-        points = 25,
+        points = 10,
         trigger = triggerHighscore(200000)
     )
 // endregion Achievements
