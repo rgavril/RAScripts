@@ -350,6 +350,24 @@
             && measured(goalCondition)
     }
 
+    function triggerBombKills(count) {
+        requiredConditions =
+            dipSwitchLives() == 3
+            && dipSwitchDifficulty() >= 4
+            && never(activePlayer() != ACTIVE_PLAYER_1)
+            && never(attractMode() != ATTRACT_OFF)
+
+        goalCondition =
+            tally(count,
+                currentAge() == AGE_1910 && frameEnemyKilled(specialEnemy1Status()),
+                currentAge() == AGE_1910 && frameEnemyKilled(specialEnemy2Status()),
+                currentAge() == AGE_1910 && frameEnemyKilled(specialEnemy3Status())
+            )
+
+        return
+            requiredConditions
+            && measured(goalCondition)
+    }
     // Trigger: Highscore
     // Triggers when the player reaches a specified score
     function triggerHighscore(score) {
@@ -527,6 +545,14 @@
         trigger = triggerMissleKills(count = 50)
     )
 
+    // Achievement: Bomb Defuser
+    achievement(
+        title = "Bomb Disposal Expert",
+        description = "Destroy 10 bombs from 1910 in a single game, on default setting.",
+        points = 5,
+        trigger = triggerBombKills(count = 10)
+    )
+
     // Achievement: Ace Cadet
     achievement(
         title = "Ace Cadet",
@@ -551,7 +577,7 @@
         return
             dipSwitchLives() == 3
             && dipSwitchDifficulty() == 4
-            && once(framePlayer1GameOver()) || once(framePlayer1ScoreOverflowed())
+            && (once(framePlayer1GameOver()) || once(framePlayer1ScoreOverflowed()))
             && never(attractMode() == ATTRACT_ON)
     }
 
