@@ -129,6 +129,14 @@
             && (currentPlayerLives() == 0)
     }
 
+    // Frame : Player 1 Score Overflowed
+    // Happens when player 1's score overflows back to 0
+    function framePlayer1ScoreOverflowed() {
+        return
+            attractMode() == ATTRACT_OFF
+            && gameState() == STATE_IN_GAMEPLAY
+            && prev(player1Score()) > player1Score()
+    }
     // Frame : Player Got Hit
     // Happens when player gets hit and loses a life
     function framePlayerGotHit() {
@@ -541,19 +549,32 @@
     // Start condition for the Hiscore leaderboards.
     function startHighscoreLeaderboard() {
         return
-            frameGameStarted()
-            && dipSwitchLives() == 3
+            dipSwitchLives() == 3
             && dipSwitchDifficulty() == 4
-        // return
-        //     dipSwitchLives() == 3
-        //     && (once(framePlayer1GameOver()))
-        //     && never(attractMode() == ATTRACT_ON)
+            && once(framePlayer1GameOver()) || once(framePlayer1ScoreOverflowed())
+            && never(attractMode() == ATTRACT_ON)
     }
 
     // Leaderboard Value : Hiscore
     // Value function for the Hiscore leaderboards.
     function valueHighscoreLeaderboard() {
-      return player1Score()
+        reset =
+            never(attractMode() == ATTRACT_ON) &&
+            measured( tally(0, always_false()) )
+
+        return max_of(
+            reset,
+            measured( player1Score()),
+            measured( player1Score() + 1000000, when = repeated(1, framePlayer1ScoreOverflowed()) ),
+            measured( player1Score() + 2000000, when = repeated(2, framePlayer1ScoreOverflowed()) ),
+            measured( player1Score() + 3000000, when = repeated(3, framePlayer1ScoreOverflowed()) ),
+            measured( player1Score() + 4000000, when = repeated(4, framePlayer1ScoreOverflowed()) ),
+            measured( player1Score() + 5000000, when = repeated(5, framePlayer1ScoreOverflowed()) ),
+            measured( player1Score() + 6000000, when = repeated(6, framePlayer1ScoreOverflowed()) ),
+            measured( player1Score() + 7000000, when = repeated(7, framePlayer1ScoreOverflowed()) ),
+            measured( player1Score() + 8000000, when = repeated(8, framePlayer1ScoreOverflowed()) ),
+            measured( player1Score() + 9000000, when = repeated(9, framePlayer1ScoreOverflowed()) )
+        )
     }
 
     // Leaderboard: Player 1 Score
