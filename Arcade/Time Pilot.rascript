@@ -282,13 +282,14 @@
     }
 
     // Trigger: Formation Kills
-    // Triggers when the player destroys an entire enemy formation a specified number of times
+    // Triggers when the player destroys an entire enemy formation a specified number of times in a single game
     function triggerForationKills(count, age) {
         requiredConditions =
             dipSwitchLives() == 3
             && dipSwitchDifficulty() >= 4
             && never(activePlayer() != ACTIVE_PLAYER_1)
             && never(attractMode() != ATTRACT_OFF)
+            && never(framePlayer1GameOver())
             && disable_when(currentAge() != age, currentAge() == age)
 
         goalCondition =
@@ -358,7 +359,7 @@
     achievement(
         id = 540954,
         title = "Age of the Biplane",
-        description = "Complete the A.D. 1910 stage using the default settings.",
+        description = "Complete the A.D. 1910 stage on default setting.",
         points = 3,
         type = "progression",
         trigger = triggerAgeCompleted(AGE_1910)
@@ -368,7 +369,7 @@
     achievement(
         id = 540958,
         title = "Age of the Monoplane",
-        description = "Complete the A.D. 1940 stage using the default settings.",
+        description = "Complete the A.D. 1940 stage on default setting.",
         points = 3,
         type = "progression",
         trigger = triggerAgeCompleted(AGE_1940)
@@ -378,7 +379,7 @@
     achievement(
         id = 540957,
         title = "Age of the Helicopter",
-        description = "Complete the A.D. 1970 stage using the default settings.",
+        description = "Complete the A.D. 1970 stage on default setting.",
         points = 5,
         type = "progression",
         trigger = triggerAgeCompleted(AGE_1970)
@@ -388,7 +389,7 @@
     achievement(
         id = 540956,
         title = "Age of the Jet Plane",
-        description = "Complete the A.D. 1982 stage using the default settings.",
+        description = "Complete the A.D. 1982 stage on default setting.",
         points = 10,
         type = "progression",
         trigger = triggerAgeCompleted(AGE_1982)
@@ -398,7 +399,7 @@
     achievement(
         id = 540955,
         title = "Age of the UFO",
-        description = "Complete the A.D. 2001 stage using the default settings.",
+        description = "Complete the A.D. 2001 stage on default setting.",
         points = 25,
         type = "win_condition",
         trigger = triggerAgeCompleted(AGE_2001)
@@ -425,8 +426,8 @@
     // Achievement: Back to the Future
     achievement(
         id = 542121,
-        title = "Back to the Future",
-        description = "Reach 2001 in the second loop using the default settings.",
+        title = "Back to the... Flying Saucers",
+        description = "Reach 2001 in the second loop on default setting.",
         points = 25,
         trigger = triggerBackToTheFuture()
     )
@@ -471,7 +472,7 @@
     achievement(
         id = 541536,
         title = "Monoplane Formation Breaker",
-        description = "Destroy 4 monoplane formations from 1910 in a single game, using the default settings.",
+        description = "Destroy 4 monoplane formations from 1910 in a single game, on default setting.",
         points = 5,
         trigger = triggerForationKills(age=AGE_1910, count = 4)
     )
@@ -479,7 +480,7 @@
     // Achievement: Biplane Squadron Crusher
     achievement(
         title = "Biplane Squadron Crusher",
-        description = "Destroy 4 biplane formations from 1940 in a single game, using the default settings.",
+        description = "Destroy 4 biplane formations from 1940 in a single game, on default setting.",
         points = 5,
         trigger = triggerForationKills(age=AGE_1940, count = 4)
     )
@@ -487,7 +488,7 @@
     // Achievement: Helicopter Group Purger
     achievement(
         title = "Helicopter Group Purger",
-        description = "Destroy 4 helicopter formations from 1970 in a single game, using the default settings.",
+        description = "Destroy 4 helicopter formations from 1970 in a single game, on default setting.",
         points = 10,
         trigger = triggerForationKills(age=AGE_1970, count = 4)
     )
@@ -495,7 +496,7 @@
     // Achievement: Jet Plane Flight Terminator
     achievement(
         title = "Jet Plane Flight Terminator",
-        description = "Destroy 4 jet plane formations from 1982 in a single game, using the default settings.",
+        description = "Destroy 4 jet plane formations from 1982 in a single game, on default setting.",
         points = 10,
         trigger = triggerForationKills(age=AGE_1982, count = 4)
     )
@@ -504,7 +505,7 @@
     achievement(
         id = 541644,
         title = "Bomber Barrage",
-        description = "Destroy 5 mid-size bombers from 1940 in a single game, using the default settings.",
+        description = "Destroy 5 mid-size bombers from 1940 in a single game, on default setting.",
         points = 5,
         trigger = triggerBomberKills(count = 5)
     )
@@ -513,7 +514,7 @@
     achievement(
         id = 541649,
         title = "Missle Anihilator",
-        description = "Destroy 50 homming missles in a single game, using the default settings.",
+        description = "Destroy 50 homming missles in a single game, on default setting.",
         points = 5,
         trigger = triggerMissleKills(count = 50)
     )
@@ -521,7 +522,7 @@
     // Achievement: Ace Cadet
     achievement(
         title = "Ace Cadet",
-        description = "Achieve a score of 100,000 points using the default settings.",
+        description = "Achieve a score of 100,000 points on default setting.",
         points = 5,
         trigger = triggerHighscore(100000)
     )
@@ -529,7 +530,7 @@
     // Achievement: Ace Cadet
     achievement(
         title = "Master Pilot",
-        description = "Achieve a score of 200,000 points using the default settings.",
+        description = "Achieve a score of 200,000 points on default setting.",
         points = 10,
         trigger = triggerHighscore(200000)
     )
@@ -559,7 +560,7 @@
     leaderboard(
         id = 138551,
         title = "Hiscore Arcade Mode",
-        description = "Highest score using default settings",
+        description = "Highest score on default settings",
         format = "SCORE",
         start = startHighscoreLeaderboard(),
         cancel = always_false(),
@@ -589,6 +590,7 @@
         title = "Speedrun 1910 A.D.",
         description = "Fastest time to complete the A.D. 1910 stage on default difficulty",
         format = "TIME",
+        lower_is_better = true,
         start = startSpeedrunLeaderboard(AGE_1910),
         cancel = gameState() == STATE_GAME_OVER,
         submit = submitSpeedrunLeaderboard(AGE_1910),
@@ -601,6 +603,7 @@
         title = "Speedrun 1940 A.D.",
         description = "Fastest time to complete the A.D. 1940 stage on default difficulty",
         format = "TIME",
+        lower_is_better = true,
         start = startSpeedrunLeaderboard(AGE_1940),
         cancel = gameState() == STATE_GAME_OVER,
         submit = submitSpeedrunLeaderboard(AGE_1940),
@@ -613,6 +616,7 @@
         title = "Speedrun 1970 A.D.",
         description = "Fastest time to complete the A.D. 1970 stage on default difficulty",
         format = "TIME",
+        lower_is_better = true,
         start = startSpeedrunLeaderboard(AGE_1970),
         cancel = gameState() == STATE_GAME_OVER,
         submit = submitSpeedrunLeaderboard(AGE_1970),
@@ -625,6 +629,7 @@
         title = "Speedrun 1982 A.D.",
         description = "Fastest time to complete the A.D. 1982 stage on default difficulty",
         format = "TIME",
+        lower_is_better = true,
         start = startSpeedrunLeaderboard(AGE_1982),
         cancel = gameState() == STATE_GAME_OVER,
         submit = submitSpeedrunLeaderboard(AGE_1982),
@@ -637,6 +642,7 @@
         title = "Speedrun 2001 A.D.",
         description = "Fastest time to complete the A.D. 2001 stage on default difficulty",
         format = "TIME",
+        lower_is_better = true,
         start = startSpeedrunLeaderboard(AGE_2001),
         cancel = gameState() == STATE_GAME_OVER,
         submit = submitSpeedrunLeaderboard(AGE_2001),
@@ -650,17 +656,17 @@
     rich_presence_conditional_display(
         attractMode() == ATTRACT_OFF,
 
-        "Fighting {3} ( Stage: {0} | Lives: {1} | Score: {2} )",
+        "Fighting {3} • Stage: {0} • Lives: {1} • Score: {2}",
         rich_presence_macro("Number", currentStage()),
         rich_presence_macro("Number", currentPlayerLives()),
         rich_presence_macro("Score", player1Score()),
         rich_presence_lookup("Age", currentAge(),
             {
-                AGE_1910: "Biplanes in 1910 A.D.",
-                AGE_1940: "Monoplanes in 1940 A.D.",
-                AGE_1970: "Hilicopters in 1970 A.D.",
-                AGE_1982: "Superjets in 1982 A.D.",
-                AGE_2001: "Flying Saucers in 2001 A.D."
+                AGE_1910: "Biplanes in A.D. 1910",
+                AGE_1940: "Monoplanes in A.D. 1940",
+                AGE_1970: "Hilicopters in A.D. 1970",
+                AGE_1982: "Superjets in A.D. 1982",
+                AGE_2001: "Flying Saucers in A.D. 2001"
             }
         )
     )
