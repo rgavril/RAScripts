@@ -547,6 +547,7 @@
 
     // Achievement: Bomb Defuser
     achievement(
+        id = 542269,
         title = "Bomb Disposal Expert",
         description = "Destroy 10 bombs from 1910 in a single game, on default setting.",
         points = 5,
