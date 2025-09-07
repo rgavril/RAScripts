@@ -298,10 +298,9 @@
             && never(activePlayer() != ACTIVE_PLAYER_1)
             && never(attractMode() != ATTRACT_OFF)
             && never(framePlayer1GameOver())
-            && disable_when(currentAge() != age, currentAge() == age)
 
         goalCondition =
-            repeated(count, frameFormationKill())
+            repeated(count, frameFormationKill() && currentAge() == age)
         
         return
             requiredConditions
@@ -325,9 +324,9 @@
             && measured(goalCondition)
     }
 
-    // Trigger: Missle Kills
-    // Triggers when the player destroys a specified number of homming missles
-    function triggerMissleKills(count) {
+    // Trigger: Missile Kills
+    // Triggers when the player destroys a specified number of homing missiles
+    function triggerMissileKills(count) {
         requiredConditions =
             dipSwitchLives() == 3
             && dipSwitchDifficulty() >= 4
@@ -385,7 +384,7 @@
     achievement(
         id = 540954,
         title = "Age of the Biplane",
-        description = "Complete the A.D. 1910 stage on default setting.",
+        description = "Complete the A.D. 1910 stage on default settings.",
         points = 3,
         type = "progression",
         trigger = triggerAgeCompleted(AGE_1910)
@@ -395,7 +394,7 @@
     achievement(
         id = 540958,
         title = "Age of the Monoplane",
-        description = "Complete the A.D. 1940 stage on default setting.",
+        description = "Complete the A.D. 1940 stage on default settings.",
         points = 3,
         type = "progression",
         trigger = triggerAgeCompleted(AGE_1940)
@@ -405,7 +404,7 @@
     achievement(
         id = 540957,
         title = "Age of the Helicopter",
-        description = "Complete the A.D. 1970 stage on default setting.",
+        description = "Complete the A.D. 1970 stage on default settings.",
         points = 5,
         type = "progression",
         trigger = triggerAgeCompleted(AGE_1970)
@@ -415,7 +414,7 @@
     achievement(
         id = 540956,
         title = "Age of the Jet Plane",
-        description = "Complete the A.D. 1982 stage on default setting.",
+        description = "Complete the A.D. 1982 stage on default settings.",
         points = 10,
         type = "progression",
         trigger = triggerAgeCompleted(AGE_1982)
@@ -425,7 +424,7 @@
     achievement(
         id = 540955,
         title = "Age of the UFO",
-        description = "Complete the A.D. 2001 stage on default setting.",
+        description = "Complete the A.D. 2001 stage on default settings.",
         points = 25,
         type = "win_condition",
         trigger = triggerAgeCompleted(AGE_2001)
@@ -435,7 +434,7 @@
     achievement(
         id = 540994,
         title = "Perfect First Flight",
-        description = "Reach 1940 without getting hit on default of higher difficulty.",
+        description = "Reach 1940 without getting hit on default or higher difficulty.",
         points = 5,
         trigger = triggerNoDeathTillStage(2)
     )
@@ -444,7 +443,7 @@
     achievement(
         id = 540995,
         title = "Immortal Pilot",
-        description = "Reach 2001 without getting hit on default of higher difficulty.",
+        description = "Reach 2001 without getting hit on default or higher difficulty.",
         points = 25,
         trigger = triggerNoDeathTillStage(5)
     )
@@ -453,7 +452,7 @@
     achievement(
         id = 542121,
         title = "Back to the... Flying Saucers",
-        description = "Reach 2001 in the second loop on default setting.",
+        description = "Reach 2001 in the second loop on default settings.",
         points = 25,
         trigger = triggerBackToTheFuture()
     )
@@ -494,11 +493,11 @@
         trigger = triggerRescueMission(year = AGE_1982, count = 2)
     )
 
-    // Achievement: Squadon Sweap
+    // Achievement: Monoplane Formation Breaker
     achievement(
         id = 541536,
         title = "Monoplane Formation Breaker",
-        description = "Destroy 4 monoplane formations from 1910 in a single game, on default setting.",
+        description = "Destroy 4 monoplane formations from 1910 in a single game, on default settings.",
         points = 5,
         trigger = triggerForationKills(age=AGE_1910, count = 4)
     )
@@ -506,7 +505,7 @@
     // Achievement: Biplane Squadron Crusher
     achievement(
         title = "Biplane Squadron Crusher",
-        description = "Destroy 4 biplane formations from 1940 in a single game, on default setting.",
+        description = "Destroy 4 biplane formations from 1940 in a single game, on default settings.",
         points = 5,
         trigger = triggerForationKills(age=AGE_1940, count = 4)
     )
@@ -514,7 +513,7 @@
     // Achievement: Helicopter Group Purger
     achievement(
         title = "Helicopter Group Purger",
-        description = "Destroy 4 helicopter formations from 1970 in a single game, on default setting.",
+        description = "Destroy 4 helicopter formations from 1970 in a single game, on default settings.",
         points = 10,
         trigger = triggerForationKills(age=AGE_1970, count = 4)
     )
@@ -522,7 +521,7 @@
     // Achievement: Jet Plane Flight Terminator
     achievement(
         title = "Jet Plane Flight Terminator",
-        description = "Destroy 4 jet plane formations from 1982 in a single game, on default setting.",
+        description = "Destroy 4 jet plane formations from 1982 in a single game, on default settings.",
         points = 10,
         trigger = triggerForationKills(age=AGE_1982, count = 4)
     )
@@ -531,25 +530,25 @@
     achievement(
         id = 541644,
         title = "Bomber Barrage",
-        description = "Destroy 5 mid-size bombers from 1940 in a single game, on default setting.",
+        description = "Destroy 5 mid-size bombers from 1940 in a single game, on default settings.",
         points = 5,
         trigger = triggerBomberKills(count = 5)
     )
 
-    // Achievement: Missle Anihilator
+    // Achievement: Missile Annihilator
     achievement(
         id = 541649,
-        title = "Missle Anihilator",
-        description = "Destroy 50 homming missles in a single game, on default setting.",
+        title = "Missile Annihilator",
+        description = "Destroy 50 homing missiles in a single game, on default settings.",
         points = 5,
-        trigger = triggerMissleKills(count = 50)
+        trigger = triggerMissileKills(count = 50)
     )
 
     // Achievement: Bomb Defuser
     achievement(
         id = 542269,
         title = "Bomb Disposal Expert",
-        description = "Destroy 10 bombs from 1910 in a single game, on default setting.",
+        description = "Destroy 10 bombs from 1910 in a single game, on default settings.",
         points = 5,
         trigger = triggerBombKills(count = 10)
     )
@@ -557,15 +556,15 @@
     // Achievement: Ace Cadet
     achievement(
         title = "Ace Cadet",
-        description = "Achieve a score of 100,000 points on default setting.",
+        description = "Achieve a score of 100,000 points on default settings.",
         points = 5,
         trigger = triggerHighscore(100000)
     )
 
-    // Achievement: Ace Cadet
+    // Achievement: Master Pilot
     achievement(
         title = "Master Pilot",
-        description = "Achieve a score of 200,000 points on default setting.",
+        description = "Achieve a score of 200,000 points on default settings.",
         points = 10,
         trigger = triggerHighscore(200000)
     )
