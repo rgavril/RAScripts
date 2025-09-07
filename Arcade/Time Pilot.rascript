@@ -568,84 +568,84 @@
         value = valueHighscoreLeaderboard()
     )
 
-    function startSpeedrunLeaderboard(age) {
+    function startSpeedrunLeaderboard(stage) {
         return
             dipSwitchDifficulty() == 4
             && attractMode() == ATTRACT_OFF
             && typeOfGame() == TYPE_OF_GAME_1P
-            && currentAge() == age
+            && currentStage() == stage
             && prev(gameState()) != STATE_NEW_LIFE_READY_MESSAGE
             && gameState() == STATE_NEW_LIFE_READY_MESSAGE
     }
 
-    function submitSpeedrunLeaderboard(age) {
+    function submitSpeedrunLeaderboard(stage) {
         return
-            prev(currentAge() == age)
-            && currentAge() != age
+            prev(currentStage() == stage)
+            && currentStage() != stage
     }
 
-    // Leaderboard: Speedrun 1910 A.D.
+    // Leaderboard: Speedrun Stage 1
     leaderboard(
         id = 138651,
-        title = "Speedrun 1910 A.D.",
-        description = "Fastest time to complete the A.D. 1910 stage on default difficulty",
+        title = "Speedrun Stage 1",
+        description = "Fastest time to complete 1st stage on default difficulty",
         format = "TIME",
         lower_is_better = true,
-        start = startSpeedrunLeaderboard(AGE_1910),
+        start = startSpeedrunLeaderboard(stage = 1),
         cancel = gameState() == STATE_GAME_OVER,
-        submit = submitSpeedrunLeaderboard(AGE_1910),
+        submit = submitSpeedrunLeaderboard(stage = 1),
         value = measured(always_true())
     )
 
-    // Leaderboard: Speedrun 1940 A.D.
+    // Leaderboard: Speedrun Stage 2
     leaderboard(
         id = 138652,
-        title = "Speedrun 1940 A.D.",
-        description = "Fastest time to complete the A.D. 1940 stage on default difficulty",
+        title = "Speedrun Stage 2",
+        description = "Fastest time to complete 2nd stage on default difficulty",
         format = "TIME",
         lower_is_better = true,
-        start = startSpeedrunLeaderboard(AGE_1940),
+        start = startSpeedrunLeaderboard(stage = 2),
         cancel = gameState() == STATE_GAME_OVER,
-        submit = submitSpeedrunLeaderboard(AGE_1940),
+        submit = submitSpeedrunLeaderboard(stage = 2),
         value = measured(always_true())
     )
 
-    // Leaderboard: Speedrun 1970 A.D.
+    // Leaderboard: Speedrun Stage 3
     leaderboard(
         id = 138653,
-        title = "Speedrun 1970 A.D.",
-        description = "Fastest time to complete the A.D. 1970 stage on default difficulty",
+        title = "Speedrun Stage 3",
+        description = "Fastest time to complete 3rd stage on default difficulty",
         format = "TIME",
         lower_is_better = true,
-        start = startSpeedrunLeaderboard(AGE_1970),
+        start = startSpeedrunLeaderboard(stage = 3),
         cancel = gameState() == STATE_GAME_OVER,
-        submit = submitSpeedrunLeaderboard(AGE_1970),
+        submit = submitSpeedrunLeaderboard(stage = 3),
         value = measured(always_true())
     )
 
-    // Leaderboard: Speedrun 1982 A.D.
+    // Leaderboard: Speedrun Stage 4
     leaderboard(
         id = 138654,
-        title = "Speedrun 1982 A.D.",
-        description = "Fastest time to complete the A.D. 1982 stage on default difficulty",
+        title = "Speedrun Stage 4",
+        description = "Fastest time to complete 4th stage on default difficulty",
         format = "TIME",
         lower_is_better = true,
-        start = startSpeedrunLeaderboard(AGE_1982),
+        start = startSpeedrunLeaderboard(stage = 4),
         cancel = gameState() == STATE_GAME_OVER,
-        submit = submitSpeedrunLeaderboard(AGE_1982),
+        submit = submitSpeedrunLeaderboard(stage = 4),
         value = measured(always_true())
     )
 
-    // Leaderboard: Speedrun 2001 A.D.
+    // Leaderboard: Speedrun Stage 5
     leaderboard(
         id = 138655,
-        title = "Speedrun 2001 A.D.",
-        description = "Fastest time to complete the A.D. 2001 stage on default difficulty",
+        title = "Speedrun Stage 5",
+        description = "Fastest time to complete 5th stage on default difficulty",
         format = "TIME",
         lower_is_better = true,
-        start = startSpeedrunLeaderboard(AGE_2001),
+        start = startSpeedrunLeaderboard(stage = 5),
         cancel = gameState() == STATE_GAME_OVER,
-        submit = submitSpeedrunLeaderboard(AGE_2001),
+        submit = submitSpeedrunLeaderboard(stage = 5),
         value = measured(always_true())
     )
 
