@@ -36,6 +36,7 @@
     // Address: Player 1 Score
     // Indicates the current score of player 1
     function player1Score() => bcd(tbyte(0x0533))
+    function player1Score_XX0000() => byte(0x0535)
 
     // Address: Current Stage
     // Indicates the current stage the player is on
@@ -135,8 +136,10 @@
         return
             attractMode() == ATTRACT_OFF
             && gameState() == STATE_IN_GAMEPLAY
-            && prev(player1Score()) > player1Score()
+            && prev(player1Score_XX0000()) == 0x99
+            && (player1Score_XX0000() == 0x00)
     }
+
     // Frame : Player Got Hit
     // Happens when player gets hit and loses a life
     function framePlayerGotHit() {
