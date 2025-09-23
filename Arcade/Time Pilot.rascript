@@ -262,7 +262,7 @@
             activePlayer() == ACTIVE_PLAYER_1
             && attractMode() == ATTRACT_OFF
             && dipSwitchDifficulty() == 4
-            && dipSwitchLives() == 3
+            && dipSwitchLives() <= 5
             && prev(currentStage() == 9)
             && currentStage() == 10
 
@@ -455,7 +455,7 @@
     achievement(
         id = 542121,
         title = "Back to the... Flying Saucers",
-        description = "Reach 2001 in the second loop on default settings.",
+        description = "Reach 2001 in the second loop on default difficulty, starting with 5 lives or less.",
         points = 25,
         trigger = triggerBackToTheFuture()
     )
@@ -464,18 +464,18 @@
     achievement(
         id = 541012,
         title = "Carnegie Hero Medal",
-        description = "Rescue 5 parachutes from 1910 in a single life, without opening fire, on default or higher difficulty.",
-        points = 5,
-        trigger = triggerRescueMission(year = AGE_1910, count = 5)
+        description = "Rescue 3 parachutes from 1910 in a single life, without opening fire, on default or higher difficulty.",
+        points = 3,
+        trigger = triggerRescueMission(year = AGE_1910, count = 3)
     )
 
     // Achievement: Navy and Marine Corps Medal
     achievement(
         id = 541013,
         title = "Navy and Marine Corps Medal", // Savior of Dunkirk
-        description = "Rescue 4 parachutes from 1940 in a single life, without opening fire, on default or higher difficulty.",
+        description = "Rescue 3 parachutes from 1940 in a single life, without opening fire, on default or higher difficulty.",
         points = 5,
-        trigger = triggerRescueMission(year = AGE_1940, count = 4)
+        trigger = triggerRescueMission(year = AGE_1940, count = 3)
     )
 
     // Achievement: Silver Lifesaving Medal
@@ -491,9 +491,9 @@
     achievement(
         id = 541015,
         title = "Gold Lifesaving Medal", // Falklands Rescue
-        description = "Rescue 2 parachutes from 1982 in a single life, without opening fire, on default or higher difficulty.",
+        description = "Rescue 3 parachutes from 1982 in a single life, without opening fire, on default or higher difficulty.",
         points = 10,
-        trigger = triggerRescueMission(year = AGE_1982, count = 2)
+        trigger = triggerRescueMission(year = AGE_1982, count = 3)
     )
 
     // Achievement: Monoplane Formation Breaker
