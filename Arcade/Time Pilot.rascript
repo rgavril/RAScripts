@@ -262,7 +262,7 @@
             activePlayer() == ACTIVE_PLAYER_1
             && attractMode() == ATTRACT_OFF
             && dipSwitchDifficulty() == 4
-            && dipSwitchLives() <= 5
+            && dipSwitchLives() == 3
             && prev(currentStage() == 9)
             && currentStage() == 10
 
@@ -437,7 +437,8 @@
     achievement(
         id = 540994,
         title = "Perfect First Flight",
-        description = "Reach 1940 without getting hit on default or higher difficulty.",
+        //description = "Reach 1940 without getting hit on default or higher difficulty.",
+        description = "Complete the first stage without getting hit on default or higher difficulty.",
         points = 5,
         trigger = triggerNoDeathTillStage(2)
     )
@@ -446,7 +447,8 @@
     achievement(
         id = 540995,
         title = "Immortal Pilot",
-        description = "Reach 2001 without getting hit on default or higher difficulty.",
+        // description = "Reach 2001 without getting hit on default or higher difficulty.",
+        description = "Complete stages 1 to 4 without getting hit on default or higher difficulty.",
         points = 25,
         trigger = triggerNoDeathTillStage(5)
     )
@@ -455,7 +457,8 @@
     achievement(
         id = 542121,
         title = "Back to the... Flying Saucers",
-        description = "Reach 2001 in the second loop on default difficulty, starting with 5 lives or less.",
+        // description = "Reach 2001 in the second loop on default settings.",
+        description = "Complete stages 1 to 9 on default settings.",
         points = 25,
         trigger = triggerBackToTheFuture()
     )
