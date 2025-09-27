@@ -318,6 +318,7 @@
             && dipSwitchDifficulty() >= 4
             && never(activePlayer() != ACTIVE_PLAYER_1)
             && never(attractMode() != ATTRACT_OFF)
+            && never(framePlayer1GameOver())
 
         goalCondition =
             repeated(5, currentAge() == AGE_1940 && frameEnemyKilled(specialEnemy1Status()))
@@ -335,6 +336,7 @@
             && dipSwitchDifficulty() >= 4
             && never(activePlayer() != ACTIVE_PLAYER_1)
             && never(attractMode() != ATTRACT_OFF)
+            && never(framePlayer1GameOver())
 
         goalCondition =
             tally(count,
@@ -358,6 +360,7 @@
             && dipSwitchDifficulty() >= 4
             && never(activePlayer() != ACTIVE_PLAYER_1)
             && never(attractMode() != ATTRACT_OFF)
+            && never(framePlayer1GameOver())
 
         goalCondition =
             tally(count,
