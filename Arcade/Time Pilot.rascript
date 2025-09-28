@@ -285,7 +285,7 @@
             && disable_when(framePlayerFiredBullet(), until=frameLifeStarted())
 
         goalConditions =
-            repeated(count, frameParachuteRescued() && never(framePlayerGotHit()))
+            repeated(count, frameParachuteRescued() && never(frameLifeStarted()))
 
         return 
             primingConditions
