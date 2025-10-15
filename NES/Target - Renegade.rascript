@@ -70,6 +70,11 @@
 	//  - If the player picks up the heart, the timer will stop counting down.
 	function entityTimer(slot) => byte(0x0411-(slot-1))
 
+    // Addresses : Enemy State (0x03f3, 0x03f2, 0x03f1, 0x03f0)
+    // Current state of the enemy in the specified slot.
+    function enemyState(slot) => byte(0x03f3-(slot-1))
+    ENEMY_STATE_DYING = 0x0c  // The enemy is in the process of dying, this state lasts for few frames.
+
 	// Addresses : Player Energy (0x00da)
 	// Current player energy, which is a value between 0x00 and 0x40.
 	function playerEnergy() => byte(0x00da)
@@ -147,6 +152,16 @@
             // Strange, RATools complains when writing it like this :
             // && entityType(slot) != entityType
     }
+
+    // Frame : Enemy Died
+    // If an enemy entity from a specific slot has died.
+    // Note: This is different from "Entity Vanished", as it only counts when the enemy dies,
+    // not when it vanishes for other reasons (e.g. going off screen).
+    function frameEnemyDied(slot) {
+        return
+            prev(enemyState(slot)) != ENEMY_STATE_DYING
+            && enemyState(slot) == ENEMY_STATE_DYING
+    }
 // #endregion Frame Functions
 
 // #region Achievement Triggers
@@ -206,9 +221,10 @@
             tally_of( range(1,4), totalKills, slot =>
                 // an enemy entity has vanished
                 any_of( ENTITY_TYPE["Enemy"], enemyName =>
-                    frameEntityVanished(slot, ENTITY_TYPE["Enemy"][enemyName])
+                    entityType(slot) == ENTITY_TYPE["Enemy"][enemyName]
                 )
                 // and the player last action was the specified attack action
+                && frameEnemyDied(slot)
                 && playerLastAction() == PLAYER_LAST_ACTION[attackAction]
             )
 

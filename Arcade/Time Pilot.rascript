@@ -274,8 +274,7 @@
     // without shooting any bullets
     function triggerRescueMission(year, count) {
         primingConditions =
-            dipSwitchLives() == 3
-            && dipSwitchDifficulty() >= 4
+            dipSwitchDifficulty() >= 4
             && never(activePlayer() != ACTIVE_PLAYER_1)
             && never(attractMode() != ATTRACT_OFF)
             && never(currentAge() != year)
