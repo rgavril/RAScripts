@@ -8,9 +8,17 @@
     ACTIVE_SCREEN_PAUSE_MENU_PICTURE = 0x800acadc 
     ACTIVE_SCREEN_PAUSE_MENU_SOUND = 0x800acba0
     ACTIVE_SCREEN_PAUSE_MENU_QUIT = 0x800ac6a8
+    ACTIVE_SCREEN_DEMO_GAMEPLAY = 0x8009046c
+    ACTIVE_SCREEN_EXIT_GAMEPLAY = 0x800883e4
 
     function selectedLocation() => word(0x026910)
-    function selectedLevel() => word(0x026918)
+    LOCATION_MOSCOW = 0x00
+    LOCATION_EASTER_ISLAND = 0x01
+    LOCATION_SWITZERLAND = 0x02
+    LOCATION_SCOTLAND = 0x03
+    LOCATION_HONG_KONG = 0x04
+    LOCATION_EGYPT = 0x05
+
     function selectedPlayMode() => word(0x026912)
     PLAY_MODE_SINGLE_PLAYER = 0x00
     PLAY_MODE_TIME_ATTACK = 0x01
@@ -18,17 +26,65 @@
     PLAY_MODE_SPLIT_SCREEN = 0x03
     PLAY_MODE_HEAD_TO_HEAD = 0x04
 
+    function selectedRaceTrack() => word(0x026918)
+
     function currentRaceTotalLaps() => dword(0x0bd168)
     function currentSeasonRaceNumber() => byte(0x026e56) + 1
+    function currentRaceTrack() => dword(0x0ba810)
+    function currentRaceLocation() => dword(0x0bb498)
 
-    function playerPointer() => dword(0x0b70ec)
-    function playerPosition() => dword(tbyte(0x0b70ec)+0x590)
-    function playerTeamId() => byte(tbyte(0x0b70ec)+0x128)
-    function playerLap() => byte(tbyte(0x0b70ec)+0x574)
+    function playerPointer() => dword(0x0b70f8)
+    function playerPosition() => dword(tbyte(0x0b70f8)+0x590)
+    function playerTeamId() => byte(tbyte(0x0b70f8)+0x128)
+    function playerLap() => byte(tbyte(0x0b70f8)+0x574)
+    function playerGameOver() => byte(tbyte(0x0b70f8)+0x619)
+
+    function raceCountdownTimer() => dword(0x0bc394)
 
     function SplitScreenTopCarPointer() => dword(0x0c26a0)
     function SplitScreenBottomCarPointer() => dword(0x0c26a4)
 // #endregion Memory Addresses
+
+// #region Frame Functions
+    function frameRaceCountdownTimerStarted() {
+        return
+            prev(raceCountdownTimer()) == 0
+            && raceCountdownTimer() == 0x5f
+    }
+
+    function frameActiveScreenSwitchedToInGame() {
+        return
+            prev(activeScreen()) == 0
+            && activeScreen() == ACTIVE_SCREEN_IN_GAME
+    }
+// #endregion Frame Functions
+
+// #region Achivement Triggers
+    function triggerRaceWin(location, track) {
+        return
+            currentRaceLocation() == location
+            && currentRaceTrack() == track
+            && playerPosition() == 1
+            && playerLap() == currentRaceTotalLaps() + 1
+            && playerPointer() > 0x80000000
+
+            && once ( frameActiveScreenSwitchedToInGame())
+            && once ( frameRaceCountdownTimerStarted() )
+
+            && never( activeScreen() == ACTIVE_SCREEN_DEMO_GAMEPLAY )
+            && never( activeScreen() == ACTIVE_SCREEN_EXIT_GAMEPLAY )
+            && never( playerGameOver() > 0)
+    }
+// #endregion Achivement Triggers
+
+// #region Achievements
+    achievement(
+        title = "Moscow Beginner",
+        description = "Finish first in Moscow 1 in Single Player mode.",
+        points = 3,
+        trigger = triggerRaceWin(location=LOCATION_MOSCOW, track=1)
+    )
+// #endregion Achievements
 
 // #region Rich Presence
     teamLookup = {
@@ -62,7 +118,7 @@
     // Single Player
     rich_presence_conditional_display(
         (
-            activeScreen() == ACTIVE_SCREEN_IN_GAME || 
+            activeScreen() == ACTIVE_SCREEN_IN_GAME ||
             activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_MAIN ||
             activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_PICTURE ||
             activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_SOUND ||
@@ -75,7 +131,7 @@
 
         rich_presence_lookup("Team", playerTeamId(), teamLookup, "Unknown"),             // 0 : Team
         rich_presence_lookup("Location", selectedLocation(), locationLookup, "Unknown"), // 1 : Location
-        rich_presence_macro("Number", selectedLevel()),                                  // 2 : Level
+        rich_presence_macro("Number", selectedRaceTrack()),                              // 2 : Track
         rich_presence_macro("Number", playerPosition()),                                 // 3 : Position
         rich_presence_macro("Number", playerLap()),                                      // 4 : Current Lap
         rich_presence_macro("Number", currentRaceTotalLaps())                            // 5 : Total Laps
@@ -84,7 +140,7 @@
     // Season Race
     rich_presence_conditional_display(
         (
-            activeScreen() == ACTIVE_SCREEN_IN_GAME || 
+            activeScreen() == ACTIVE_SCREEN_IN_GAME ||
             activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_MAIN ||
             activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_PICTURE ||
             activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_SOUND ||
@@ -97,14 +153,14 @@
 
         rich_presence_lookup("Team", playerTeamId(), teamLookup, "Unknown"),             // 0 : Team
         rich_presence_lookup("Location", selectedLocation(), locationLookup, "Unknown"), // 1 : Location
-        rich_presence_macro("Number", selectedLevel()),                                  // 2 : Level
+        rich_presence_macro("Number", selectedRaceTrack()),                              // 2 : Track
         rich_presence_macro("Number", currentSeasonRaceNumber())                         // 3 : Season Race
     )
 
     // Time Attack
     rich_presence_conditional_display(
         (
-            activeScreen() == ACTIVE_SCREEN_IN_GAME || 
+            activeScreen() == ACTIVE_SCREEN_IN_GAME ||
             activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_MAIN ||
             activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_PICTURE ||
             activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_SOUND ||
@@ -117,7 +173,7 @@
 
         rich_presence_lookup("Team", playerTeamId(), teamLookup, "Unknown"),             // 0 : Team
         rich_presence_lookup("Location", selectedLocation(), locationLookup, "Unknown"), // 1 : Location
-        rich_presence_macro("Number", selectedLevel())                                   // 2 : Level
+        rich_presence_macro("Number", selectedRaceTrack())                               // 2 : Track
     )
 
     // Two Player Modes
