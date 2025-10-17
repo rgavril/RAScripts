@@ -3,6 +3,7 @@
 
 // #region Memory Addresses
     function activeScreen() => dword(0x0c1718)
+    ACTIVE_SCREEN_MAIN_MENU = 0x24e720c6
     ACTIVE_SCREEN_IN_GAME = 0x80090e58
     ACTIVE_SCREEN_PAUSE_MENU_MAIN = 0x800ac898
     ACTIVE_SCREEN_PAUSE_MENU_PICTURE = 0x800acadc 
@@ -38,6 +39,9 @@
     function playerTeamId() => byte(tbyte(0x0b70f8)+0x128)
     function playerLap() => byte(tbyte(0x0b70f8)+0x574)
     function playerGameOver() => byte(tbyte(0x0b70f8)+0x619)
+    function playerLap1Time() => dword(tbyte(0x0b70f8)+0x57c)
+    function playerLap2Time() => dword(tbyte(0x0b70f8)+0x580)
+    function playerLap3Time() => dword(tbyte(0x0b70f8)+0x584)
 
     function raceCountdownTimer() => dword(0x0bc394)
 
@@ -80,6 +84,7 @@
 // #region Achievements
     // Moscow 1 Track
     achievement(
+        id = 551773,
         title = "Moscow Beginner",
         description = "Win a race on the Moscow 1 track with any team",
         trigger = triggerRaceWin(LOCATION_MOSCOW, 1),
@@ -126,6 +131,45 @@
         points = 10
     )
 // #endregion Achievements
+
+// #region Leaderboards
+    function startBestLapLeaderboard(locationId, trackNumber) {
+        return
+            activeScreen() == ACTIVE_SCREEN_IN_GAME
+            && playerPointer() > 0x80000000
+            && selectedLocation() == locationId
+            && selectedRaceTrack() == trackNumber
+            && playerLap() == prev(playerLap()) + 1
+            && playerLap() > 1
+    }
+
+    function cancelBestLapLeaderboard() {
+        return
+            activeScreen() == ACTIVE_SCREEN_EXIT_GAMEPLAY
+            || activeScreen() == ACTIVE_SCREEN_MAIN_MENU
+            || playerGameOver() > 0
+            || playerPointer() <= 0x80000000
+    }
+
+    function valueBestLapLeaderboard() {
+        return max_of(
+            measured( tally(0, always_false())),
+            measured( playerLap1Time() * 10/3, when = prev(playerLap()) == 1 ),
+            measured( playerLap2Time() * 10/3, when = prev(playerLap()) >= 2 )
+        )
+    }
+
+    leaderboard(
+        title = "Fastest Lap Time - Moscow 1",
+        description = "Fastest Lap Time on Moscow 1 Track",
+        format = "MILLISECS",
+        lower_is_better = true,
+        start = startBestLapLeaderboard(LOCATION_MOSCOW, 1),
+        cancel = cancelBestLapLeaderboard(),
+        submit = always_true(),
+        value = valueBestLapLeaderboard()  
+    )
+// #endregion Leaderboards
 
 // #region Rich Presence
     teamLookup = {
