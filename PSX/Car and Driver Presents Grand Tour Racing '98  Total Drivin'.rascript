@@ -134,47 +134,47 @@
 
 // #region Leaderboards
     bestLapLeaderboardDefinitions = [
-        { "trackName": "Moscow 1", "locationId": LOCATION_MOSCOW, "trackNumber": 1 },
-        { "trackName": "Moscow 2", "locationId": LOCATION_MOSCOW, "trackNumber": 2 },
-        { "trackName": "Moscow 3", "locationId": LOCATION_MOSCOW, "trackNumber": 3 },
-        { "trackName": "Moscow 4", "locationId": LOCATION_MOSCOW, "trackNumber": 4 },
-        { "trackName": "Moscow 5", "locationId": LOCATION_MOSCOW, "trackNumber": 5 },
-        { "trackName": "Moscow 6", "locationId": LOCATION_MOSCOW, "trackNumber": 6 },
+        {"id":143064, "trackName": "Moscow 1", "locationId": LOCATION_MOSCOW, "trackNumber": 1 },
+        {"id":143065, "trackName": "Moscow 2", "locationId": LOCATION_MOSCOW, "trackNumber": 2 },
+        {"id":143066, "trackName": "Moscow 3", "locationId": LOCATION_MOSCOW, "trackNumber": 3 },
+        {"id":143067, "trackName": "Moscow 4", "locationId": LOCATION_MOSCOW, "trackNumber": 4 },
+        {"id":143068, "trackName": "Moscow 5", "locationId": LOCATION_MOSCOW, "trackNumber": 5 },
+        {"id":143069, "trackName": "Moscow 6", "locationId": LOCATION_MOSCOW, "trackNumber": 6 },
 
-        { "trackName": "Easter Island 1", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 1 },
-        { "trackName": "Easter Island 2", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 2 },
-        { "trackName": "Easter Island 3", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 3 },
-        { "trackName": "Easter Island 4", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 4 },
-        { "trackName": "Easter Island 5", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 5 },
-        { "trackName": "Easter Island 6", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 6 },
+        {"id":143070, "trackName": "Easter Island 1", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 1 },
+        {"id":143071, "trackName": "Easter Island 2", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 2 },
+        {"id":143072, "trackName": "Easter Island 3", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 3 },
+        {"id":143073, "trackName": "Easter Island 4", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 4 },
+        {"id":143074, "trackName": "Easter Island 5", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 5 },
+        {"id":143075, "trackName": "Easter Island 6", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 6 },
 
-        { "trackName": "Switzerland 1", "locationId": LOCATION_SWITZERLAND, "trackNumber": 1 },
-        { "trackName": "Switzerland 2", "locationId": LOCATION_SWITZERLAND, "trackNumber": 2 },
-        { "trackName": "Switzerland 3", "locationId": LOCATION_SWITZERLAND, "trackNumber": 3 },
-        { "trackName": "Switzerland 4", "locationId": LOCATION_SWITZERLAND, "trackNumber": 4 },
-        { "trackName": "Switzerland 5", "locationId": LOCATION_SWITZERLAND, "trackNumber": 5 },
-        { "trackName": "Switzerland 6", "locationId": LOCATION_SWITZERLAND, "trackNumber": 6 },
+        {"id":143076, "trackName": "Switzerland 1", "locationId": LOCATION_SWITZERLAND, "trackNumber": 1 },
+        {"id":143077, "trackName": "Switzerland 2", "locationId": LOCATION_SWITZERLAND, "trackNumber": 2 },
+        {"id":143078, "trackName": "Switzerland 3", "locationId": LOCATION_SWITZERLAND, "trackNumber": 3 },
+        {"id":143079, "trackName": "Switzerland 4", "locationId": LOCATION_SWITZERLAND, "trackNumber": 4 },
+        {"id":143080, "trackName": "Switzerland 5", "locationId": LOCATION_SWITZERLAND, "trackNumber": 5 },
+        {"id":143081, "trackName": "Switzerland 6", "locationId": LOCATION_SWITZERLAND, "trackNumber": 6 },
 
-        { "trackName": "Scotland 1", "locationId": LOCATION_SCOTLAND, "trackNumber": 1 },
-        { "trackName": "Scotland 2", "locationId": LOCATION_SCOTLAND, "trackNumber": 2 },
-        { "trackName": "Scotland 3", "locationId": LOCATION_SCOTLAND, "trackNumber": 3 },
-        { "trackName": "Scotland 4", "locationId": LOCATION_SCOTLAND, "trackNumber": 4 },
-        { "trackName": "Scotland 5", "locationId": LOCATION_SCOTLAND, "trackNumber": 5 },
-        { "trackName": "Scotland 6", "locationId": LOCATION_SCOTLAND, "trackNumber": 6 },
+        {"id":143082, "trackName": "Scotland 1", "locationId": LOCATION_SCOTLAND, "trackNumber": 1 },
+        {"id":143083, "trackName": "Scotland 2", "locationId": LOCATION_SCOTLAND, "trackNumber": 2 },
+        {"id":143084, "trackName": "Scotland 3", "locationId": LOCATION_SCOTLAND, "trackNumber": 3 },
+        {"id":143085, "trackName": "Scotland 4", "locationId": LOCATION_SCOTLAND, "trackNumber": 4 },
+        {"id":143086, "trackName": "Scotland 5", "locationId": LOCATION_SCOTLAND, "trackNumber": 5 },
+        {"id":143087, "trackName": "Scotland 6", "locationId": LOCATION_SCOTLAND, "trackNumber": 6 },
 
-        { "trackName": "Hong Kong 1", "locationId": LOCATION_HONG_KONG, "trackNumber": 1 },
-        { "trackName": "Hong Kong 2", "locationId": LOCATION_HONG_KONG, "trackNumber": 2 },
-        { "trackName": "Hong Kong 3", "locationId": LOCATION_HONG_KONG, "trackNumber": 3 },
-        { "trackName": "Hong Kong 4", "locationId": LOCATION_HONG_KONG, "trackNumber": 4 },
-        { "trackName": "Hong Kong 5", "locationId": LOCATION_HONG_KONG, "trackNumber": 5 },
-        { "trackName": "Hong Kong 6", "locationId": LOCATION_HONG_KONG, "trackNumber": 6 },
+        {"id":143088, "trackName": "Hong Kong 1", "locationId": LOCATION_HONG_KONG, "trackNumber": 1 },
+        {"id":143089, "trackName": "Hong Kong 2", "locationId": LOCATION_HONG_KONG, "trackNumber": 2 },
+        {"id":143090, "trackName": "Hong Kong 3", "locationId": LOCATION_HONG_KONG, "trackNumber": 3 },
+        {"id":143091, "trackName": "Hong Kong 4", "locationId": LOCATION_HONG_KONG, "trackNumber": 4 },
+        {"id":143092, "trackName": "Hong Kong 5", "locationId": LOCATION_HONG_KONG, "trackNumber": 5 },
+        {"id":143093, "trackName": "Hong Kong 6", "locationId": LOCATION_HONG_KONG, "trackNumber": 6 },
 
-        { "trackName": "Egypt 1", "locationId": LOCATION_EGYPT, "trackNumber": 1 },
-        { "trackName": "Egypt 2", "locationId": LOCATION_EGYPT, "trackNumber": 2 },
-        { "trackName": "Egypt 3", "locationId": LOCATION_EGYPT, "trackNumber": 3 },
-        { "trackName": "Egypt 4", "locationId": LOCATION_EGYPT, "trackNumber": 4 },
-        { "trackName": "Egypt 5", "locationId": LOCATION_EGYPT, "trackNumber": 5 },
-        { "trackName": "Egypt 6", "locationId": LOCATION_EGYPT, "trackNumber": 6 }
+        {"id":143094, "trackName": "Egypt 1", "locationId": LOCATION_EGYPT, "trackNumber": 1 },
+        {"id":143095, "trackName": "Egypt 2", "locationId": LOCATION_EGYPT, "trackNumber": 2 },
+        {"id":143096, "trackName": "Egypt 3", "locationId": LOCATION_EGYPT, "trackNumber": 3 },
+        {"id":143097, "trackName": "Egypt 4", "locationId": LOCATION_EGYPT, "trackNumber": 4 },
+        {"id":143098, "trackName": "Egypt 5", "locationId": LOCATION_EGYPT, "trackNumber": 5 },
+        {"id":143099, "trackName": "Egypt 6", "locationId": LOCATION_EGYPT, "trackNumber": 6 }
     ]
 
     function startBestLapLeaderboard(locationId, trackNumber) {
@@ -205,6 +205,7 @@
 
     for definition in bestLapLeaderboardDefinitions {
         leaderboard(
+            id = definition["id"],
             title = definition["trackName"] + " : Best Lap",
             description = "Fastest Lap Time on the " + definition["trackName"] + " Track",
             format = "MILLISECS",
