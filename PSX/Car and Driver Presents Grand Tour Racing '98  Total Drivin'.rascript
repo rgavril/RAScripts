@@ -133,6 +133,50 @@
 // #endregion Achievements
 
 // #region Leaderboards
+    bestLapLeaderboardDefinitions = [
+        { "trackName": "Moscow 1", "locationId": LOCATION_MOSCOW, "trackNumber": 1 },
+        { "trackName": "Moscow 2", "locationId": LOCATION_MOSCOW, "trackNumber": 2 },
+        { "trackName": "Moscow 3", "locationId": LOCATION_MOSCOW, "trackNumber": 3 },
+        { "trackName": "Moscow 4", "locationId": LOCATION_MOSCOW, "trackNumber": 4 },
+        { "trackName": "Moscow 5", "locationId": LOCATION_MOSCOW, "trackNumber": 5 },
+        { "trackName": "Moscow 6", "locationId": LOCATION_MOSCOW, "trackNumber": 6 },
+
+        { "trackName": "Easter Island 1", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 1 },
+        { "trackName": "Easter Island 2", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 2 },
+        { "trackName": "Easter Island 3", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 3 },
+        { "trackName": "Easter Island 4", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 4 },
+        { "trackName": "Easter Island 5", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 5 },
+        { "trackName": "Easter Island 6", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 6 },
+
+        { "trackName": "Switzerland 1", "locationId": LOCATION_SWITZERLAND, "trackNumber": 1 },
+        { "trackName": "Switzerland 2", "locationId": LOCATION_SWITZERLAND, "trackNumber": 2 },
+        { "trackName": "Switzerland 3", "locationId": LOCATION_SWITZERLAND, "trackNumber": 3 },
+        { "trackName": "Switzerland 4", "locationId": LOCATION_SWITZERLAND, "trackNumber": 4 },
+        { "trackName": "Switzerland 5", "locationId": LOCATION_SWITZERLAND, "trackNumber": 5 },
+        { "trackName": "Switzerland 6", "locationId": LOCATION_SWITZERLAND, "trackNumber": 6 },
+
+        { "trackName": "Scotland 1", "locationId": LOCATION_SCOTLAND, "trackNumber": 1 },
+        { "trackName": "Scotland 2", "locationId": LOCATION_SCOTLAND, "trackNumber": 2 },
+        { "trackName": "Scotland 3", "locationId": LOCATION_SCOTLAND, "trackNumber": 3 },
+        { "trackName": "Scotland 4", "locationId": LOCATION_SCOTLAND, "trackNumber": 4 },
+        { "trackName": "Scotland 5", "locationId": LOCATION_SCOTLAND, "trackNumber": 5 },
+        { "trackName": "Scotland 6", "locationId": LOCATION_SCOTLAND, "trackNumber": 6 },
+
+        { "trackName": "Hong Kong 1", "locationId": LOCATION_HONG_KONG, "trackNumber": 1 },
+        { "trackName": "Hong Kong 2", "locationId": LOCATION_HONG_KONG, "trackNumber": 2 },
+        { "trackName": "Hong Kong 3", "locationId": LOCATION_HONG_KONG, "trackNumber": 3 },
+        { "trackName": "Hong Kong 4", "locationId": LOCATION_HONG_KONG, "trackNumber": 4 },
+        { "trackName": "Hong Kong 5", "locationId": LOCATION_HONG_KONG, "trackNumber": 5 },
+        { "trackName": "Hong Kong 6", "locationId": LOCATION_HONG_KONG, "trackNumber": 6 },
+
+        { "trackName": "Egypt 1", "locationId": LOCATION_EGYPT, "trackNumber": 1 },
+        { "trackName": "Egypt 2", "locationId": LOCATION_EGYPT, "trackNumber": 2 },
+        { "trackName": "Egypt 3", "locationId": LOCATION_EGYPT, "trackNumber": 3 },
+        { "trackName": "Egypt 4", "locationId": LOCATION_EGYPT, "trackNumber": 4 },
+        { "trackName": "Egypt 5", "locationId": LOCATION_EGYPT, "trackNumber": 5 },
+        { "trackName": "Egypt 6", "locationId": LOCATION_EGYPT, "trackNumber": 6 }
+    ]
+
     function startBestLapLeaderboard(locationId, trackNumber) {
         return
             activeScreen() == ACTIVE_SCREEN_IN_GAME
@@ -159,16 +203,18 @@
         )
     }
 
-    leaderboard(
-        title = "Fastest Lap Time - Moscow 1",
-        description = "Fastest Lap Time on Moscow 1 Track",
-        format = "MILLISECS",
-        lower_is_better = true,
-        start = startBestLapLeaderboard(LOCATION_MOSCOW, 1),
-        cancel = cancelBestLapLeaderboard(),
-        submit = always_true(),
-        value = valueBestLapLeaderboard()  
-    )
+    for definition in bestLapLeaderboardDefinitions {
+        leaderboard(
+            title = definition["trackName"] + " : Best Lap",
+            description = "Fastest Lap Time on the " + definition["trackName"] + " Track",
+            format = "MILLISECS",
+            lower_is_better = true,
+            start = startBestLapLeaderboard(definition["locationId"], definition["trackNumber"]),
+            cancel = cancelBestLapLeaderboard(),
+            submit = always_true(),
+            value = valueBestLapLeaderboard()
+        )
+    }
 // #endregion Leaderboards
 
 // #region Rich Presence
