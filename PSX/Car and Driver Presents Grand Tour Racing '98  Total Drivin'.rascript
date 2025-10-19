@@ -82,7 +82,7 @@
 // #endregion Achivement Triggers
 
 // #region Achievements
-    // Moscow 1 Track
+    // Moscow 1 Race Challange
     achievement(
         id = 551773,
         title = "Moscow Beginner",
@@ -91,40 +91,45 @@
         points = 3
     )
 
-    // Moscow 2 Track
+    // Moscow 2 Race Challange
     achievement(
+        id = 442471,
         title = "Moscow Experienced",
         description = "Win a race on the Moscow 2 track with any team",
         trigger = triggerRaceWin(LOCATION_MOSCOW, 2),
         points = 5
     )
 
-    // Moscow 3 Track
+    // Moscow 3 Race Challange
     achievement(
+        id = 442472,
         title = "Moscow Profecient",
         description = "Win a race on the Moscow 3 track with any team",
         trigger = triggerRaceWin(LOCATION_MOSCOW, 3),
         points = 5
     )
 
-    // Moscow 4 Track
+    // Moscow 4 Race Challange
     achievement(
+        id = 442473,
         title = "Moscow Expert",
         description = "Win a race on the Moscow 4 track with any team",
         trigger = triggerRaceWin(LOCATION_MOSCOW, 4),
         points = 10
     )
 
-    // Moscow 5 Track
+    // Moscow 5 Race Challange
     achievement(
+        id = 442474,
         title = "Moscow Master",
         description = "Win a race on the Moscow 5 track with any team",
         trigger = triggerRaceWin(LOCATION_MOSCOW, 5),
         points = 10
     )
 
-    // Moscow 6 Track
+    // Moscow 6 Race Challange
     achievement(
+        id = 44247,
         title = "Moscow Champion",
         description = "Win a race on the Moscow 6 track with any team",
         trigger = triggerRaceWin(LOCATION_MOSCOW, 6),
