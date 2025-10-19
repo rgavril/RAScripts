@@ -141,92 +141,92 @@
 // #region Achievements
     // Moscow 1 Race Challange
     achievement(
-        id = 551773,
-        title = "Moscow Beginner",
+        id          = 551773,
+        title       = "Moscow Beginner",
         description = "Win a race on the Moscow 1 track with any team",
-        trigger = triggerRaceWin(LOCATION_MOSCOW, 1),
-        points = 3
+        points      = 3,
+        trigger     = triggerRaceWin(LOCATION_MOSCOW, 1)
     )
 
     // Moscow 2 Race Challange
     achievement(
-        id = 552471,
-        title = "Moscow Experienced",
+        id          = 552471,
+        title       = "Moscow Experienced",
         description = "Win a race on the Moscow 2 track with any team",
-        trigger = triggerRaceWin(LOCATION_MOSCOW, 2),
-        points = 5
+        points      = 5,
+        trigger     = triggerRaceWin(LOCATION_MOSCOW, 2)
     )
 
     // Moscow 3 Race Challange
     achievement(
-        id = 552472,
-        title = "Moscow Profecient",
+        id          = 552472,
+        title       = "Moscow Profecient",
         description = "Win a race on the Moscow 3 track with any team",
-        trigger = triggerRaceWin(LOCATION_MOSCOW, 3),
-        points = 5
+        points      = 5,
+        trigger     = triggerRaceWin(LOCATION_MOSCOW, 3)
     )
 
     // Moscow 4 Race Challange
     achievement(
-        id = 552473,
-        title = "Moscow Expert",
+        id          = 552473,
+        title       = "Moscow Expert",
         description = "Win a race on the Moscow 4 track with any team",
-        trigger = triggerRaceWin(LOCATION_MOSCOW, 4),
-        points = 10
+        points =      10,
+        trigger =     triggerRaceWin(LOCATION_MOSCOW, 4)
     )
 
     // Moscow 5 Race Challange
     achievement(
-        id = 552474,
-        title = "Moscow Master",
+        id          = 552474,
+        title       = "Moscow Master",
         description = "Win a race on the Moscow 5 track with any team",
-        trigger = triggerRaceWin(LOCATION_MOSCOW, 5),
-        points = 10
+        points =      10,
+        trigger =     triggerRaceWin(LOCATION_MOSCOW, 5)
     )
 
     // Moscow 6 Race Challange
     achievement(
-        id = 552475,
-        title = "Moscow Champion",
+        id          = 552475,
+        title       = "Moscow Champion",
         description = "Win a race on the Moscow 6 track with any team",
-        trigger = triggerRaceWin(LOCATION_MOSCOW, 6),
-        points = 10
+        points =      10,
+        trigger =     triggerRaceWin(LOCATION_MOSCOW, 6)
     )
 
     // Egypt 1 Race Challange
     achievement(
-        id = 552476,
-        title = "Egypt Beginner",
+        id          = 552476,
+        title       = "Egypt Beginner",
         description = "Win a race on the Egypt 1 track with any team",
-        trigger = triggerRaceWin(LOCATION_EGYPT, 1),
-        points = 3
+        trigger     = triggerRaceWin(LOCATION_EGYPT, 1),
+        points      = 3
     )
 
     // Hong Kong 1 Race Challange
     achievement(
-        id = 552477,
-        title = "Hong Kong Beginner",
+        id          = 552477,
+        title       = "Hong Kong Beginner",
         description = "Win a race on the Hong Kong 1 track with any team",
-        trigger = triggerRaceWin(LOCATION_HONG_KONG, 1),
-        points = 3
+        points      = 3,
+        trigger     = triggerRaceWin(LOCATION_HONG_KONG, 1)
     )
 
     // Team Ahmed Season Win
     achievement(
-        id = 552824,
-        title = "Ahmed Season Champion",
+        id          = 552824,
+        title       = "Ahmed Season Champion",
         description = "Win the season championship with Team Ahmed",
-        trigger = triggerSeasonWinWithTeam(TEAM_AHMED),
-        points = 5
+        points      = 5,
+        trigger     = triggerSeasonWinWithTeam(TEAM_AHMED)
     )
 
     // Team Morgen Season Win
     achievement(
-        id = 552825,
-        title = "Morgen Season Champion",
+        id          = 552825,
+        title       = "Morgen Season Champion",
         description = "Win the season championship with Team Morgen",
-        trigger = triggerSeasonWinWithTeam(TEAM_MORGEN),
-        points = 5
+        points      = 5,
+        trigger     = triggerSeasonWinWithTeam(TEAM_MORGEN)
     )
 // #endregion Achievements
 
