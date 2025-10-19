@@ -12,6 +12,10 @@
     ACTIVE_SCREEN_DEMO_GAMEPLAY = 0x8009046c
     ACTIVE_SCREEN_EXIT_GAMEPLAY = 0x800883e4
 
+    function mainMenuScreen() => word(0x02690c)
+    MAIN_MENU_DEFAULT = 0x00
+    MAIN_MENU_SEASON_RACE_RESULTS = 0x0c
+
     function selectedLocation() => word(0x026910)
     LOCATION_MOSCOW = 0x00
     LOCATION_EASTER_ISLAND = 0x01
@@ -27,12 +31,26 @@
     PLAY_MODE_SPLIT_SCREEN = 0x03
     PLAY_MODE_HEAD_TO_HEAD = 0x04
 
+    function selectedTeam() => word(0x02691a)
+    TEAM_AHMED = 0x00
+    TEAM_MORGEN = 0x01
+    TEAM_ROSSI = 0x02
+    TEAM_XU = 0x03
+    TEAM_LUMIERE = 0x04
+    TEAM_ROBERTS = 0x05
+    TEAM_IVANOV = 0x06
+    TEAM_BAPTISE = 0x07
+
     function selectedRaceTrack() => word(0x026918)
 
     function currentRaceTotalLaps() => dword(0x0bd168)
-    function currentSeasonRaceNumber() => byte(0x026e56) + 1
     function currentRaceTrack() => dword(0x0ba810)
     function currentRaceLocation() => dword(0x0bb498)
+
+    function currentSeasonRaceNumber() => byte(0x026e56) + 1
+    function currentSeasonTeam() => byte(0x026e57)
+    function currentSeasonPoints(teamId) => byte(0x026e4e + teamId)
+    function previousRacePosition(teamId) => byte(0x026e46 + teamId)
 
     function playerPointer() => dword(0x0b70f8)
     function playerPosition() => dword(tbyte(0x0b70f8)+0x590)
@@ -61,6 +79,18 @@
             prev(activeScreen()) == 0
             && activeScreen() == ACTIVE_SCREEN_IN_GAME
     }
+
+    function frameSeasonRaceResultsAppeared() {
+        return
+            activeScreen() == ACTIVE_SCREEN_MAIN_MENU
+            && prev(mainMenuScreen()) != MAIN_MENU_SEASON_RACE_RESULTS
+            && mainMenuScreen() == MAIN_MENU_SEASON_RACE_RESULTS
+    }
+
+    function framePlayerLapIncreased() {
+        return
+            playerLap() == prev(playerLap()) + 1
+    }
 // #endregion Frame Functions
 
 // #region Achivement Triggers
@@ -79,6 +109,33 @@
             && never( activeScreen() == ACTIVE_SCREEN_EXIT_GAMEPLAY )
             && never( playerGameOver() > 0)
     }
+
+    function triggerSeasonWinWithTeam(teamId) {
+        requiredConditions =
+            selectedPlayMode() == PLAY_MODE_SEASON
+            && currentSeasonTeam() == teamId
+            && currentSeasonRaceNumber() == 6
+            && frameSeasonRaceResultsAppeared()
+            // && once ( prev(currentSeasonRaceNumber() == 1) && currentSeasonRaceNumber() == 2 )
+            // && once ( prev(currentSeasonRaceNumber() == 2) && currentSeasonRaceNumber() == 3 )
+            // && once ( prev(currentSeasonRaceNumber() == 3) && currentSeasonRaceNumber() == 4 )
+            // && once ( prev(currentSeasonRaceNumber() == 4) && currentSeasonRaceNumber() == 5 )
+
+        seasonWinerConditions = always_true()
+        for otherTeamId in range(0,7) {
+            if (otherTeamId != teamId) {
+                seasonWinerConditions = seasonWinerConditions &&
+                    ((
+                        currentSeasonPoints(teamId) > currentSeasonPoints(otherTeamId)
+                    ) || (
+                        currentSeasonPoints(teamId) == currentSeasonPoints(otherTeamId)
+                        && previousRacePosition(teamId) < previousRacePosition(otherTeamId)
+                    ))
+            }
+        }
+
+        return requiredConditions && (seasonWinerConditions)
+    }
 // #endregion Achivement Triggers
 
 // #region Achievements
@@ -93,7 +150,7 @@
 
     // Moscow 2 Race Challange
     achievement(
-        id = 442471,
+        id = 552471,
         title = "Moscow Experienced",
         description = "Win a race on the Moscow 2 track with any team",
         trigger = triggerRaceWin(LOCATION_MOSCOW, 2),
@@ -102,7 +159,7 @@
 
     // Moscow 3 Race Challange
     achievement(
-        id = 442472,
+        id = 552472,
         title = "Moscow Profecient",
         description = "Win a race on the Moscow 3 track with any team",
         trigger = triggerRaceWin(LOCATION_MOSCOW, 3),
@@ -111,7 +168,7 @@
 
     // Moscow 4 Race Challange
     achievement(
-        id = 442473,
+        id = 552473,
         title = "Moscow Expert",
         description = "Win a race on the Moscow 4 track with any team",
         trigger = triggerRaceWin(LOCATION_MOSCOW, 4),
@@ -120,7 +177,7 @@
 
     // Moscow 5 Race Challange
     achievement(
-        id = 442474,
+        id = 552474,
         title = "Moscow Master",
         description = "Win a race on the Moscow 5 track with any team",
         trigger = triggerRaceWin(LOCATION_MOSCOW, 5),
@@ -129,11 +186,47 @@
 
     // Moscow 6 Race Challange
     achievement(
-        id = 44247,
+        id = 552475,
         title = "Moscow Champion",
         description = "Win a race on the Moscow 6 track with any team",
         trigger = triggerRaceWin(LOCATION_MOSCOW, 6),
         points = 10
+    )
+
+    // Egypt 1 Race Challange
+    achievement(
+        id = 552476,
+        title = "Egypt Beginner",
+        description = "Win a race on the Egypt 1 track with any team",
+        trigger = triggerRaceWin(LOCATION_EGYPT, 1),
+        points = 3
+    )
+
+    // Hong Kong 1 Race Challange
+    achievement(
+        id = 552477,
+        title = "Hong Kong Beginner",
+        description = "Win a race on the Hong Kong 1 track with any team",
+        trigger = triggerRaceWin(LOCATION_HONG_KONG, 1),
+        points = 3
+    )
+
+    // Team Ahmed Season Win
+    achievement(
+        id = 552824,
+        title = "Ahmed Season Champion",
+        description = "Win the season championship with Team Ahmed",
+        trigger = triggerSeasonWinWithTeam(TEAM_AHMED),
+        points = 5
+    )
+
+    // Team Morgen Season Win
+    achievement(
+        id = 552825,
+        title = "Morgen Season Champion",
+        description = "Win the season championship with Team Morgen",
+        trigger = triggerSeasonWinWithTeam(TEAM_MORGEN),
+        points = 5
     )
 // #endregion Achievements
 
@@ -188,8 +281,8 @@
             && playerPointer() > 0x80000000
             && selectedLocation() == locationId
             && selectedRaceTrack() == trackNumber
-            && playerLap() == prev(playerLap()) + 1
             && playerLap() > 1
+            && framePlayerLapIncreased()
     }
 
     function cancelBestLapLeaderboard() {
