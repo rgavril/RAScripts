@@ -289,6 +289,56 @@
         )
     // #endregion Switzerland Race Challanges
 
+    // #region Scotland Race Challanges
+        achievement(
+            title       = "Scotland Beginner",
+            description = "Win a race on the Scotland 1 track with any team",
+            points      = 3,
+            trigger     = triggerRaceWin(LOCATION_SCOTLAND, 1),
+            id          = 553004
+        )
+
+        achievement(
+            title       = "Scotland Experienced",
+            description = "Win a race on the Scotland 2 track with any team",
+            points      = 5,
+            trigger     = triggerRaceWin(LOCATION_SCOTLAND, 2),
+            id          = 553005
+        )
+
+        achievement(
+            title       = "Scotland Profecient",
+            description = "Win a race on the Scotland 3 track with any team",
+            points      = 5,
+            trigger     = triggerRaceWin(LOCATION_SCOTLAND, 3),
+            id          = 553006
+        )
+
+        achievement(
+            title       = "Scotland Expert",
+            description = "Win a race on the Scotland 4 track with any team",
+            points =      10,
+            trigger =     triggerRaceWin(LOCATION_SCOTLAND, 4),
+            id          = 553007
+        )
+
+        achievement(
+            title       = "Scotland Master",
+            description = "Win a race on the Scotland 5 track with any team",
+            points =      10,
+            trigger =     triggerRaceWin(LOCATION_SCOTLAND, 5),
+            id          = 553008
+        )
+
+        achievement(
+            title       = "Scotland Champion",
+            description = "Win a race on the Scotland 6 track with any team",
+            points      = 10,
+            trigger     = triggerRaceWin(LOCATION_SCOTLAND, 6),
+            id          = 553009
+        )
+    // #endregion Scotland Race Challanges
+
     // Egypt 1 Race Challange
     achievement(
         id          = 552476,
