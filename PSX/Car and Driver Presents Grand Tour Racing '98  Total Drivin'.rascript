@@ -139,59 +139,155 @@
 // #endregion Achivement Triggers
 
 // #region Achievements
-    // Moscow 1 Race Challange
-    achievement(
-        id          = 551773,
-        title       = "Moscow Beginner",
-        description = "Win a race on the Moscow 1 track with any team",
-        points      = 3,
-        trigger     = triggerRaceWin(LOCATION_MOSCOW, 1)
-    )
+    // #region Moscow Race Challanges
+        achievement(
+            id          = 551773,
+            title       = "Moscow Beginner",
+            description = "Win a race on the Moscow 1 track with any team",
+            points      = 3,
+            trigger     = triggerRaceWin(LOCATION_MOSCOW, 1)
+        )
 
-    // Moscow 2 Race Challange
-    achievement(
-        id          = 552471,
-        title       = "Moscow Experienced",
-        description = "Win a race on the Moscow 2 track with any team",
-        points      = 5,
-        trigger     = triggerRaceWin(LOCATION_MOSCOW, 2)
-    )
+        achievement(
+            id          = 552471,
+            title       = "Moscow Experienced",
+            description = "Win a race on the Moscow 2 track with any team",
+            points      = 5,
+            trigger     = triggerRaceWin(LOCATION_MOSCOW, 2)
+        )
 
-    // Moscow 3 Race Challange
-    achievement(
-        id          = 552472,
-        title       = "Moscow Profecient",
-        description = "Win a race on the Moscow 3 track with any team",
-        points      = 5,
-        trigger     = triggerRaceWin(LOCATION_MOSCOW, 3)
-    )
+        achievement(
+            id          = 552472,
+            title       = "Moscow Profecient",
+            description = "Win a race on the Moscow 3 track with any team",
+            points      = 5,
+            trigger     = triggerRaceWin(LOCATION_MOSCOW, 3)
+        )
 
-    // Moscow 4 Race Challange
-    achievement(
-        id          = 552473,
-        title       = "Moscow Expert",
-        description = "Win a race on the Moscow 4 track with any team",
-        points =      10,
-        trigger =     triggerRaceWin(LOCATION_MOSCOW, 4)
-    )
+        achievement(
+            id          = 552473,
+            title       = "Moscow Expert",
+            description = "Win a race on the Moscow 4 track with any team",
+            points =      10,
+            trigger =     triggerRaceWin(LOCATION_MOSCOW, 4)
+        )
 
-    // Moscow 5 Race Challange
-    achievement(
-        id          = 552474,
-        title       = "Moscow Master",
-        description = "Win a race on the Moscow 5 track with any team",
-        points =      10,
-        trigger =     triggerRaceWin(LOCATION_MOSCOW, 5)
-    )
+        achievement(
+            id          = 552474,
+            title       = "Moscow Master",
+            description = "Win a race on the Moscow 5 track with any team",
+            points =      10,
+            trigger =     triggerRaceWin(LOCATION_MOSCOW, 5)
+        )
 
-    // Moscow 6 Race Challange
-    achievement(
-        id          = 552475,
-        title       = "Moscow Champion",
-        description = "Win a race on the Moscow 6 track with any team",
-        points =      10,
-        trigger =     triggerRaceWin(LOCATION_MOSCOW, 6)
-    )
+        achievement(
+            id          = 552475,
+            title       = "Moscow Champion",
+            description = "Win a race on the Moscow 6 track with any team",
+            points      = 10,
+            trigger     = triggerRaceWin(LOCATION_MOSCOW, 6)
+        )
+    // #endregion Moscow Race Challanges
+
+    // #region Easter Island Race Challanges
+        achievement(
+            id          = 552991,
+            title       = "Easter Island Beginner",
+            description = "Win a race on the Easter Island 1 track with any team",
+            points      = 3,
+            trigger     = triggerRaceWin(LOCATION_EASTER_ISLAND, 1)
+        )
+
+        achievement(
+            id          = 552992,
+            title       = "Easter Island Experienced",
+            description = "Win a race on the Easter Island 2 track with any team",
+            points      = 5,
+            trigger     = triggerRaceWin(LOCATION_EASTER_ISLAND, 2)
+        )
+
+        achievement(
+            id          = 552993,
+            title       = "Easter Island Profecient",
+            description = "Win a race on the Easter Island 3 track with any team",
+            points      = 5,
+            trigger     = triggerRaceWin(LOCATION_EASTER_ISLAND, 3)
+        )
+
+        achievement(
+            id          = 552994,
+            title       = "Easter Island Expert",
+            description = "Win a race on the Easter Island 4 track with any team",
+            points =      10,
+            trigger =     triggerRaceWin(LOCATION_EASTER_ISLAND, 4)
+        )
+
+        achievement(
+            id          = 552995,
+            title       = "Easter Island Master",
+            description = "Win a race on the Easter Island 5 track with any team",
+            points =      10,
+            trigger =     triggerRaceWin(LOCATION_EASTER_ISLAND, 5)
+        )
+
+        achievement(
+            id          = 552996,
+            title       = "Easter Island Champion",
+            description = "Win a race on the Easter Island 6 track with any team",
+            points      = 10,
+            trigger     = triggerRaceWin(LOCATION_EASTER_ISLAND, 6)
+        )
+    // #endregion Easter Island Race Challanges
+
+    // #region Switzerland Race Challanges
+        achievement(
+            id          = 552997,
+            title       = "Switzerland Beginner",
+            description = "Win a race on the Switzerland 1 track with any team",
+            points      = 3,
+            trigger     = triggerRaceWin(LOCATION_SWITZERLAND, 1)
+        )
+
+        achievement(
+            id          = 552998,
+            title       = "Switzerland Experienced",
+            description = "Win a race on the Switzerland 2 track with any team",
+            points      = 5,
+            trigger     = triggerRaceWin(LOCATION_SWITZERLAND, 2)
+        )
+
+        achievement(
+            id          = 552999,
+            title       = "Switzerland Profecient",
+            description = "Win a race on the Switzerland 3 track with any team",
+            points      = 5,
+            trigger     = triggerRaceWin(LOCATION_SWITZERLAND, 3)
+        )
+
+        achievement(
+            id          = 553000,
+            title       = "Switzerland Expert",
+            description = "Win a race on the Switzerland 4 track with any team",
+            points =      10,
+            trigger =     triggerRaceWin(LOCATION_SWITZERLAND, 4)
+        )
+
+        achievement(
+            id          = 553001,
+            title       = "Switzerland Master",
+            description = "Win a race on the Switzerland 5 track with any team",
+            points =      10,
+            trigger =     triggerRaceWin(LOCATION_SWITZERLAND, 5)
+        )
+
+        achievement(
+            id          = 553002,
+            title       = "Switzerland Champion",
+            description = "Win a race on the Switzerland 6 track with any team",
+            points      = 10,
+            trigger     = triggerRaceWin(LOCATION_SWITZERLAND, 6)
+        )
+    // #endregion Switzerland Race Challanges
 
     // Egypt 1 Race Challange
     achievement(
