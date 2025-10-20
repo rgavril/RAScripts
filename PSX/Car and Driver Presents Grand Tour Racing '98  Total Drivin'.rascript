@@ -339,23 +339,105 @@
         )
     // #endregion Scotland Race Challanges
 
-    // Egypt 1 Race Challange
-    achievement(
-        id          = 552476,
-        title       = "Egypt Beginner",
-        description = "Win a race on the Egypt 1 track with any team",
-        trigger     = triggerRaceWin(LOCATION_EGYPT, 1),
-        points      = 3
-    )
+    // #region Hong Kong Race Challanges
+        achievement(
+            title       = "Hong Kong Beginner",
+            description = "Win a race on the Hong Kong 1 track with any team",
+            points      = 3,
+            trigger     = triggerRaceWin(LOCATION_HONG_KONG, 1),
+            id          = 552477
+        )
 
-    // Hong Kong 1 Race Challange
-    achievement(
-        id          = 552477,
-        title       = "Hong Kong Beginner",
-        description = "Win a race on the Hong Kong 1 track with any team",
-        points      = 3,
-        trigger     = triggerRaceWin(LOCATION_HONG_KONG, 1)
-    )
+        achievement(
+            title       = "Hong Kong Experienced",
+            description = "Win a race on the Hong Kong 2 track with any team",
+            points      = 5,
+            trigger     = triggerRaceWin(LOCATION_HONG_KONG, 2),
+            id          = 553011
+        )
+
+        achievement(
+            title       = "Hong Kong Profecient",
+            description = "Win a race on the Hong Kong 3 track with any team",
+            points      = 5,
+            trigger     = triggerRaceWin(LOCATION_HONG_KONG, 3),
+            id          = 553012
+        )
+
+        achievement(
+            title       = "Hong Kong Expert",
+            description = "Win a race on the Hong Kong 4 track with any team",
+            points =      10,
+            trigger =     triggerRaceWin(LOCATION_HONG_KONG, 4),
+            id          = 553013
+        )
+
+        achievement(
+            title       = "Hong Kong Master",
+            description = "Win a race on the Hong Kong 5 track with any team",
+            points =      10,
+            trigger =     triggerRaceWin(LOCATION_HONG_KONG, 5),
+            id          = 553014
+        )
+
+        achievement(
+            title       = "Hong Kong Champion",
+            description = "Win a race on the Hong Kong 6 track with any team",
+            points      = 10,
+            trigger     = triggerRaceWin(LOCATION_HONG_KONG, 6),
+            id          = 553015
+        )
+    // #endregion Hong Kong Race Challanges
+
+    // #region Egypt Race Challanges
+        achievement(
+            title       = "Egypt Beginner",
+            description = "Win a race on the Egypt 1 track with any team",
+            points      = 3,
+            trigger     = triggerRaceWin(LOCATION_EGYPT, 1),
+            id          = 552476
+        )
+
+        achievement(
+            title       = "Egypt Experienced",
+            description = "Win a race on the Egypt 2 track with any team",
+            points      = 5,
+            trigger     = triggerRaceWin(LOCATION_EGYPT, 2),
+            id          = 553016
+        )
+
+        achievement(
+            title       = "Egypt Profecient",
+            description = "Win a race on the Egypt 3 track with any team",
+            points      = 5,
+            trigger     = triggerRaceWin(LOCATION_EGYPT, 3),
+            id          = 553017
+        )
+
+        achievement(
+            title       = "Egypt Expert",
+            description = "Win a race on the Egypt 4 track with any team",
+            points =      10,
+            trigger =     triggerRaceWin(LOCATION_EGYPT, 4),
+            id          = 553018
+        )
+
+        achievement(
+            title       = "Egypt Master",
+            description = "Win a race on the Egypt 5 track with any team",
+            points =      10,
+            trigger =     triggerRaceWin(LOCATION_EGYPT, 5),
+            id          = 553019
+        )
+
+        achievement(
+            title       = "Egypt Champion",
+            description = "Win a race on the Egypt 6 track with any team",
+            points      = 10,
+            trigger     = triggerRaceWin(LOCATION_EGYPT, 6),
+            id          = 553020
+        )
+    // #endregion Egypt Race Challanges
 
     // Team Ahmed Season Win
     achievement(
