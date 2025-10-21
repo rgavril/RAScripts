@@ -186,13 +186,11 @@
             for otherTeamID in range(0,7) {
                 if (otherTeamID != teamID) {
                     teamWinCondition = teamWinCondition &&
-                        ((
-                            currentSeasonPoints(teamID) > currentSeasonPoints(otherTeamID)
-                        ) || (
-                            currentSeasonPoints(teamID) == currentSeasonPoints(otherTeamID)
-                            &&
-                            previousRacePosition(teamID) < previousRacePosition(otherTeamID)
-                        ))
+                        __ornext(
+                            ( currentSeasonPoints(teamID) == currentSeasonPoints(otherTeamID) && previousRacePosition(teamID) < previousRacePosition(otherTeamID))
+                            ||
+                            ( currentSeasonPoints(teamID) > currentSeasonPoints(otherTeamID) )
+                        )
                 }
             }
 
@@ -219,16 +217,16 @@
             && never( frameSeasonPointsDecreased(TEAM_XU) )
 
         return startConditions && cancelConditions && requiredConditions
-        // &&(
-        //     seasonWinerConditions[TEAM_AHMED] ||
-        //     seasonWinerConditions[TEAM_BAPTISE] ||
-        //     seasonWinerConditions[TEAM_IVANOV] ||
-        //     seasonWinerConditions[TEAM_LUMIERE] ||
-        //     seasonWinerConditions[TEAM_MORGEN] ||
-        //     seasonWinerConditions[TEAM_ROBERTS] ||
-        //     seasonWinerConditions[TEAM_ROSSI] ||
-        //     seasonWinerConditions[TEAM_XU]
-        // )
+        && (
+            seasonWinerConditions[TEAM_AHMED]
+            || seasonWinerConditions[TEAM_BAPTISE]
+            || seasonWinerConditions[TEAM_IVANOV]
+            || seasonWinerConditions[TEAM_LUMIERE]
+            || seasonWinerConditions[TEAM_MORGEN]
+            || seasonWinerConditions[TEAM_ROBERTS]
+            || seasonWinerConditions[TEAM_ROSSI]
+            || seasonWinerConditions[TEAM_XU]
+        )
     }
 // #endregion Achivement Triggers
 
@@ -599,15 +597,13 @@
         )
     // #endregion Ultimate Season Wins
 
-    // DISABLED due to of a RATools bug that that split to
-    // achievement(
-    //     title       = "Top of the Podium",
-    //     description = "Finish a Season in the 1st Place using any available team",
-    //     points      = 5,
-    //     trigger     = triggerSeasonWin(),
-    //     id          = 553226
-    // )
-
+    achievement(
+        title       = "Top Season",
+        description = "Finish a Season on the 1st place using any team",
+        points      = 5,
+        trigger     = triggerSeasonWin(),
+        id          = 553226
+    )
 // #endregion Achievements
 
 // #region Leaderboards
