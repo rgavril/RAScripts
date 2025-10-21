@@ -170,6 +170,66 @@
 
         return startConditions && cancelConditions && requiredConditions && (seasonWinerConditions)
     }
+
+    function triggerSeasonWin() {
+        requiredConditions =
+            selectedPlayMode() == PLAY_MODE_SEASON
+            && currentSeasonRaceNumber() == 6
+            && frameSeasonRaceResultsAppeared()
+
+        seasonWinerConditions = []
+
+        for teamID in range(0,7) {
+            teamWinCondition =
+                currentSeasonTeam() == teamID
+
+            for otherTeamID in range(0,7) {
+                if (otherTeamID != teamID) {
+                    teamWinCondition = teamWinCondition &&
+                        ((
+                            currentSeasonPoints(teamID) > currentSeasonPoints(otherTeamID)
+                        ) || (
+                            currentSeasonPoints(teamID) == currentSeasonPoints(otherTeamID)
+                            &&
+                            previousRacePosition(teamID) < previousRacePosition(otherTeamID)
+                        ))
+                }
+            }
+
+            array_push(seasonWinerConditions, teamWinCondition)
+        }
+
+        startConditions =
+            // Track that a progression was made through all 6 season races
+            once( frameProgressedToSeasonRace(2) )
+            && once( frameProgressedToSeasonRace(3) )
+            && once( frameProgressedToSeasonRace(4) )
+            && once( frameProgressedToSeasonRace(5) )
+            && once( frameProgressedToSeasonRace(6) )
+
+        cancelConditions =
+            // Cancel if a previous state was loaded or season was quit
+            never( frameSeasonPointsDecreased(TEAM_AHMED) )
+            && never( frameSeasonPointsDecreased(TEAM_BAPTISE) )
+            && never( frameSeasonPointsDecreased(TEAM_IVANOV) )
+            && never( frameSeasonPointsDecreased(TEAM_LUMIERE) )
+            && never( frameSeasonPointsDecreased(TEAM_MORGEN) )
+            && never( frameSeasonPointsDecreased(TEAM_ROBERTS) )
+            && never( frameSeasonPointsDecreased(TEAM_ROSSI) )
+            && never( frameSeasonPointsDecreased(TEAM_XU) )
+
+        return startConditions && cancelConditions && requiredConditions
+        // &&(
+        //     seasonWinerConditions[TEAM_AHMED] ||
+        //     seasonWinerConditions[TEAM_BAPTISE] ||
+        //     seasonWinerConditions[TEAM_IVANOV] ||
+        //     seasonWinerConditions[TEAM_LUMIERE] ||
+        //     seasonWinerConditions[TEAM_MORGEN] ||
+        //     seasonWinerConditions[TEAM_ROBERTS] ||
+        //     seasonWinerConditions[TEAM_ROSSI] ||
+        //     seasonWinerConditions[TEAM_XU]
+        // )
+    }
 // #endregion Achivement Triggers
 
 // #region Achievements
@@ -538,6 +598,16 @@
             id          = 553219
         )
     // #endregion Ultimate Season Wins
+
+    // DISABLED due to of a RATools bug that that split to
+    // achievement(
+    //     title       = "Top of the Podium",
+    //     description = "Finish a Season in the 1st Place using any available team",
+    //     points      = 5,
+    //     trigger     = triggerSeasonWin(),
+    //     id          = 553226
+    // )
+
 // #endregion Achievements
 
 // #region Leaderboards
