@@ -53,7 +53,7 @@
     function currentSeasonPoints(teamID) => byte(0x026e4e + teamID)
     function previousRacePosition(teamID) => byte(0x026e46 + teamID)
 
-    function playerPointer() => dword(0x0b70f8)
+    function playerPointer() => tbyte(0x0b70f8)
     function playerPosition() => dword(tbyte(0x0b70f8)+0x590)
     function playerteamID() => byte(tbyte(0x0b70f8)+0x128)
     function playerLap() => byte(tbyte(0x0b70f8)+0x574)
@@ -112,7 +112,7 @@
             && currentRaceTrack() == track
             && playerPosition() == 1
             && playerLap() == currentRaceTotalLaps() + 1
-            && playerPointer() > 0x80000000
+            && playerPointer() != 0
 
             && once ( frameGameStateSwitchedToInGame())
             && once ( frameRaceCountdownTimerStarted() )
@@ -588,7 +588,7 @@
     function startBestLapLeaderboard(locationId, trackNumber) {
         return
             gameState() == GAME_STATE_IN_GAME
-            && playerPointer() > 0x80000000
+            && playerPointer() != 0
             && selectedLocation() == locationId
             && selectedRaceTrack() == trackNumber
             && playerLap() > 1
@@ -600,7 +600,7 @@
             gameState() == GAME_STATE_EXIT_GAMEPLAY
             || gameState() == GAME_STATE_IN_FRONTEND
             || playerGameOver() > 0
-            || playerPointer() <= 0x80000000
+            || playerPointer() == 0
     }
 
     function valueBestLapLeaderboard() {
