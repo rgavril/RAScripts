@@ -122,22 +122,37 @@
             && never( playerGameOver() > 0)
     }
 
-    function triggerSeasonWinWithTeam(teamID) {
+    function triggerUltimateSeason(teamID) {
         requiredConditions =
             selectedPlayMode() == PLAY_MODE_SEASON
             && currentSeasonTeam() == teamID
             && currentSeasonRaceNumber() == 6
             && frameSeasonRaceResultsAppeared()
 
+        seasonWinerConditions = always_true()
+            for otherTeamID in range(0,7) {
+                if (otherTeamID != teamID) {
+                    seasonWinerConditions = seasonWinerConditions &&
+                        ((
+                            currentSeasonPoints(teamID) > currentSeasonPoints(otherTeamID)
+                        ) || (
+                            currentSeasonPoints(teamID) == currentSeasonPoints(otherTeamID)
+                            && previousRacePosition(teamID) < previousRacePosition(otherTeamID)
+                        ))
+                }
+            }
+
+        startConditions =
             // Track that a progression was made through all 6 season races
-            && once( frameProgressedToSeasonRace(2) )
+            once( frameProgressedToSeasonRace(2) )
             && once( frameProgressedToSeasonRace(3) )
             && once( frameProgressedToSeasonRace(4) )
             && once( frameProgressedToSeasonRace(5) )
             && once( frameProgressedToSeasonRace(6) )
 
-            // Abort if a previous state was loaded or season was quit
-            && never( frameSeasonPointsDecreased(TEAM_AHMED) )
+        cancelConditions =
+            // Cancel if a previous state was loaded or season was quit
+            never( frameSeasonPointsDecreased(TEAM_AHMED) )
             && never( frameSeasonPointsDecreased(TEAM_BAPTISE) )
             && never( frameSeasonPointsDecreased(TEAM_IVANOV) )
             && never( frameSeasonPointsDecreased(TEAM_LUMIERE) )
@@ -145,21 +160,15 @@
             && never( frameSeasonPointsDecreased(TEAM_ROBERTS) )
             && never( frameSeasonPointsDecreased(TEAM_ROSSI) )
             && never( frameSeasonPointsDecreased(TEAM_XU) )
+            // Cancel if a season race is started in any location less than level 6
+            && never(
+                gameState() == GAME_STATE_IN_GAME
+                && selectedPlayMode() == PLAY_MODE_SEASON
+                && frameRaceCountdownTimerStarted()
+                && currentRaceTrack() < 6
+            )
 
-        seasonWinerConditions = always_true()
-        for otherTeamID in range(0,7) {
-            if (otherTeamID != teamID) {
-                seasonWinerConditions = seasonWinerConditions &&
-                    ((
-                        currentSeasonPoints(teamID) > currentSeasonPoints(otherTeamID)
-                    ) || (
-                        currentSeasonPoints(teamID) == currentSeasonPoints(otherTeamID)
-                        && previousRacePosition(teamID) < previousRacePosition(otherTeamID)
-                    ))
-            }
-        }
-
-        return requiredConditions && (seasonWinerConditions)
+        return startConditions && cancelConditions && requiredConditions && (seasonWinerConditions)
     }
 // #endregion Achivement Triggers
 
@@ -464,23 +473,71 @@
         )
     // #endregion Egypt Race Challanges
 
-    // Team Ahmed Season Win
-    achievement(
-        id          = 552824,
-        title       = "Ahmed Season Champion",
-        description = "Win the season championship with Team Ahmed",
-        points      = 5,
-        trigger     = triggerSeasonWinWithTeam(TEAM_AHMED)
-    )
+    // #region Ultimate Season Wins
+        achievement(
+            title       = "Ahmed's Ultimate Challenge",
+            description = "Win a Season with Team Ahmed where every track raced is at Level 6",
+            points      = 25,
+            trigger     = triggerUltimateSeason(TEAM_AHMED),
+            id          = 552824
+        )
 
-    // Team Morgen Season Win
-    achievement(
-        id          = 552825,
-        title       = "Morgen Season Champion",
-        description = "Win the season championship with Team Morgen",
-        points      = 5,
-        trigger     = triggerSeasonWinWithTeam(TEAM_MORGEN)
-    )
+        achievement(
+            title       = "Morgen's Ultimate Challenge",
+            description = "Win a Season with Team Morgen where every track raced is at Level 6",
+            points      = 25,
+            trigger     = triggerUltimateSeason(TEAM_MORGEN),
+            id          = 552825
+        )
+
+        achievement(
+            title       = "Rossi's Ultimate Challenge",
+            description = "Win a Season with Team Rossi where every track raced is at Level 6",
+            points      = 25,
+            trigger     = triggerUltimateSeason(TEAM_ROSSI),
+            id          = 553214
+        )
+
+        achievement(
+            title       = "Xu's Ultimate Challenge",
+            description = "Win a Season with Team Xu where every track raced is at Level 6",
+            points      = 25,
+            trigger     = triggerUltimateSeason(TEAM_ROSSI),
+            id          = 553215
+        )
+
+        achievement(
+            title       = "Lumiere's Ultimate Challenge",
+            description = "Win a Season with Team Lumiere where every track raced is at Level 6",
+            points      = 25,
+            trigger     = triggerUltimateSeason(TEAM_LUMIERE),
+            id          = 553216
+        )
+
+        achievement(
+            title       = "Roberts' Ultimate Challenge",
+            description = "Win a Season with Team Roberts where every track raced is at Level 6",
+            points      = 25,
+            trigger     = triggerUltimateSeason(TEAM_ROBERTS),
+            id          = 553217
+        )
+
+        achievement(
+            title       = "Ivanov's Ultimate Challenge",
+            description = "Win a Season with Team Ivanov where every track raced is at Level 6",
+            points      = 25,
+            trigger     = triggerUltimateSeason(TEAM_IVANOV),
+            id          = 553218
+        )
+
+        achievement(
+            title       = "Baptise's Ultimate Challenge",
+            description = "Win a Season with Team Baptise where every track raced is at Level 6",
+            points      = 25,
+            trigger     = triggerUltimateSeason(TEAM_BAPTISE),
+            id          = 553219
+        )
+    // #endregion Ultimate Season Wins
 // #endregion Achievements
 
 // #region Leaderboards
