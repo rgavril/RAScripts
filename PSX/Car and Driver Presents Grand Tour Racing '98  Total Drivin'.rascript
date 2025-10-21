@@ -2,19 +2,20 @@
 // #ID = 25969
 
 // #region Memory Addresses
-    function activeScreen() => dword(0x0c1718)
-    ACTIVE_SCREEN_MAIN_MENU = 0x24e720c6
-    ACTIVE_SCREEN_IN_GAME = 0x80090e58
-    ACTIVE_SCREEN_PAUSE_MENU_MAIN = 0x800ac898
-    ACTIVE_SCREEN_PAUSE_MENU_PICTURE = 0x800acadc 
-    ACTIVE_SCREEN_PAUSE_MENU_SOUND = 0x800acba0
-    ACTIVE_SCREEN_PAUSE_MENU_QUIT = 0x800ac6a8
-    ACTIVE_SCREEN_DEMO_GAMEPLAY = 0x8009046c
-    ACTIVE_SCREEN_EXIT_GAMEPLAY = 0x800883e4
+    function gameState() => dword(0x0c1718)
+    GAME_STATE_NULL = 0x00000000
+    GAME_STATE_IN_FRONTEND = 0x24e720c6
+    GAME_STATE_IN_GAME = 0x80090e58
+    GAME_STATE_PAUSE_MENU_MAIN = 0x800ac898
+    GAME_STATE_PAUSE_MENU_PICTURE = 0x800acadc 
+    GAME_STATE_PAUSE_MENU_SOUND = 0x800acba0
+    GAME_STATE_PAUSE_MENU_QUIT = 0x800ac6a8
+    GAME_STATE_DEMO_GAMEPLAY = 0x8009046c
+    GAME_STATE_EXIT_GAMEPLAY = 0x800883e4
 
-    function mainMenuScreen() => word(0x02690c)
-    MAIN_MENU_DEFAULT = 0x00
-    MAIN_MENU_SEASON_RACE_RESULTS = 0x0c
+    function frontendScreen() => word(0x02690c)
+    SCREEN_MAIN_MENU = 0x00
+    SCREEN_RACE_RESULTS = 0x0c
 
     function selectedLocation() => word(0x026910)
     LOCATION_MOSCOW = 0x00
@@ -49,12 +50,12 @@
 
     function currentSeasonRaceNumber() => byte(0x026e56) + 1
     function currentSeasonTeam() => byte(0x026e57)
-    function currentSeasonPoints(teamId) => byte(0x026e4e + teamId)
-    function previousRacePosition(teamId) => byte(0x026e46 + teamId)
+    function currentSeasonPoints(teamID) => byte(0x026e4e + teamID)
+    function previousRacePosition(teamID) => byte(0x026e46 + teamID)
 
     function playerPointer() => dword(0x0b70f8)
     function playerPosition() => dword(tbyte(0x0b70f8)+0x590)
-    function playerTeamId() => byte(tbyte(0x0b70f8)+0x128)
+    function playerteamID() => byte(tbyte(0x0b70f8)+0x128)
     function playerLap() => byte(tbyte(0x0b70f8)+0x574)
     function playerGameOver() => byte(tbyte(0x0b70f8)+0x619)
     function playerLap1Time() => dword(tbyte(0x0b70f8)+0x57c)
@@ -74,22 +75,33 @@
             && raceCountdownTimer() == 0x5f
     }
 
-    function frameActiveScreenSwitchedToInGame() {
+    function frameGameStateSwitchedToInGame() {
         return
-            prev(activeScreen()) == 0
-            && activeScreen() == ACTIVE_SCREEN_IN_GAME
+            prev(gameState()) == GAME_STATE_NULL
+            && gameState() == GAME_STATE_IN_GAME
     }
 
     function frameSeasonRaceResultsAppeared() {
         return
-            activeScreen() == ACTIVE_SCREEN_MAIN_MENU
-            && prev(mainMenuScreen()) != MAIN_MENU_SEASON_RACE_RESULTS
-            && mainMenuScreen() == MAIN_MENU_SEASON_RACE_RESULTS
+            gameState() == GAME_STATE_IN_FRONTEND
+            && prev(frontendScreen()) != SCREEN_RACE_RESULTS
+            && frontendScreen() == SCREEN_RACE_RESULTS
     }
 
     function framePlayerLapIncreased() {
         return
             playerLap() == prev(playerLap()) + 1
+    }
+
+    function frameProgressedToSeasonRace(raceNumber) {
+        return
+            prev(currentSeasonRaceNumber()) == raceNumber - 1
+            && currentSeasonRaceNumber() == raceNumber
+    }
+
+    function frameSeasonPointsDecreased(teamID) {
+        return
+            prev(currentSeasonPoints(teamID)) > currentSeasonPoints(teamID)
     }
 // #endregion Frame Functions
 
@@ -102,34 +114,47 @@
             && playerLap() == currentRaceTotalLaps() + 1
             && playerPointer() > 0x80000000
 
-            && once ( frameActiveScreenSwitchedToInGame())
+            && once ( frameGameStateSwitchedToInGame())
             && once ( frameRaceCountdownTimerStarted() )
 
-            && never( activeScreen() == ACTIVE_SCREEN_DEMO_GAMEPLAY )
-            && never( activeScreen() == ACTIVE_SCREEN_EXIT_GAMEPLAY )
+            && never( gameState() == GAME_STATE_DEMO_GAMEPLAY )
+            && never( gameState() == GAME_STATE_EXIT_GAMEPLAY )
             && never( playerGameOver() > 0)
     }
 
-    function triggerSeasonWinWithTeam(teamId) {
+    function triggerSeasonWinWithTeam(teamID) {
         requiredConditions =
             selectedPlayMode() == PLAY_MODE_SEASON
-            && currentSeasonTeam() == teamId
+            && currentSeasonTeam() == teamID
             && currentSeasonRaceNumber() == 6
             && frameSeasonRaceResultsAppeared()
-            // && once ( prev(currentSeasonRaceNumber() == 1) && currentSeasonRaceNumber() == 2 )
-            // && once ( prev(currentSeasonRaceNumber() == 2) && currentSeasonRaceNumber() == 3 )
-            // && once ( prev(currentSeasonRaceNumber() == 3) && currentSeasonRaceNumber() == 4 )
-            // && once ( prev(currentSeasonRaceNumber() == 4) && currentSeasonRaceNumber() == 5 )
+
+            // Track that a progression was made through all 6 season races
+            && once( frameProgressedToSeasonRace(2) )
+            && once( frameProgressedToSeasonRace(3) )
+            && once( frameProgressedToSeasonRace(4) )
+            && once( frameProgressedToSeasonRace(5) )
+            && once( frameProgressedToSeasonRace(6) )
+
+            // Abort if a previous state was loaded or season was quit
+            && never( frameSeasonPointsDecreased(TEAM_AHMED) )
+            && never( frameSeasonPointsDecreased(TEAM_BAPTISE) )
+            && never( frameSeasonPointsDecreased(TEAM_IVANOV) )
+            && never( frameSeasonPointsDecreased(TEAM_LUMIERE) )
+            && never( frameSeasonPointsDecreased(TEAM_MORGEN) )
+            && never( frameSeasonPointsDecreased(TEAM_ROBERTS) )
+            && never( frameSeasonPointsDecreased(TEAM_ROSSI) )
+            && never( frameSeasonPointsDecreased(TEAM_XU) )
 
         seasonWinerConditions = always_true()
-        for otherTeamId in range(0,7) {
-            if (otherTeamId != teamId) {
+        for otherTeamID in range(0,7) {
+            if (otherTeamID != teamID) {
                 seasonWinerConditions = seasonWinerConditions &&
                     ((
-                        currentSeasonPoints(teamId) > currentSeasonPoints(otherTeamId)
+                        currentSeasonPoints(teamID) > currentSeasonPoints(otherTeamID)
                     ) || (
-                        currentSeasonPoints(teamId) == currentSeasonPoints(otherTeamId)
-                        && previousRacePosition(teamId) < previousRacePosition(otherTeamId)
+                        currentSeasonPoints(teamID) == currentSeasonPoints(otherTeamID)
+                        && previousRacePosition(teamID) < previousRacePosition(otherTeamID)
                     ))
             }
         }
@@ -143,7 +168,7 @@
         achievement(
             id          = 551773,
             title       = "Moscow Beginner",
-            description = "Win a race on the Moscow 1 track with any team",
+            description = "Finish 1st place on the Moscow Level 1 track with any team during One Player or Season gameplay",
             points      = 3,
             trigger     = triggerRaceWin(LOCATION_MOSCOW, 1)
         )
@@ -151,7 +176,7 @@
         achievement(
             id          = 552471,
             title       = "Moscow Experienced",
-            description = "Win a race on the Moscow 2 track with any team",
+            description = "Finish 1st place on the Moscow Level 2 track with any team during One Player or Season gameplay",
             points      = 5,
             trigger     = triggerRaceWin(LOCATION_MOSCOW, 2)
         )
@@ -159,7 +184,7 @@
         achievement(
             id          = 552472,
             title       = "Moscow Profecient",
-            description = "Win a race on the Moscow 3 track with any team",
+            description = "Finish 1st place on the Moscow Level 3 track with any team during One Player or Season gameplay",
             points      = 5,
             trigger     = triggerRaceWin(LOCATION_MOSCOW, 3)
         )
@@ -167,7 +192,7 @@
         achievement(
             id          = 552473,
             title       = "Moscow Expert",
-            description = "Win a race on the Moscow 4 track with any team",
+            description = "Finish 1st place on the Moscow Level 4 track with any team during One Player or Season gameplay",
             points =      10,
             trigger =     triggerRaceWin(LOCATION_MOSCOW, 4)
         )
@@ -175,7 +200,7 @@
         achievement(
             id          = 552474,
             title       = "Moscow Master",
-            description = "Win a race on the Moscow 5 track with any team",
+            description = "Finish 1st place on the Moscow Level 5 track with any team during One Player or Season gameplay",
             points =      10,
             trigger =     triggerRaceWin(LOCATION_MOSCOW, 5)
         )
@@ -183,7 +208,7 @@
         achievement(
             id          = 552475,
             title       = "Moscow Champion",
-            description = "Win a race on the Moscow 6 track with any team",
+            description = "Finish 1st place on the Moscow Level 6 track with any team during One Player or Season gameplay",
             points      = 10,
             trigger     = triggerRaceWin(LOCATION_MOSCOW, 6)
         )
@@ -193,7 +218,7 @@
         achievement(
             id          = 552991,
             title       = "Easter Island Beginner",
-            description = "Win a race on the Easter Island 1 track with any team",
+            description = "Finish 1st place on the Easter Island Level 1 track with any team during One Player or Season gameplay",
             points      = 3,
             trigger     = triggerRaceWin(LOCATION_EASTER_ISLAND, 1)
         )
@@ -201,7 +226,7 @@
         achievement(
             id          = 552992,
             title       = "Easter Island Experienced",
-            description = "Win a race on the Easter Island 2 track with any team",
+            description = "Finish 1st place on the Easter Island Level 2 track with any team during One Player or Season gameplay",
             points      = 5,
             trigger     = triggerRaceWin(LOCATION_EASTER_ISLAND, 2)
         )
@@ -209,7 +234,7 @@
         achievement(
             id          = 552993,
             title       = "Easter Island Profecient",
-            description = "Win a race on the Easter Island 3 track with any team",
+            description = "Finish 1st place on the Easter Island Level 3 track with any team during One Player or Season gameplay",
             points      = 5,
             trigger     = triggerRaceWin(LOCATION_EASTER_ISLAND, 3)
         )
@@ -217,7 +242,7 @@
         achievement(
             id          = 552994,
             title       = "Easter Island Expert",
-            description = "Win a race on the Easter Island 4 track with any team",
+            description = "Finish 1st place on the Easter Island Level 4 track with any team during One Player or Season gameplay",
             points =      10,
             trigger =     triggerRaceWin(LOCATION_EASTER_ISLAND, 4)
         )
@@ -225,7 +250,7 @@
         achievement(
             id          = 552995,
             title       = "Easter Island Master",
-            description = "Win a race on the Easter Island 5 track with any team",
+            description = "Finish 1st place on the Easter Island Level 5 track with any team during One Player or Season gameplay",
             points =      10,
             trigger =     triggerRaceWin(LOCATION_EASTER_ISLAND, 5)
         )
@@ -233,7 +258,7 @@
         achievement(
             id          = 552996,
             title       = "Easter Island Champion",
-            description = "Win a race on the Easter Island 6 track with any team",
+            description = "Finish 1st place on the Easter Island Level 6 track with any team during One Player or Season gameplay",
             points      = 10,
             trigger     = triggerRaceWin(LOCATION_EASTER_ISLAND, 6)
         )
@@ -243,7 +268,7 @@
         achievement(
             id          = 552997,
             title       = "Switzerland Beginner",
-            description = "Win a race on the Switzerland 1 track with any team",
+            description = "Finish 1st place on the Switzerland Level 1 track with any team during One Player or Season gameplay",
             points      = 3,
             trigger     = triggerRaceWin(LOCATION_SWITZERLAND, 1)
         )
@@ -251,7 +276,7 @@
         achievement(
             id          = 552998,
             title       = "Switzerland Experienced",
-            description = "Win a race on the Switzerland 2 track with any team",
+            description = "Finish 1st place on the Switzerland Level 2 track with any team during One Player or Season gameplay",
             points      = 5,
             trigger     = triggerRaceWin(LOCATION_SWITZERLAND, 2)
         )
@@ -259,7 +284,7 @@
         achievement(
             id          = 552999,
             title       = "Switzerland Profecient",
-            description = "Win a race on the Switzerland 3 track with any team",
+            description = "Finish 1st place on the Switzerland Level 3 track with any team during One Player or Season gameplay",
             points      = 5,
             trigger     = triggerRaceWin(LOCATION_SWITZERLAND, 3)
         )
@@ -267,7 +292,7 @@
         achievement(
             id          = 553000,
             title       = "Switzerland Expert",
-            description = "Win a race on the Switzerland 4 track with any team",
+            description = "Finish 1st place on the Switzerland Level 4 track with any team during One Player or Season gameplay",
             points =      10,
             trigger =     triggerRaceWin(LOCATION_SWITZERLAND, 4)
         )
@@ -275,7 +300,7 @@
         achievement(
             id          = 553001,
             title       = "Switzerland Master",
-            description = "Win a race on the Switzerland 5 track with any team",
+            description = "Finish 1st place on the Switzerland Level 5 track with any team during One Player or Season gameplay",
             points =      10,
             trigger =     triggerRaceWin(LOCATION_SWITZERLAND, 5)
         )
@@ -283,7 +308,7 @@
         achievement(
             id          = 553002,
             title       = "Switzerland Champion",
-            description = "Win a race on the Switzerland 6 track with any team",
+            description = "Finish 1st place on the Switzerland Level 6 track with any team during One Player or Season gameplay",
             points      = 10,
             trigger     = triggerRaceWin(LOCATION_SWITZERLAND, 6)
         )
@@ -292,7 +317,7 @@
     // #region Scotland Race Challanges
         achievement(
             title       = "Scotland Beginner",
-            description = "Win a race on the Scotland 1 track with any team",
+            description = "Finish 1st place on the Scotland Level 1 track with any team during One Player or Season gameplay",
             points      = 3,
             trigger     = triggerRaceWin(LOCATION_SCOTLAND, 1),
             id          = 553004
@@ -300,7 +325,7 @@
 
         achievement(
             title       = "Scotland Experienced",
-            description = "Win a race on the Scotland 2 track with any team",
+            description = "Finish 1st place on the Scotland Level 2 track with any team during One Player or Season gameplay",
             points      = 5,
             trigger     = triggerRaceWin(LOCATION_SCOTLAND, 2),
             id          = 553005
@@ -308,7 +333,7 @@
 
         achievement(
             title       = "Scotland Profecient",
-            description = "Win a race on the Scotland 3 track with any team",
+            description = "Finish 1st place on the Scotland Level 3 track with any team during One Player or Season gameplay",
             points      = 5,
             trigger     = triggerRaceWin(LOCATION_SCOTLAND, 3),
             id          = 553006
@@ -316,7 +341,7 @@
 
         achievement(
             title       = "Scotland Expert",
-            description = "Win a race on the Scotland 4 track with any team",
+            description = "Finish 1st place on the Scotland Level 4 track with any team during One Player or Season gameplay",
             points =      10,
             trigger =     triggerRaceWin(LOCATION_SCOTLAND, 4),
             id          = 553007
@@ -324,7 +349,7 @@
 
         achievement(
             title       = "Scotland Master",
-            description = "Win a race on the Scotland 5 track with any team",
+            description = "Finish 1st place on the Scotland Level 5 track with any team during One Player or Season gameplay",
             points =      10,
             trigger =     triggerRaceWin(LOCATION_SCOTLAND, 5),
             id          = 553008
@@ -332,7 +357,7 @@
 
         achievement(
             title       = "Scotland Champion",
-            description = "Win a race on the Scotland 6 track with any team",
+            description = "Finish 1st place on the Scotland Level 6 track with any team during One Player or Season gameplay",
             points      = 10,
             trigger     = triggerRaceWin(LOCATION_SCOTLAND, 6),
             id          = 553009
@@ -342,7 +367,7 @@
     // #region Hong Kong Race Challanges
         achievement(
             title       = "Hong Kong Beginner",
-            description = "Win a race on the Hong Kong 1 track with any team",
+            description = "Finish 1st place on the Hong Kong Level 1 track with any team during One Player or Season gameplay",
             points      = 3,
             trigger     = triggerRaceWin(LOCATION_HONG_KONG, 1),
             id          = 552477
@@ -350,7 +375,7 @@
 
         achievement(
             title       = "Hong Kong Experienced",
-            description = "Win a race on the Hong Kong 2 track with any team",
+            description = "Finish 1st place on the Hong Kong Level 2 track with any team during One Player or Season gameplay",
             points      = 5,
             trigger     = triggerRaceWin(LOCATION_HONG_KONG, 2),
             id          = 553011
@@ -358,7 +383,7 @@
 
         achievement(
             title       = "Hong Kong Profecient",
-            description = "Win a race on the Hong Kong 3 track with any team",
+            description = "Finish 1st place on the Hong Kong Level 3 track with any team during One Player or Season gameplay",
             points      = 5,
             trigger     = triggerRaceWin(LOCATION_HONG_KONG, 3),
             id          = 553012
@@ -366,7 +391,7 @@
 
         achievement(
             title       = "Hong Kong Expert",
-            description = "Win a race on the Hong Kong 4 track with any team",
+            description = "Finish 1st place on the Hong Kong Level 4 track with any team during One Player or Season gameplay",
             points =      10,
             trigger =     triggerRaceWin(LOCATION_HONG_KONG, 4),
             id          = 553013
@@ -374,7 +399,7 @@
 
         achievement(
             title       = "Hong Kong Master",
-            description = "Win a race on the Hong Kong 5 track with any team",
+            description = "Finish 1st place on the Hong Kong Level 5 track with any team during One Player or Season gameplay",
             points =      10,
             trigger =     triggerRaceWin(LOCATION_HONG_KONG, 5),
             id          = 553014
@@ -382,7 +407,7 @@
 
         achievement(
             title       = "Hong Kong Champion",
-            description = "Win a race on the Hong Kong 6 track with any team",
+            description = "Finish 1st place on the Hong Kong Level 6 track with any team during One Player or Season gameplay",
             points      = 10,
             trigger     = triggerRaceWin(LOCATION_HONG_KONG, 6),
             id          = 553015
@@ -392,7 +417,7 @@
     // #region Egypt Race Challanges
         achievement(
             title       = "Egypt Beginner",
-            description = "Win a race on the Egypt 1 track with any team",
+            description = "Finish 1st place on the Egypt Level 1 track with any team during One Player or Season gameplay",
             points      = 3,
             trigger     = triggerRaceWin(LOCATION_EGYPT, 1),
             id          = 552476
@@ -400,7 +425,7 @@
 
         achievement(
             title       = "Egypt Experienced",
-            description = "Win a race on the Egypt 2 track with any team",
+            description = "Finish 1st place on the Egypt Level 2 track with any team during One Player or Season gameplay",
             points      = 5,
             trigger     = triggerRaceWin(LOCATION_EGYPT, 2),
             id          = 553016
@@ -408,7 +433,7 @@
 
         achievement(
             title       = "Egypt Profecient",
-            description = "Win a race on the Egypt 3 track with any team",
+            description = "Finish 1st place on the Egypt Level 3 track with any team during One Player or Season gameplay",
             points      = 5,
             trigger     = triggerRaceWin(LOCATION_EGYPT, 3),
             id          = 553017
@@ -416,7 +441,7 @@
 
         achievement(
             title       = "Egypt Expert",
-            description = "Win a race on the Egypt 4 track with any team",
+            description = "Finish 1st place on the Egypt Level 4 track with any team during One Player or Season gameplay",
             points =      10,
             trigger =     triggerRaceWin(LOCATION_EGYPT, 4),
             id          = 553018
@@ -424,7 +449,7 @@
 
         achievement(
             title       = "Egypt Master",
-            description = "Win a race on the Egypt 5 track with any team",
+            description = "Finish 1st place on the Egypt Level 5 track with any team during One Player or Season gameplay",
             points =      10,
             trigger =     triggerRaceWin(LOCATION_EGYPT, 5),
             id          = 553019
@@ -432,7 +457,7 @@
 
         achievement(
             title       = "Egypt Champion",
-            description = "Win a race on the Egypt 6 track with any team",
+            description = "Finish 1st place on the Egypt Level 6 track with any team during One Player or Season gameplay",
             points      = 10,
             trigger     = triggerRaceWin(LOCATION_EGYPT, 6),
             id          = 553020
@@ -505,7 +530,7 @@
 
     function startBestLapLeaderboard(locationId, trackNumber) {
         return
-            activeScreen() == ACTIVE_SCREEN_IN_GAME
+            gameState() == GAME_STATE_IN_GAME
             && playerPointer() > 0x80000000
             && selectedLocation() == locationId
             && selectedRaceTrack() == trackNumber
@@ -515,8 +540,8 @@
 
     function cancelBestLapLeaderboard() {
         return
-            activeScreen() == ACTIVE_SCREEN_EXIT_GAMEPLAY
-            || activeScreen() == ACTIVE_SCREEN_MAIN_MENU
+            gameState() == GAME_STATE_EXIT_GAMEPLAY
+            || gameState() == GAME_STATE_IN_FRONTEND
             || playerGameOver() > 0
             || playerPointer() <= 0x80000000
     }
@@ -576,18 +601,18 @@
     // Single Player
     rich_presence_conditional_display(
         (
-            activeScreen() == ACTIVE_SCREEN_IN_GAME ||
-            activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_MAIN ||
-            activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_PICTURE ||
-            activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_SOUND ||
-            activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_QUIT
+            gameState() == GAME_STATE_IN_GAME ||
+            gameState() == GAME_STATE_PAUSE_MENU_MAIN ||
+            gameState() == GAME_STATE_PAUSE_MENU_PICTURE ||
+            gameState() == GAME_STATE_PAUSE_MENU_SOUND ||
+            gameState() == GAME_STATE_PAUSE_MENU_QUIT
         )
         && playerPointer() != 0
         && selectedPlayMode() == PLAY_MODE_SINGLE_PLAYER,
 
         "Playing Single Race with Team {0} on {1} {2} • Position {3} • Lap {4}/{5}",
 
-        rich_presence_lookup("Team", playerTeamId(), teamLookup, "Unknown"),             // 0 : Team
+        rich_presence_lookup("Team", playerteamID(), teamLookup, "Unknown"),             // 0 : Team
         rich_presence_lookup("Location", selectedLocation(), locationLookup, "Unknown"), // 1 : Location
         rich_presence_macro("Number", selectedRaceTrack()),                              // 2 : Track
         rich_presence_macro("Number", playerPosition()),                                 // 3 : Position
@@ -598,18 +623,18 @@
     // Season Race
     rich_presence_conditional_display(
         (
-            activeScreen() == ACTIVE_SCREEN_IN_GAME ||
-            activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_MAIN ||
-            activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_PICTURE ||
-            activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_SOUND ||
-            activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_QUIT
+            gameState() == GAME_STATE_IN_GAME ||
+            gameState() == GAME_STATE_PAUSE_MENU_MAIN ||
+            gameState() == GAME_STATE_PAUSE_MENU_PICTURE ||
+            gameState() == GAME_STATE_PAUSE_MENU_SOUND ||
+            gameState() == GAME_STATE_PAUSE_MENU_QUIT
         )
         && playerPointer() != 0
         && selectedPlayMode() == PLAY_MODE_SEASON,
 
         "Playing Season Race {3} with Team {0} on {1} {2}",
 
-        rich_presence_lookup("Team", playerTeamId(), teamLookup, "Unknown"),             // 0 : Team
+        rich_presence_lookup("Team", playerteamID(), teamLookup, "Unknown"),             // 0 : Team
         rich_presence_lookup("Location", selectedLocation(), locationLookup, "Unknown"), // 1 : Location
         rich_presence_macro("Number", selectedRaceTrack()),                              // 2 : Track
         rich_presence_macro("Number", currentSeasonRaceNumber())                         // 3 : Season Race
@@ -618,25 +643,25 @@
     // Time Attack
     rich_presence_conditional_display(
         (
-            activeScreen() == ACTIVE_SCREEN_IN_GAME ||
-            activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_MAIN ||
-            activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_PICTURE ||
-            activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_SOUND ||
-            activeScreen() == ACTIVE_SCREEN_PAUSE_MENU_QUIT
+            gameState() == GAME_STATE_IN_GAME ||
+            gameState() == GAME_STATE_PAUSE_MENU_MAIN ||
+            gameState() == GAME_STATE_PAUSE_MENU_PICTURE ||
+            gameState() == GAME_STATE_PAUSE_MENU_SOUND ||
+            gameState() == GAME_STATE_PAUSE_MENU_QUIT
         )
         && playerPointer() != 0
         && selectedPlayMode() == PLAY_MODE_TIME_ATTACK,
 
         "Playing Time Attack with Team {0} on {1} {2}",
 
-        rich_presence_lookup("Team", playerTeamId(), teamLookup, "Unknown"),             // 0 : Team
+        rich_presence_lookup("Team", playerteamID(), teamLookup, "Unknown"),             // 0 : Team
         rich_presence_lookup("Location", selectedLocation(), locationLookup, "Unknown"), // 1 : Location
         rich_presence_macro("Number", selectedRaceTrack())                               // 2 : Track
     )
 
     // Two Player Modes
     rich_presence_conditional_display(
-        activeScreen() == 0
+        gameState() == GAME_STATE_NULL
         && (selectedPlayMode() == PLAY_MODE_SPLIT_SCREEN || selectedPlayMode() == PLAY_MODE_HEAD_TO_HEAD)
         && SplitScreenBottomCarPointer() >= 0x80000000
         && SplitScreenTopCarPointer() >= 0x80000000,
