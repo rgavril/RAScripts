@@ -40,7 +40,7 @@
     TEAM_LUMIERE = 0x04
     TEAM_ROBERTS = 0x05
     TEAM_IVANOV = 0x06
-    TEAM_BAPTISE = 0x07
+    TEAM_BAPTISTE = 0x07
 
     function selectedRaceTrack() => word(0x026918)
 
@@ -153,7 +153,7 @@
         cancelConditions =
             // Cancel if a previous state was loaded or season was quit
             never( frameSeasonPointsDecreased(TEAM_AHMED) )
-            && never( frameSeasonPointsDecreased(TEAM_BAPTISE) )
+            && never( frameSeasonPointsDecreased(TEAM_BAPTISTE) )
             && never( frameSeasonPointsDecreased(TEAM_IVANOV) )
             && never( frameSeasonPointsDecreased(TEAM_LUMIERE) )
             && never( frameSeasonPointsDecreased(TEAM_MORGEN) )
@@ -208,7 +208,7 @@
         cancelConditions =
             // Cancel if a previous state was loaded or season was quit
             never( frameSeasonPointsDecreased(TEAM_AHMED) )
-            && never( frameSeasonPointsDecreased(TEAM_BAPTISE) )
+            && never( frameSeasonPointsDecreased(TEAM_BAPTISTE) )
             && never( frameSeasonPointsDecreased(TEAM_IVANOV) )
             && never( frameSeasonPointsDecreased(TEAM_LUMIERE) )
             && never( frameSeasonPointsDecreased(TEAM_MORGEN) )
@@ -219,7 +219,7 @@
         return startConditions && cancelConditions && requiredConditions
         && (
             seasonWinerConditions[TEAM_AHMED]
-            || seasonWinerConditions[TEAM_BAPTISE]
+            || seasonWinerConditions[TEAM_BAPTISTE]
             || seasonWinerConditions[TEAM_IVANOV]
             || seasonWinerConditions[TEAM_LUMIERE]
             || seasonWinerConditions[TEAM_MORGEN]
@@ -589,10 +589,10 @@
         )
 
         achievement(
-            title       = "Baptise's Ultimate Challenge",
-            description = "Win a Season with Team Baptise where every track raced is at Level 6",
+            title       = "Baptiste's Ultimate Challenge",
+            description = "Win a Season with Team Baptiste where every track raced is at Level 6",
             points      = 25,
-            trigger     = triggerUltimateSeason(TEAM_BAPTISE),
+            trigger     = triggerUltimateSeason(TEAM_BAPTISTE),
             id          = 553219
         )
     // #endregion Ultimate Season Wins
@@ -602,6 +602,7 @@
         description = "Finish a Season on the 1st place using any team",
         points      = 5,
         trigger     = triggerSeasonWin(),
+        type        = "win_condition",
         id          = 553226
     )
 // #endregion Achievements
@@ -701,7 +702,7 @@
         4: "Lumiere",
         5: "Roberts",
         6: "Ivanov",
-        7: "Baptise"
+        7: "Baptiste"
     }
 
     locationLookup = {
