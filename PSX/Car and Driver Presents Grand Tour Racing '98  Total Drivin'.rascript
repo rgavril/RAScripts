@@ -167,15 +167,10 @@
             && once( frameProgressedToSeasonRace(6) )
 
         cancelConditions =
-            // Cancel if a previous state was loaded or season was quit
-            never( frameSeasonPointsDecreased(TEAM_AHMED) )
-            && never( frameSeasonPointsDecreased(TEAM_BAPTISTE) )
-            && never( frameSeasonPointsDecreased(TEAM_IVANOV) )
-            && never( frameSeasonPointsDecreased(TEAM_LUMIERE) )
-            && never( frameSeasonPointsDecreased(TEAM_MORGEN) )
-            && never( frameSeasonPointsDecreased(TEAM_ROBERTS) )
-            && never( frameSeasonPointsDecreased(TEAM_ROSSI) )
-            && never( frameSeasonPointsDecreased(TEAM_XU) )
+            // Cancel was season was aborted or a old state was loaded
+            never (
+                any_of(range(0,7), teamID => frameSeasonPointsDecreased(teamID))
+            )
 
             // Cancel if a season race is started in any location less than level 6
             && never(
@@ -191,15 +186,9 @@
     function triggerSeasonWin() {
         winConditions =
             whenLastSeasonRaceResultsAppeared()
-            && (
-                ( currentSeasonTeam() == TEAM_AHMED    && isTeamOnTopSeasonPosition(TEAM_AHMED)    ) ||
-                ( currentSeasonTeam() == TEAM_BAPTISTE && isTeamOnTopSeasonPosition(TEAM_BAPTISTE) ) ||
-                ( currentSeasonTeam() == TEAM_IVANOV   && isTeamOnTopSeasonPosition(TEAM_IVANOV)   ) ||
-                ( currentSeasonTeam() == TEAM_LUMIERE  && isTeamOnTopSeasonPosition(TEAM_LUMIERE)  ) ||
-                ( currentSeasonTeam() == TEAM_MORGEN   && isTeamOnTopSeasonPosition(TEAM_MORGEN)   ) ||
-                ( currentSeasonTeam() == TEAM_ROBERTS  && isTeamOnTopSeasonPosition(TEAM_ROBERTS)  ) ||
-                ( currentSeasonTeam() == TEAM_ROSSI    && isTeamOnTopSeasonPosition(TEAM_ROSSI)    ) ||
-                ( currentSeasonTeam() == TEAM_XU       && isTeamOnTopSeasonPosition(TEAM_XU)       )
+            && any_of( range(0,7), teamID => 
+                currentSeasonTeam() == teamID 
+                && isTeamOnTopSeasonPosition(teamID)
             )
 
         checkpointConditions =
@@ -211,17 +200,24 @@
             && once( frameProgressedToSeasonRace(6) )
 
         cancelConditions =
-            // Cancel if a previous state was loaded or season was quit
-            never( frameSeasonPointsDecreased(TEAM_AHMED) )
-            && never( frameSeasonPointsDecreased(TEAM_BAPTISTE) )
-            && never( frameSeasonPointsDecreased(TEAM_IVANOV) )
-            && never( frameSeasonPointsDecreased(TEAM_LUMIERE) )
-            && never( frameSeasonPointsDecreased(TEAM_MORGEN) )
-            && never( frameSeasonPointsDecreased(TEAM_ROBERTS) )
-            && never( frameSeasonPointsDecreased(TEAM_ROSSI) )
-            && never( frameSeasonPointsDecreased(TEAM_XU) )
+            // Cancel was season was aborted or a old state was loaded
+            never (
+                any_of(range(0,7), teamID => frameSeasonPointsDecreased(teamID))
+            )
 
         return checkpointConditions && cancelConditions && winConditions
+    }
+
+    function triggerGoldSeason() {
+        return
+            triggerSeasonWin()
+
+            // Cancel when selected team has finished a race but is not on top position
+            && none_of(range(0,7), teamID =>
+                currentSeasonTeam() == teamID
+                && frameSeasonRaceResultsAppeared()
+                && previousRacePosition(teamID) != 1
+            )
     }
 // #endregion Achivement Triggers
 
@@ -597,6 +593,15 @@
         description = "Finish a Season on the 1st place using any team",
         points      = 5,
         trigger     = triggerSeasonWin(),
+        type        = "win_condition",
+        id          = 553226
+    )
+
+    achievement(
+        title       = "Gold Season",
+        description = "Win a Season by finishing first on all six races",
+        points      = 10,
+        trigger     = triggerGoldSeason(),
         type        = "win_condition",
         id          = 553226
     )
