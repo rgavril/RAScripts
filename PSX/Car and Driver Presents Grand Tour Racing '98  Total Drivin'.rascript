@@ -105,6 +105,36 @@
     }
 // #endregion Frame Functions
 
+// #region Complex Conditions
+    function isTeamOnTopSeasonPosition(teamID) {
+        betterSeasonPosition = always_true()
+
+        // Iterate thorough all teams
+        for otherTeamID in range(0,7) {
+            if (otherTeamID != teamID) {
+                betterSeasonPosition = betterSeasonPosition
+                    && __ornext(
+                        (
+                            currentSeasonPoints(teamID) == currentSeasonPoints(otherTeamID)
+                            && previousRacePosition(teamID) < previousRacePosition(otherTeamID)
+                        ) || (
+                            currentSeasonPoints(teamID) > currentSeasonPoints(otherTeamID)
+                        )
+                    )
+            }
+        }
+
+        return betterSeasonPosition
+    }
+
+    function whenLastSeasonRaceResultsAppeared() {
+        return
+            selectedPlayMode() == PLAY_MODE_SEASON
+            && currentSeasonRaceNumber() == 6
+            && frameSeasonRaceResultsAppeared()
+    }
+// #endregion Complex Conditions
+
 // #region Achivement Triggers
     function triggerRaceWin(location, track) {
         return
@@ -123,26 +153,12 @@
     }
 
     function triggerUltimateSeason(teamID) {
-        requiredConditions =
-            selectedPlayMode() == PLAY_MODE_SEASON
-            && currentSeasonTeam() == teamID
-            && currentSeasonRaceNumber() == 6
-            && frameSeasonRaceResultsAppeared()
+        winConditions =
+            currentSeasonTeam() == teamID
+            && whenLastSeasonRaceResultsAppeared()
+            && isTeamOnTopSeasonPosition(teamID)
 
-        seasonWinerConditions = always_true()
-            for otherTeamID in range(0,7) {
-                if (otherTeamID != teamID) {
-                    seasonWinerConditions = seasonWinerConditions &&
-                        ((
-                            currentSeasonPoints(teamID) > currentSeasonPoints(otherTeamID)
-                        ) || (
-                            currentSeasonPoints(teamID) == currentSeasonPoints(otherTeamID)
-                            && previousRacePosition(teamID) < previousRacePosition(otherTeamID)
-                        ))
-                }
-            }
-
-        startConditions =
+        checkpointConditions =
             // Track that a progression was made through all 6 season races
             once( frameProgressedToSeasonRace(2) )
             && once( frameProgressedToSeasonRace(3) )
@@ -160,6 +176,7 @@
             && never( frameSeasonPointsDecreased(TEAM_ROBERTS) )
             && never( frameSeasonPointsDecreased(TEAM_ROSSI) )
             && never( frameSeasonPointsDecreased(TEAM_XU) )
+
             // Cancel if a season race is started in any location less than level 6
             && never(
                 gameState() == GAME_STATE_IN_GAME
@@ -168,36 +185,24 @@
                 && currentRaceTrack() < 6
             )
 
-        return startConditions && cancelConditions && requiredConditions && (seasonWinerConditions)
+        return checkpointConditions && cancelConditions && winConditions
     }
 
     function triggerSeasonWin() {
-        requiredConditions =
-            selectedPlayMode() == PLAY_MODE_SEASON
-            && currentSeasonRaceNumber() == 6
-            && frameSeasonRaceResultsAppeared()
+        winConditions =
+            whenLastSeasonRaceResultsAppeared()
+            && (
+                ( currentSeasonTeam() == TEAM_AHMED    && isTeamOnTopSeasonPosition(TEAM_AHMED)    ) ||
+                ( currentSeasonTeam() == TEAM_BAPTISTE && isTeamOnTopSeasonPosition(TEAM_BAPTISTE) ) ||
+                ( currentSeasonTeam() == TEAM_IVANOV   && isTeamOnTopSeasonPosition(TEAM_IVANOV)   ) ||
+                ( currentSeasonTeam() == TEAM_LUMIERE  && isTeamOnTopSeasonPosition(TEAM_LUMIERE)  ) ||
+                ( currentSeasonTeam() == TEAM_MORGEN   && isTeamOnTopSeasonPosition(TEAM_MORGEN)   ) ||
+                ( currentSeasonTeam() == TEAM_ROBERTS  && isTeamOnTopSeasonPosition(TEAM_ROBERTS)  ) ||
+                ( currentSeasonTeam() == TEAM_ROSSI    && isTeamOnTopSeasonPosition(TEAM_ROSSI)    ) ||
+                ( currentSeasonTeam() == TEAM_XU       && isTeamOnTopSeasonPosition(TEAM_XU)       )
+            )
 
-        seasonWinerConditions = []
-
-        for teamID in range(0,7) {
-            teamWinCondition =
-                currentSeasonTeam() == teamID
-
-            for otherTeamID in range(0,7) {
-                if (otherTeamID != teamID) {
-                    teamWinCondition = teamWinCondition &&
-                        __ornext(
-                            ( currentSeasonPoints(teamID) == currentSeasonPoints(otherTeamID) && previousRacePosition(teamID) < previousRacePosition(otherTeamID))
-                            ||
-                            ( currentSeasonPoints(teamID) > currentSeasonPoints(otherTeamID) )
-                        )
-                }
-            }
-
-            array_push(seasonWinerConditions, teamWinCondition)
-        }
-
-        startConditions =
+        checkpointConditions =
             // Track that a progression was made through all 6 season races
             once( frameProgressedToSeasonRace(2) )
             && once( frameProgressedToSeasonRace(3) )
@@ -216,17 +221,7 @@
             && never( frameSeasonPointsDecreased(TEAM_ROSSI) )
             && never( frameSeasonPointsDecreased(TEAM_XU) )
 
-        return startConditions && cancelConditions && requiredConditions
-        && (
-            seasonWinerConditions[TEAM_AHMED]
-            || seasonWinerConditions[TEAM_BAPTISTE]
-            || seasonWinerConditions[TEAM_IVANOV]
-            || seasonWinerConditions[TEAM_LUMIERE]
-            || seasonWinerConditions[TEAM_MORGEN]
-            || seasonWinerConditions[TEAM_ROBERTS]
-            || seasonWinerConditions[TEAM_ROSSI]
-            || seasonWinerConditions[TEAM_XU]
-        )
+        return checkpointConditions && cancelConditions && winConditions
     }
 // #endregion Achivement Triggers
 
