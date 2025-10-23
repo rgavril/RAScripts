@@ -183,7 +183,7 @@
         return checkpointConditions && cancelConditions && winConditions
     }
 
-    function triggerSeasonWin() {
+    function triggerTopSeason() {
         winConditions =
             whenLastSeasonRaceResultsAppeared()
             && any_of( range(0,7), teamID => 
@@ -210,7 +210,7 @@
 
     function triggerGoldSeason() {
         return
-            triggerSeasonWin()
+            triggerTopSeason()
 
             // Cancel when selected team has finished a race but is not on top position
             && none_of(range(0,7), teamID =>
@@ -592,7 +592,7 @@
         title       = "Top Season",
         description = "Finish a Season on the 1st place using any team",
         points      = 5,
-        trigger     = triggerSeasonWin(),
+        trigger     = triggerTopSeason(),
         type        = "win_condition",
         id          = 553226
     )
