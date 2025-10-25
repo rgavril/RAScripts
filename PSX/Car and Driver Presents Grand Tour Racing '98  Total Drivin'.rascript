@@ -71,6 +71,26 @@
     function SplitScreenBottomCarPointer() => dword(0x0c26a4)
 // #endregion Memory Addresses
 
+    teamLookup = {
+        0: "Ahmed",
+        1: "Morgen",
+        2: "Rossi",
+        3: "Xu",
+        4: "Lumiere",
+        5: "Roberts",
+        6: "Ivanov",
+        7: "Baptiste"
+    }
+
+    locationLookup = {
+        0: "Moscow",
+        1: "Easter Island",
+        2: "Switzerland",
+        3: "Scotland",
+        4: "Hong Kong",
+        5: "Egypt"
+    }
+
 // #region Frame Functions
     function frameRaceCountdownTimerStarted() {
         return
@@ -105,6 +125,17 @@
     function frameSeasonPointsDecreased(teamID) {
         return
             prev(currentSeasonPoints(teamID)) > currentSeasonPoints(teamID)
+    }
+
+    function frameLapCompleted() {
+        return
+            playerLap() == prev(playerLap()) + 1
+    }
+
+    function frameRaceCompleted() {
+        return
+            prev(playerLap()) == currentRaceTotalLaps()
+            && playerLap() == currentRaceTotalLaps() + 1
     }
 // #endregion Frame Functions
 
@@ -143,9 +174,31 @@
         return
             currentRaceLocation() == location
             && currentRaceTrack() == track
-            && playerPosition() == 1
-            && playerLap() == currentRaceTotalLaps() + 1
             && playerPointer() != 0
+
+            && frameRaceCompleted()
+            && playerPosition() == 1
+
+            && once ( frameGameStateSwitchedToInGame())
+            && once ( frameRaceCountdownTimerStarted() )
+
+            && never( gameState() == GAME_STATE_DEMO_GAMEPLAY )
+            && never( gameState() == GAME_STATE_EXIT_GAMEPLAY )
+            && never( playerGameOver() > 0)
+    }
+
+    function triggerTimeTrial(location, track, time) {
+        return
+            currentRaceLocation() == location
+            && currentRaceTrack() == track
+            && playerPointer() != 0
+            
+            && frameLapCompleted()
+            && (
+                ( playerLap() == 2 && playerLap1Time() < (time[0]*60*100 + time[1]*100 + time[2]) * 3/10 )
+                ||
+                ( playerLap() > 2 && playerLap2Time() < (time[0]*60*100 + time[1]*100 + time[2]) * 3/10 )
+            )
 
             && once ( frameGameStateSwitchedToInGame())
             && once ( frameRaceCountdownTimerStarted() )
@@ -546,6 +599,77 @@
         )
     // #endregion Egypt Race Challanges
 
+    // #region Time Attack Challanges
+        timeAttackAchievements = [
+            { "id": 000000, "location": LOCATION_MOSCOW,        "track": 1, "time": [1, 21, 82] },
+            { "id": 000000, "location": LOCATION_MOSCOW,        "track": 2, "time": [1, 26, 91] },
+            { "id": 000000, "location": LOCATION_MOSCOW,        "track": 3, "time": [0, 55, 68] },
+            { "id": 000000, "location": LOCATION_MOSCOW,        "track": 4, "time": [1, 02, 99] },
+            { "id": 000000, "location": LOCATION_MOSCOW,        "track": 5, "time": [1, 11, 45] },
+            { "id": 000000, "location": LOCATION_MOSCOW,        "track": 6, "time": [1, 22, 36] },
+            { "id": 000000, "location": LOCATION_EASTER_ISLAND, "track": 1, "time": [1, 18, 90] },
+            { "id": 000000, "location": LOCATION_EASTER_ISLAND, "track": 2, "time": [1, 25, 45] },
+            { "id": 000000, "location": LOCATION_EASTER_ISLAND, "track": 3, "time": [1, 18, 32] },
+            { "id": 000000, "location": LOCATION_EASTER_ISLAND, "track": 4, "time": [1, 20, 01] },
+            { "id": 000000, "location": LOCATION_EASTER_ISLAND, "track": 5, "time": [1, 29, 98] },
+            { "id": 000000, "location": LOCATION_EASTER_ISLAND, "track": 6, "time": [1, 36, 61] },
+            { "id": 000000, "location": LOCATION_SWITZERLAND,   "track": 1, "time": [1, 27, 75] },
+            { "id": 000000, "location": LOCATION_SWITZERLAND,   "track": 2, "time": [1, 25, 20] },
+            { "id": 000000, "location": LOCATION_SWITZERLAND,   "track": 3, "time": [1, 21, 04] },
+            { "id": 000000, "location": LOCATION_SWITZERLAND,   "track": 4, "time": [1, 57, 22] },
+            { "id": 000000, "location": LOCATION_SWITZERLAND,   "track": 5, "time": [1, 59, 80] },
+            { "id": 000000, "location": LOCATION_SWITZERLAND,   "track": 6, "time": [1, 55, 61] },
+            { "id": 000000, "location": LOCATION_SCOTLAND,      "track": 1, "time": [1, 34, 41] },
+            { "id": 000000, "location": LOCATION_SCOTLAND,      "track": 2, "time": [1, 33, 43] },
+            { "id": 000000, "location": LOCATION_SCOTLAND,      "track": 3, "time": [1, 31, 79] },
+            { "id": 000000, "location": LOCATION_SCOTLAND,      "track": 4, "time": [1, 38, 29] },
+            { "id": 000000, "location": LOCATION_SCOTLAND,      "track": 5, "time": [1, 35, 31] },
+            { "id": 000000, "location": LOCATION_SCOTLAND,      "track": 6, "time": [1, 52, 45] },
+            { "id": 000000, "location": LOCATION_EGYPT,         "track": 1, "time": [1, 59, 09] },
+            { "id": 000000, "location": LOCATION_EGYPT,         "track": 2, "time": [2, 02, 75] },
+            { "id": 000000, "location": LOCATION_EGYPT,         "track": 3, "time": [2, 26, 54] },
+            { "id": 000000, "location": LOCATION_EGYPT,         "track": 4, "time": [1, 49, 72] },
+            { "id": 000000, "location": LOCATION_EGYPT,         "track": 5, "time": [2, 20, 67] },
+            { "id": 000000, "location": LOCATION_EGYPT,         "track": 6, "time": [2, 18, 52] },
+            { "id": 000000, "location": LOCATION_HONG_KONG,     "track": 1, "time": [1, 02, 67] },
+            { "id": 000000, "location": LOCATION_HONG_KONG,     "track": 2, "time": [0, 58, 61] },
+            { "id": 000000, "location": LOCATION_HONG_KONG,     "track": 3, "time": [0, 39, 57] },
+            { "id": 000000, "location": LOCATION_HONG_KONG,     "track": 4, "time": [0, 41, 26] },
+            { "id": 000000, "location": LOCATION_HONG_KONG,     "track": 5, "time": [1, 09, 34] },
+            { "id": 000000, "location": LOCATION_HONG_KONG,     "track": 6, "time": [1, 13, 80] },
+        ]
+
+        for definition in timeAttackAchievements {
+            trackDifficulty = ["", "Beginer", "Experienced", "Proficient", "Expert", "Master", "Champion"]
+
+            genTitle = ""
+            genTitle = genTitle + locationLookup[ definition["location"] ]
+            genTitle = genTitle + " "
+            // genTitle = genTitle + trackDifficulty[ definition["track"] ]
+            genTitle = genTitle + definition["track"]
+            genTitle = genTitle + " Time Trial"
+
+            genDescription = ""
+            genDescription = genDescription + "Finish a lap under"
+            genDescription = genDescription + " " 
+            genDescription = genDescription + definition["time"][0] + ":" + definition["time"][1] + ":" + definition["time"][2]
+            genDescription = genDescription + " "
+            genDescription = genDescription + "on the "
+            genDescription = genDescription + locationLookup[ definition["location"] ]
+            genDescription = genDescription + " "
+            genDescription = genDescription + definition["track"]
+            genDescription = genDescription + " "
+            genDescription = genDescription + "track"
+
+            achievement(
+                title = genTitle,
+                description = genDescription,
+                points = 5,
+                trigger = triggerTimeTrial(definition["location"], definition["track"], definition["time"])
+            )
+        }
+    // #endregion
+
     // #region Ultimate Season Wins
         achievement(
             title       = "Ahmed's Ultimate Challenge",
@@ -732,26 +856,6 @@
 // #endregion Leaderboards
 
 // #region Rich Presence
-    teamLookup = {
-        0: "Ahmed",
-        1: "Morgen",
-        2: "Rossi",
-        3: "Xu",
-        4: "Lumiere",
-        5: "Roberts",
-        6: "Ivanov",
-        7: "Baptiste"
-    }
-
-    locationLookup = {
-        0: "Moscow",
-        1: "Easter Island",
-        2: "Switzerland",
-        3: "Scotland",
-        4: "Hong Kong",
-        5: "Egypt"
-    }
-
     playModeLookup = {
         0: "single player",
         1: "time attack",
