@@ -638,7 +638,7 @@
 
     achievement(
         title       = "Three Laps Magic",
-        description = "Win 3 lap race while delaying your start for at least 20 seconds",
+        description = "Win 3 lap race while delaying your start for at least 30 seconds",
         points      = 10,
         trigger     = triggerLapMagic(laps=3, delay=30),
         id          = 554003
