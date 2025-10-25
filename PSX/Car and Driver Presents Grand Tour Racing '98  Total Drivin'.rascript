@@ -61,6 +61,9 @@
     function playerLap1Time() => dword(tbyte(0x0b70f8)+0x57c)
     function playerLap2Time() => dword(tbyte(0x0b70f8)+0x580)
     function playerLap3Time() => dword(tbyte(0x0b70f8)+0x584)
+    function playerRaceTime() => dword(tbyte(0x0b70f8)+0x578)
+
+    function speed() => word(0x0bca1c)
 
     function raceCountdownTimer() => dword(0x0bc394)
 
@@ -150,6 +153,27 @@
             && never( gameState() == GAME_STATE_DEMO_GAMEPLAY )
             && never( gameState() == GAME_STATE_EXIT_GAMEPLAY )
             && never( playerGameOver() > 0)
+    }
+
+    function triggerLapMagic(laps, delay) {
+        winConditions =
+            playerPosition() == 1
+            && playerLap() == currentRaceTotalLaps() + 1
+
+        primingConditions =
+            playerPointer() != 0
+            && playerRaceTime() > delay * 3/10 * 100
+            && currentRaceTotalLaps() == laps
+            && once ( frameGameStateSwitchedToInGame() )
+            && once ( frameRaceCountdownTimerStarted() )
+
+        cancelConditions =
+            never( gameState() == GAME_STATE_DEMO_GAMEPLAY )
+            && never( gameState() == GAME_STATE_EXIT_GAMEPLAY )
+            && never( playerGameOver() > 0 )
+            && never( speed() != 0 && playerRaceTime() <= delay * 3/10 * 100 )
+
+        return primingConditions && cancelConditions && trigger_when(winConditions)
     }
 
     function triggerUltimateSeason(teamID) {
@@ -597,13 +621,27 @@
         id          = 553226
     )
 
+    // achievement(
+    //     title       = "Gold Season",
+    //     description = "Win a Season by finishing first on all six races",
+    //     points      = 10,
+    //     trigger     = triggerGoldSeason(),
+    // )
+
     achievement(
-        title       = "Gold Season",
-        description = "Win a Season by finishing first on all six races",
+        title       = "Two Laps Magic",
+        description = "Win 2 lap race while delaying your start for at least 20 seconds",
+        points      = 5,
+        trigger     = triggerLapMagic(laps=2, delay=20),
+        id          = 554004
+    )
+
+    achievement(
+        title       = "Three Laps Magic",
+        description = "Win 3 lap race while delaying your start for at least 20 seconds",
         points      = 10,
-        trigger     = triggerGoldSeason(),
-        type        = "win_condition",
-        id          = 553226
+        trigger     = triggerLapMagic(laps=3, delay=30),
+        id          = 554003
     )
 // #endregion Achievements
 
