@@ -369,6 +369,35 @@
         }
     // #endregion Race Challanges
 
+    // #region Hidden Track Challanges
+        hiddenTrackAchivements = [
+            { "id": 0, "location": LOCATION_MOSCOW },
+            { "id": 0, "location": LOCATION_EASTER_ISLAND },
+            { "id": 0, "location": LOCATION_SWITZERLAND },
+            { "id": 0, "location": LOCATION_SCOTLAND },
+            { "id": 0, "location": LOCATION_EGYPT },
+            { "id": 0, "location": LOCATION_HONG_KONG },
+        ]
+
+        for definition in hiddenTrackAchivements {
+            genTitle = ""
+            genTitle = genTitle + locationLookup[ definition["location"] ]
+            genTitle = genTitle + " "
+            genTitle = genTitle + "Secret Winner"
+
+            genDescription = ""
+            genDescription = genDescription + "Finish 1st place on "
+            genDescription = genDescription + locationLookup[ definition["location"] ]
+            genDescription = genDescription + "'s hidden track"
+
+            achievement(
+                title = genTitle,
+                description = genDescription,
+                points = 10,
+                trigger = triggerRaceWin(definition["location"], 7)
+            )
+        }
+    // #endregion Hidden Track Challanges
 
     // #region Time Attack Challanges
         timeAttackAchievements = [
