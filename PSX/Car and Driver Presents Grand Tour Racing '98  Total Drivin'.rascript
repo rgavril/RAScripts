@@ -170,6 +170,22 @@
 // #endregion Complex Conditions
 
 // #region Achivement Triggers
+    function triggerRaceFinish(location, track) {
+        return
+            currentRaceLocation() == location
+            && currentRaceTrack() == track
+            && playerPointer() != 0
+
+            && frameRaceCompleted()
+
+            && once ( frameGameStateSwitchedToInGame())
+            && once ( frameRaceCountdownTimerStarted() )
+
+            && never( gameState() == GAME_STATE_DEMO_GAMEPLAY )
+            && never( gameState() == GAME_STATE_EXIT_GAMEPLAY )
+            && never( playerGameOver() > 0)
+    }
+
     function triggerRaceWin(location, track) {
         return
             currentRaceLocation() == location
@@ -371,72 +387,73 @@
 
     // #region Hidden Track Challanges
         hiddenTrackAchivements = [
-            { "id": 0, "location": LOCATION_MOSCOW },
-            { "id": 0, "location": LOCATION_EASTER_ISLAND },
-            { "id": 0, "location": LOCATION_SWITZERLAND },
-            { "id": 0, "location": LOCATION_SCOTLAND },
-            { "id": 0, "location": LOCATION_EGYPT },
-            { "id": 0, "location": LOCATION_HONG_KONG },
+            { "id": 554955, "location": LOCATION_MOSCOW },
+            { "id": 554956, "location": LOCATION_EASTER_ISLAND },
+            { "id": 554957, "location": LOCATION_SWITZERLAND },
+            { "id": 554958, "location": LOCATION_SCOTLAND },
+            { "id": 554959, "location": LOCATION_EGYPT },
+            { "id": 554960, "location": LOCATION_HONG_KONG },
         ]
 
         for definition in hiddenTrackAchivements {
             genTitle = ""
             genTitle = genTitle + locationLookup[ definition["location"] ]
             genTitle = genTitle + " "
-            genTitle = genTitle + "Secret Winner"
+            genTitle = genTitle + "Secret Track"
 
             genDescription = ""
-            genDescription = genDescription + "Finish 1st place on "
+            genDescription = genDescription + "Discover and finish a race on "
             genDescription = genDescription + locationLookup[ definition["location"] ]
             genDescription = genDescription + "'s hidden track"
 
             achievement(
+                id = definition["id"],
                 title = genTitle,
                 description = genDescription,
-                points = 10,
-                trigger = triggerRaceWin(definition["location"], 7)
+                points = 5,
+                trigger = triggerRaceFinish(definition["location"], 7)
             )
         }
     // #endregion Hidden Track Challanges
 
     // #region Time Attack Challanges
         timeAttackAchievements = [
-            { "id": 554481, "location": LOCATION_MOSCOW,        "track": 1, "time": [1, 20, 44] },
-            { "id": 554482, "location": LOCATION_MOSCOW,        "track": 2, "time": [1, 25, 50] },
-            { "id": 554483, "location": LOCATION_MOSCOW,        "track": 3, "time": [0, 54, 74] },
-            { "id": 554484, "location": LOCATION_MOSCOW,        "track": 4, "time": [1, 01, 92] },
-            { "id": 554485, "location": LOCATION_MOSCOW,        "track": 5, "time": [1, 10, 25] },
-            { "id": 554486, "location": LOCATION_MOSCOW,        "track": 6, "time": [1, 20, 99] },
-            { "id": 554487, "location": LOCATION_EASTER_ISLAND, "track": 1, "time": [1, 17, 60] },
-            { "id": 554488, "location": LOCATION_EASTER_ISLAND, "track": 2, "time": [1, 23, 99] },
-            { "id": 554489, "location": LOCATION_EASTER_ISLAND, "track": 3, "time": [1, 16, 91] },
-            { "id": 554490, "location": LOCATION_EASTER_ISLAND, "track": 4, "time": [1, 18, 56] },
-            { "id": 554491, "location": LOCATION_EASTER_ISLAND, "track": 5, "time": [1, 28, 45] },
-            { "id": 554492, "location": LOCATION_EASTER_ISLAND, "track": 6, "time": [1, 34, 90] },
-            { "id": 554493, "location": LOCATION_SWITZERLAND,   "track": 1, "time": [1, 26, 27] },
-            { "id": 554494, "location": LOCATION_SWITZERLAND,   "track": 2, "time": [1, 23, 81] },
-            { "id": 554495, "location": LOCATION_SWITZERLAND,   "track": 3, "time": [1, 19, 69] },
-            { "id": 554496, "location": LOCATION_SWITZERLAND,   "track": 4, "time": [1, 55, 15] },
-            { "id": 554497, "location": LOCATION_SWITZERLAND,   "track": 5, "time": [1, 57, 70] },
-            { "id": 554498, "location": LOCATION_SWITZERLAND,   "track": 6, "time": [1, 53, 53] },
-            { "id": 554499, "location": LOCATION_SCOTLAND,      "track": 1, "time": [1, 32, 84] },
-            { "id": 554500, "location": LOCATION_SCOTLAND,      "track": 2, "time": [1, 31, 87] },
-            { "id": 554501, "location": LOCATION_SCOTLAND,      "track": 3, "time": [1, 30, 27] },
-            { "id": 554502, "location": LOCATION_SCOTLAND,      "track": 4, "time": [1, 36, 64] },
-            { "id": 554503, "location": LOCATION_SCOTLAND,      "track": 5, "time": [1, 33, 72] },
-            { "id": 554504, "location": LOCATION_SCOTLAND,      "track": 6, "time": [1, 50, 38] },
-            { "id": 554505, "location": LOCATION_EGYPT,         "track": 1, "time": [1, 57, 77] },
-            { "id": 554506, "location": LOCATION_EGYPT,         "track": 2, "time": [2, 01, 38] },
-            { "id": 554507, "location": LOCATION_EGYPT,         "track": 3, "time": [2, 24, 89] },
-            { "id": 554508, "location": LOCATION_EGYPT,         "track": 4, "time": [1, 48, 45] },
-            { "id": 554509, "location": LOCATION_EGYPT,         "track": 5, "time": [2, 19, 02] },
-            { "id": 554510, "location": LOCATION_EGYPT,         "track": 6, "time": [2, 16, 89] },
-            { "id": 554511, "location": LOCATION_HONG_KONG,     "track": 1, "time": [1, 01, 60] },
-            { "id": 554512, "location": LOCATION_HONG_KONG,     "track": 2, "time": [0, 57, 61] },
-            { "id": 554513, "location": LOCATION_HONG_KONG,     "track": 3, "time": [0, 38, 89] },
-            { "id": 554514, "location": LOCATION_HONG_KONG,     "track": 4, "time": [0, 40, 55] },
-            { "id": 554515, "location": LOCATION_HONG_KONG,     "track": 5, "time": [1, 08, 17] },
-            { "id": 554516, "location": LOCATION_HONG_KONG,     "track": 6, "time": [1, 12, 57] },
+            { "id": 554481, "location": LOCATION_MOSCOW,        "track": 1, "time": [1, 32, 26] },
+            { "id": 554482, "location": LOCATION_MOSCOW,        "track": 2, "time": [1, 33, 86] },
+            { "id": 554483, "location": LOCATION_MOSCOW,        "track": 3, "time": [1, 03, 10] },
+            { "id": 554484, "location": LOCATION_MOSCOW,        "track": 4, "time": [1, 11, 66] },
+            { "id": 554485, "location": LOCATION_MOSCOW,        "track": 5, "time": [1, 20, 10] },
+            { "id": 554486, "location": LOCATION_MOSCOW,        "track": 6, "time": [1, 31, 80] },
+            { "id": 554487, "location": LOCATION_EASTER_ISLAND, "track": 1, "time": [1, 26, 73] },
+            { "id": 554488, "location": LOCATION_EASTER_ISLAND, "track": 2, "time": [1, 37, 80] },
+            { "id": 554489, "location": LOCATION_EASTER_ISLAND, "track": 3, "time": [1, 34, 40] },
+            { "id": 554490, "location": LOCATION_EASTER_ISLAND, "track": 4, "time": [1, 36, 76] },
+            { "id": 554491, "location": LOCATION_EASTER_ISLAND, "track": 5, "time": [1, 41, 96] },
+            { "id": 554492, "location": LOCATION_EASTER_ISLAND, "track": 6, "time": [1, 53, 66] },
+            { "id": 554493, "location": LOCATION_SWITZERLAND,   "track": 1, "time": [1, 38, 33] },
+            { "id": 554494, "location": LOCATION_SWITZERLAND,   "track": 2, "time": [1, 32, 70] },
+            { "id": 554495, "location": LOCATION_SWITZERLAND,   "track": 3, "time": [1, 30, 16] },
+            { "id": 554496, "location": LOCATION_SWITZERLAND,   "track": 4, "time": [2, 17, 63] },
+            { "id": 554497, "location": LOCATION_SWITZERLAND,   "track": 5, "time": [2, 19, 93] },
+            { "id": 554498, "location": LOCATION_SWITZERLAND,   "track": 6, "time": [2, 18, 46] },
+            { "id": 554499, "location": LOCATION_SCOTLAND,      "track": 1, "time": [1, 44, 40] },
+            { "id": 554500, "location": LOCATION_SCOTLAND,      "track": 2, "time": [1, 43, 90] },
+            { "id": 554501, "location": LOCATION_SCOTLAND,      "track": 3, "time": [1, 41, 30] },
+            { "id": 554502, "location": LOCATION_SCOTLAND,      "track": 4, "time": [1, 49, 53] },
+            { "id": 554503, "location": LOCATION_SCOTLAND,      "track": 5, "time": [1, 45, 73] },
+            { "id": 554504, "location": LOCATION_SCOTLAND,      "track": 6, "time": [2, 17, 93] },
+            { "id": 554505, "location": LOCATION_EGYPT,         "track": 1, "time": [2, 11, 40] },
+            { "id": 554506, "location": LOCATION_EGYPT,         "track": 2, "time": [2, 17, 63] },
+            { "id": 554507, "location": LOCATION_EGYPT,         "track": 3, "time": [2, 44, 53] },
+            { "id": 554508, "location": LOCATION_EGYPT,         "track": 4, "time": [2, 06, 30] },
+            { "id": 554509, "location": LOCATION_EGYPT,         "track": 5, "time": [2, 44, 63] },
+            { "id": 554510, "location": LOCATION_EGYPT,         "track": 6, "time": [2, 42, 96] },
+            { "id": 554511, "location": LOCATION_HONG_KONG,     "track": 1, "time": [1, 11, 16] },
+            { "id": 554512, "location": LOCATION_HONG_KONG,     "track": 2, "time": [1, 06, 73] },
+            { "id": 554513, "location": LOCATION_HONG_KONG,     "track": 3, "time": [0, 45, 63] },
+            { "id": 554514, "location": LOCATION_HONG_KONG,     "track": 4, "time": [0, 47, 20] },
+            { "id": 554515, "location": LOCATION_HONG_KONG,     "track": 5, "time": [1, 17, 63] },
+            { "id": 554516, "location": LOCATION_HONG_KONG,     "track": 6, "time": [1, 21, 83] },
         ]
 
         for definition in timeAttackAchievements {
@@ -637,10 +654,11 @@
 
     function cancelBestLapLeaderboard() {
         return
-            gameState() == GAME_STATE_EXIT_GAMEPLAY
-            || gameState() == GAME_STATE_IN_FRONTEND
-            || playerGameOver() > 0
-            || playerPointer() == 0
+            gameState() == GAME_STATE_EXIT_GAMEPLAY     // When player exited the gameplay
+            || gameState() == GAME_STATE_IN_FRONTEND    // When in frontend
+            || playerGameOver() > 0                     // When player went game over
+            || playerPointer() == 0                     // When player pointer is zero (demo or replay)
+            || selectedRaceTrack() != trackNumber       // When player warped to a secret track
     }
 
     function valueBestLapLeaderboard() {
