@@ -286,385 +286,166 @@
     }
 
     function triggerGoldSeason() {
-        return
-            triggerTopSeason()
-
-            // Cancel when selected team has finished a race but is not on top position
-            && none_of(range(0,7), teamID =>
-                currentSeasonTeam() == teamID
-                && frameSeasonRaceResultsAppeared()
-                && previousRacePosition(teamID) != 1
+        extraCancelConditions =
+            // Cancel when user's team finished a season race but is not on 1st position 
+            never (
+                any_of(range(0,7), teamID =>
+                    frameSeasonRaceResultsAppeared()
+                    && currentSeasonTeam() == teamID
+                    && previousRacePosition(teamID) != 1
+                )
             )
+
+        return triggerTopSeason() && extraCancelConditions
     }
 // #endregion Achivement Triggers
 
 // #region Achievements
-    // #region Moscow Race Challanges
-        achievement(
-            id          = 551773,
-            title       = "Moscow Beginner",
-            description = "Finish 1st place on the Moscow Level 1 track with any team during One Player or Season gameplay",
-            points      = 3,
-            trigger     = triggerRaceWin(LOCATION_MOSCOW, 1)
-        )
-
-        achievement(
-            id          = 552471,
-            title       = "Moscow Experienced",
-            description = "Finish 1st place on the Moscow Level 2 track with any team during One Player or Season gameplay",
-            points      = 5,
-            trigger     = triggerRaceWin(LOCATION_MOSCOW, 2)
-        )
-
-        achievement(
-            id          = 552472,
-            title       = "Moscow Profecient",
-            description = "Finish 1st place on the Moscow Level 3 track with any team during One Player or Season gameplay",
-            points      = 5,
-            trigger     = triggerRaceWin(LOCATION_MOSCOW, 3)
-        )
-
-        achievement(
-            id          = 552473,
-            title       = "Moscow Expert",
-            description = "Finish 1st place on the Moscow Level 4 track with any team during One Player or Season gameplay",
-            points =      10,
-            trigger =     triggerRaceWin(LOCATION_MOSCOW, 4)
-        )
-
-        achievement(
-            id          = 552474,
-            title       = "Moscow Master",
-            description = "Finish 1st place on the Moscow Level 5 track with any team during One Player or Season gameplay",
-            points =      10,
-            trigger =     triggerRaceWin(LOCATION_MOSCOW, 5)
-        )
-
-        achievement(
-            id          = 552475,
-            title       = "Moscow Champion",
-            description = "Finish 1st place on the Moscow Level 6 track with any team during One Player or Season gameplay",
-            points      = 10,
-            trigger     = triggerRaceWin(LOCATION_MOSCOW, 6)
-        )
-    // #endregion Moscow Race Challanges
-
-    // #region Easter Island Race Challanges
-        achievement(
-            id          = 552991,
-            title       = "Easter Island Beginner",
-            description = "Finish 1st place on the Easter Island Level 1 track with any team during One Player or Season gameplay",
-            points      = 3,
-            trigger     = triggerRaceWin(LOCATION_EASTER_ISLAND, 1)
-        )
-
-        achievement(
-            id          = 552992,
-            title       = "Easter Island Experienced",
-            description = "Finish 1st place on the Easter Island Level 2 track with any team during One Player or Season gameplay",
-            points      = 5,
-            trigger     = triggerRaceWin(LOCATION_EASTER_ISLAND, 2)
-        )
-
-        achievement(
-            id          = 552993,
-            title       = "Easter Island Profecient",
-            description = "Finish 1st place on the Easter Island Level 3 track with any team during One Player or Season gameplay",
-            points      = 5,
-            trigger     = triggerRaceWin(LOCATION_EASTER_ISLAND, 3)
-        )
-
-        achievement(
-            id          = 552994,
-            title       = "Easter Island Expert",
-            description = "Finish 1st place on the Easter Island Level 4 track with any team during One Player or Season gameplay",
-            points =      10,
-            trigger =     triggerRaceWin(LOCATION_EASTER_ISLAND, 4)
-        )
-
-        achievement(
-            id          = 552995,
-            title       = "Easter Island Master",
-            description = "Finish 1st place on the Easter Island Level 5 track with any team during One Player or Season gameplay",
-            points =      10,
-            trigger =     triggerRaceWin(LOCATION_EASTER_ISLAND, 5)
-        )
-
-        achievement(
-            id          = 552996,
-            title       = "Easter Island Champion",
-            description = "Finish 1st place on the Easter Island Level 6 track with any team during One Player or Season gameplay",
-            points      = 10,
-            trigger     = triggerRaceWin(LOCATION_EASTER_ISLAND, 6)
-        )
-    // #endregion Easter Island Race Challanges
-
-    // #region Switzerland Race Challanges
-        achievement(
-            id          = 552997,
-            title       = "Switzerland Beginner",
-            description = "Finish 1st place on the Switzerland Level 1 track with any team during One Player or Season gameplay",
-            points      = 3,
-            trigger     = triggerRaceWin(LOCATION_SWITZERLAND, 1)
-        )
-
-        achievement(
-            id          = 552998,
-            title       = "Switzerland Experienced",
-            description = "Finish 1st place on the Switzerland Level 2 track with any team during One Player or Season gameplay",
-            points      = 5,
-            trigger     = triggerRaceWin(LOCATION_SWITZERLAND, 2)
-        )
-
-        achievement(
-            id          = 552999,
-            title       = "Switzerland Profecient",
-            description = "Finish 1st place on the Switzerland Level 3 track with any team during One Player or Season gameplay",
-            points      = 5,
-            trigger     = triggerRaceWin(LOCATION_SWITZERLAND, 3)
-        )
-
-        achievement(
-            id          = 553000,
-            title       = "Switzerland Expert",
-            description = "Finish 1st place on the Switzerland Level 4 track with any team during One Player or Season gameplay",
-            points =      10,
-            trigger =     triggerRaceWin(LOCATION_SWITZERLAND, 4)
-        )
-
-        achievement(
-            id          = 553001,
-            title       = "Switzerland Master",
-            description = "Finish 1st place on the Switzerland Level 5 track with any team during One Player or Season gameplay",
-            points =      10,
-            trigger =     triggerRaceWin(LOCATION_SWITZERLAND, 5)
-        )
-
-        achievement(
-            id          = 553002,
-            title       = "Switzerland Champion",
-            description = "Finish 1st place on the Switzerland Level 6 track with any team during One Player or Season gameplay",
-            points      = 10,
-            trigger     = triggerRaceWin(LOCATION_SWITZERLAND, 6)
-        )
-    // #endregion Switzerland Race Challanges
-
-    // #region Scotland Race Challanges
-        achievement(
-            title       = "Scotland Beginner",
-            description = "Finish 1st place on the Scotland Level 1 track with any team during One Player or Season gameplay",
-            points      = 3,
-            trigger     = triggerRaceWin(LOCATION_SCOTLAND, 1),
-            id          = 553004
-        )
-
-        achievement(
-            title       = "Scotland Experienced",
-            description = "Finish 1st place on the Scotland Level 2 track with any team during One Player or Season gameplay",
-            points      = 5,
-            trigger     = triggerRaceWin(LOCATION_SCOTLAND, 2),
-            id          = 553005
-        )
-
-        achievement(
-            title       = "Scotland Profecient",
-            description = "Finish 1st place on the Scotland Level 3 track with any team during One Player or Season gameplay",
-            points      = 5,
-            trigger     = triggerRaceWin(LOCATION_SCOTLAND, 3),
-            id          = 553006
-        )
-
-        achievement(
-            title       = "Scotland Expert",
-            description = "Finish 1st place on the Scotland Level 4 track with any team during One Player or Season gameplay",
-            points =      10,
-            trigger =     triggerRaceWin(LOCATION_SCOTLAND, 4),
-            id          = 553007
-        )
-
-        achievement(
-            title       = "Scotland Master",
-            description = "Finish 1st place on the Scotland Level 5 track with any team during One Player or Season gameplay",
-            points =      10,
-            trigger =     triggerRaceWin(LOCATION_SCOTLAND, 5),
-            id          = 553008
-        )
-
-        achievement(
-            title       = "Scotland Champion",
-            description = "Finish 1st place on the Scotland Level 6 track with any team during One Player or Season gameplay",
-            points      = 10,
-            trigger     = triggerRaceWin(LOCATION_SCOTLAND, 6),
-            id          = 553009
-        )
-    // #endregion Scotland Race Challanges
-
-    // #region Hong Kong Race Challanges
-        achievement(
-            title       = "Hong Kong Beginner",
-            description = "Finish 1st place on the Hong Kong Level 1 track with any team during One Player or Season gameplay",
-            points      = 3,
-            trigger     = triggerRaceWin(LOCATION_HONG_KONG, 1),
-            id          = 552477
-        )
-
-        achievement(
-            title       = "Hong Kong Experienced",
-            description = "Finish 1st place on the Hong Kong Level 2 track with any team during One Player or Season gameplay",
-            points      = 5,
-            trigger     = triggerRaceWin(LOCATION_HONG_KONG, 2),
-            id          = 553011
-        )
-
-        achievement(
-            title       = "Hong Kong Profecient",
-            description = "Finish 1st place on the Hong Kong Level 3 track with any team during One Player or Season gameplay",
-            points      = 5,
-            trigger     = triggerRaceWin(LOCATION_HONG_KONG, 3),
-            id          = 553012
-        )
-
-        achievement(
-            title       = "Hong Kong Expert",
-            description = "Finish 1st place on the Hong Kong Level 4 track with any team during One Player or Season gameplay",
-            points =      10,
-            trigger =     triggerRaceWin(LOCATION_HONG_KONG, 4),
-            id          = 553013
-        )
-
-        achievement(
-            title       = "Hong Kong Master",
-            description = "Finish 1st place on the Hong Kong Level 5 track with any team during One Player or Season gameplay",
-            points =      10,
-            trigger =     triggerRaceWin(LOCATION_HONG_KONG, 5),
-            id          = 553014
-        )
-
-        achievement(
-            title       = "Hong Kong Champion",
-            description = "Finish 1st place on the Hong Kong Level 6 track with any team during One Player or Season gameplay",
-            points      = 10,
-            trigger     = triggerRaceWin(LOCATION_HONG_KONG, 6),
-            id          = 553015
-        )
-    // #endregion Hong Kong Race Challanges
-
-    // #region Egypt Race Challanges
-        achievement(
-            title       = "Egypt Beginner",
-            description = "Finish 1st place on the Egypt Level 1 track with any team during One Player or Season gameplay",
-            points      = 3,
-            trigger     = triggerRaceWin(LOCATION_EGYPT, 1),
-            id          = 552476
-        )
-
-        achievement(
-            title       = "Egypt Experienced",
-            description = "Finish 1st place on the Egypt Level 2 track with any team during One Player or Season gameplay",
-            points      = 5,
-            trigger     = triggerRaceWin(LOCATION_EGYPT, 2),
-            id          = 553016
-        )
-
-        achievement(
-            title       = "Egypt Profecient",
-            description = "Finish 1st place on the Egypt Level 3 track with any team during One Player or Season gameplay",
-            points      = 5,
-            trigger     = triggerRaceWin(LOCATION_EGYPT, 3),
-            id          = 553017
-        )
-
-        achievement(
-            title       = "Egypt Expert",
-            description = "Finish 1st place on the Egypt Level 4 track with any team during One Player or Season gameplay",
-            points =      10,
-            trigger =     triggerRaceWin(LOCATION_EGYPT, 4),
-            id          = 553018
-        )
-
-        achievement(
-            title       = "Egypt Master",
-            description = "Finish 1st place on the Egypt Level 5 track with any team during One Player or Season gameplay",
-            points =      10,
-            trigger =     triggerRaceWin(LOCATION_EGYPT, 5),
-            id          = 553019
-        )
-
-        achievement(
-            title       = "Egypt Champion",
-            description = "Finish 1st place on the Egypt Level 6 track with any team during One Player or Season gameplay",
-            points      = 10,
-            trigger     = triggerRaceWin(LOCATION_EGYPT, 6),
-            id          = 553020
-        )
-    // #endregion Egypt Race Challanges
-
-    // #region Time Attack Challanges
-        timeAttackAchievements = [
-            { "id": 554481, "location": LOCATION_MOSCOW,        "track": 1, "time": [1, 21, 82] },
-            { "id": 554482, "location": LOCATION_MOSCOW,        "track": 2, "time": [1, 26, 91] },
-            { "id": 554483, "location": LOCATION_MOSCOW,        "track": 3, "time": [0, 55, 68] },
-            { "id": 554484, "location": LOCATION_MOSCOW,        "track": 4, "time": [1, 02, 99] },
-            { "id": 554485, "location": LOCATION_MOSCOW,        "track": 5, "time": [1, 11, 45] },
-            { "id": 554486, "location": LOCATION_MOSCOW,        "track": 6, "time": [1, 22, 36] },
-            { "id": 554487, "location": LOCATION_EASTER_ISLAND, "track": 1, "time": [1, 18, 90] },
-            { "id": 554488, "location": LOCATION_EASTER_ISLAND, "track": 2, "time": [1, 25, 45] },
-            { "id": 554489, "location": LOCATION_EASTER_ISLAND, "track": 3, "time": [1, 18, 32] },
-            { "id": 554490, "location": LOCATION_EASTER_ISLAND, "track": 4, "time": [1, 20, 01] },
-            { "id": 554491, "location": LOCATION_EASTER_ISLAND, "track": 5, "time": [1, 29, 98] },
-            { "id": 554492, "location": LOCATION_EASTER_ISLAND, "track": 6, "time": [1, 36, 61] },
-            { "id": 554493, "location": LOCATION_SWITZERLAND,   "track": 1, "time": [1, 27, 75] },
-            { "id": 554494, "location": LOCATION_SWITZERLAND,   "track": 2, "time": [1, 25, 20] },
-            { "id": 554495, "location": LOCATION_SWITZERLAND,   "track": 3, "time": [1, 21, 04] },
-            { "id": 554496, "location": LOCATION_SWITZERLAND,   "track": 4, "time": [1, 57, 22] },
-            { "id": 554497, "location": LOCATION_SWITZERLAND,   "track": 5, "time": [1, 59, 80] },
-            { "id": 554498, "location": LOCATION_SWITZERLAND,   "track": 6, "time": [1, 55, 61] },
-            { "id": 554499, "location": LOCATION_SCOTLAND,      "track": 1, "time": [1, 34, 41] },
-            { "id": 554500, "location": LOCATION_SCOTLAND,      "track": 2, "time": [1, 33, 43] },
-            { "id": 554501, "location": LOCATION_SCOTLAND,      "track": 3, "time": [1, 31, 79] },
-            { "id": 554502, "location": LOCATION_SCOTLAND,      "track": 4, "time": [1, 38, 29] },
-            { "id": 554503, "location": LOCATION_SCOTLAND,      "track": 5, "time": [1, 35, 31] },
-            { "id": 554504, "location": LOCATION_SCOTLAND,      "track": 6, "time": [1, 52, 45] },
-            { "id": 554505, "location": LOCATION_EGYPT,         "track": 1, "time": [1, 59, 09] },
-            { "id": 554506, "location": LOCATION_EGYPT,         "track": 2, "time": [2, 02, 75] },
-            { "id": 554507, "location": LOCATION_EGYPT,         "track": 3, "time": [2, 26, 54] },
-            { "id": 554508, "location": LOCATION_EGYPT,         "track": 4, "time": [1, 49, 72] },
-            { "id": 554509, "location": LOCATION_EGYPT,         "track": 5, "time": [2, 20, 67] },
-            { "id": 554510, "location": LOCATION_EGYPT,         "track": 6, "time": [2, 18, 52] },
-            { "id": 554511, "location": LOCATION_HONG_KONG,     "track": 1, "time": [1, 02, 67] },
-            { "id": 554512, "location": LOCATION_HONG_KONG,     "track": 2, "time": [0, 58, 61] },
-            { "id": 554513, "location": LOCATION_HONG_KONG,     "track": 3, "time": [0, 39, 57] },
-            { "id": 554514, "location": LOCATION_HONG_KONG,     "track": 4, "time": [0, 41, 26] },
-            { "id": 554515, "location": LOCATION_HONG_KONG,     "track": 5, "time": [1, 09, 34] },
-            { "id": 554516, "location": LOCATION_HONG_KONG,     "track": 6, "time": [1, 13, 80] },
+    // #region Race Challanges
+        raceChallangeAchivements = [
+            { "id": 551773, "location": LOCATION_MOSCOW,        "track": 1 },
+            { "id": 552471, "location": LOCATION_MOSCOW,        "track": 2 },
+            { "id": 552472, "location": LOCATION_MOSCOW,        "track": 3 },
+            { "id": 552473, "location": LOCATION_MOSCOW,        "track": 4 },
+            { "id": 552474, "location": LOCATION_MOSCOW,        "track": 5 },
+            { "id": 552475, "location": LOCATION_MOSCOW,        "track": 6 },
+            { "id": 552991, "location": LOCATION_EASTER_ISLAND, "track": 1 },
+            { "id": 552992, "location": LOCATION_EASTER_ISLAND, "track": 2 },
+            { "id": 552993, "location": LOCATION_EASTER_ISLAND, "track": 3 },
+            { "id": 552994, "location": LOCATION_EASTER_ISLAND, "track": 4 },
+            { "id": 552995, "location": LOCATION_EASTER_ISLAND, "track": 5 },
+            { "id": 552996, "location": LOCATION_EASTER_ISLAND, "track": 6 },
+            { "id": 552997, "location": LOCATION_SWITZERLAND,   "track": 1 },
+            { "id": 552998, "location": LOCATION_SWITZERLAND,   "track": 2 },
+            { "id": 552999, "location": LOCATION_SWITZERLAND,   "track": 3 },
+            { "id": 553000, "location": LOCATION_SWITZERLAND,   "track": 4 },
+            { "id": 553001, "location": LOCATION_SWITZERLAND,   "track": 5 },
+            { "id": 553002, "location": LOCATION_SWITZERLAND,   "track": 6 },
+            { "id": 553004, "location": LOCATION_SCOTLAND,      "track": 1 },
+            { "id": 553005, "location": LOCATION_SCOTLAND,      "track": 2 },
+            { "id": 553006, "location": LOCATION_SCOTLAND,      "track": 3 },
+            { "id": 553007, "location": LOCATION_SCOTLAND,      "track": 4 },
+            { "id": 553008, "location": LOCATION_SCOTLAND,      "track": 5 },
+            { "id": 553009, "location": LOCATION_SCOTLAND,      "track": 6 },
+            { "id": 552477, "location": LOCATION_EGYPT,         "track": 1 },
+            { "id": 553011, "location": LOCATION_EGYPT,         "track": 2 },
+            { "id": 553012, "location": LOCATION_EGYPT,         "track": 3 },
+            { "id": 553013, "location": LOCATION_EGYPT,         "track": 4 },
+            { "id": 553014, "location": LOCATION_EGYPT,         "track": 5 },
+            { "id": 553015, "location": LOCATION_EGYPT,         "track": 6 },
+            { "id": 552476, "location": LOCATION_HONG_KONG,     "track": 1 },
+            { "id": 553016, "location": LOCATION_HONG_KONG,     "track": 2 },
+            { "id": 553017, "location": LOCATION_HONG_KONG,     "track": 3 },
+            { "id": 553018, "location": LOCATION_HONG_KONG,     "track": 4 },
+            { "id": 553019, "location": LOCATION_HONG_KONG,     "track": 5 },
+            { "id": 553020, "location": LOCATION_HONG_KONG,     "track": 6 },
         ]
 
-        for definition in timeAttackAchievements {
-            trackDifficulty = ["", "Beginer", "Experienced", "Proficient", "Expert", "Master", "Champion"]
+        for definition in raceChallangeAchivements {
+            trackDifficulty = ["", "Beginner", "Experienced", "Proficient", "Expert", "Master", "Champion"]
+            trackPoints     = [ 0, 3, 5, 5, 5, 10, 10 ]
 
             genTitle = ""
             genTitle = genTitle + locationLookup[ definition["location"] ]
             genTitle = genTitle + " "
-            // genTitle = genTitle + trackDifficulty[ definition["track"] ]
+            genTitle = genTitle + trackDifficulty[ definition["track"] ]
+
+            genDescription = ""
+            genDescription = genDescription + "Finish 1st place on "
+            genDescription = genDescription + locationLookup[ definition["location"] ]
+            genDescription = genDescription + " "
+            genDescription = genDescription + definition["track"]
+            genDescription = genDescription + " track in One Player or Season mode"
+
+            genPoints = trackPoints[ definition["track"] ]
+
+            achievement(
+                id = definition["id"],
+                title = genTitle,
+                description = genDescription,
+                points = genPoints,
+                trigger = triggerRaceWin(definition["location"], definition["track"])
+            )
+        }
+    // #endregion Race Challanges
+
+
+    // #region Time Attack Challanges
+        timeAttackAchievements = [
+            { "id": 554481, "location": LOCATION_MOSCOW,        "track": 1, "time": [1, 20, 44] },
+            { "id": 554482, "location": LOCATION_MOSCOW,        "track": 2, "time": [1, 25, 50] },
+            { "id": 554483, "location": LOCATION_MOSCOW,        "track": 3, "time": [0, 54, 74] },
+            { "id": 554484, "location": LOCATION_MOSCOW,        "track": 4, "time": [1, 01, 92] },
+            { "id": 554485, "location": LOCATION_MOSCOW,        "track": 5, "time": [1, 10, 25] },
+            { "id": 554486, "location": LOCATION_MOSCOW,        "track": 6, "time": [1, 20, 99] },
+            { "id": 554487, "location": LOCATION_EASTER_ISLAND, "track": 1, "time": [1, 17, 60] },
+            { "id": 554488, "location": LOCATION_EASTER_ISLAND, "track": 2, "time": [1, 23, 99] },
+            { "id": 554489, "location": LOCATION_EASTER_ISLAND, "track": 3, "time": [1, 16, 91] },
+            { "id": 554490, "location": LOCATION_EASTER_ISLAND, "track": 4, "time": [1, 18, 56] },
+            { "id": 554491, "location": LOCATION_EASTER_ISLAND, "track": 5, "time": [1, 28, 45] },
+            { "id": 554492, "location": LOCATION_EASTER_ISLAND, "track": 6, "time": [1, 34, 90] },
+            { "id": 554493, "location": LOCATION_SWITZERLAND,   "track": 1, "time": [1, 26, 27] },
+            { "id": 554494, "location": LOCATION_SWITZERLAND,   "track": 2, "time": [1, 23, 81] },
+            { "id": 554495, "location": LOCATION_SWITZERLAND,   "track": 3, "time": [1, 19, 69] },
+            { "id": 554496, "location": LOCATION_SWITZERLAND,   "track": 4, "time": [1, 55, 15] },
+            { "id": 554497, "location": LOCATION_SWITZERLAND,   "track": 5, "time": [1, 57, 70] },
+            { "id": 554498, "location": LOCATION_SWITZERLAND,   "track": 6, "time": [1, 53, 53] },
+            { "id": 554499, "location": LOCATION_SCOTLAND,      "track": 1, "time": [1, 32, 84] },
+            { "id": 554500, "location": LOCATION_SCOTLAND,      "track": 2, "time": [1, 31, 87] },
+            { "id": 554501, "location": LOCATION_SCOTLAND,      "track": 3, "time": [1, 30, 27] },
+            { "id": 554502, "location": LOCATION_SCOTLAND,      "track": 4, "time": [1, 36, 64] },
+            { "id": 554503, "location": LOCATION_SCOTLAND,      "track": 5, "time": [1, 33, 72] },
+            { "id": 554504, "location": LOCATION_SCOTLAND,      "track": 6, "time": [1, 50, 38] },
+            { "id": 554505, "location": LOCATION_EGYPT,         "track": 1, "time": [1, 57, 77] },
+            { "id": 554506, "location": LOCATION_EGYPT,         "track": 2, "time": [2, 01, 38] },
+            { "id": 554507, "location": LOCATION_EGYPT,         "track": 3, "time": [2, 24, 89] },
+            { "id": 554508, "location": LOCATION_EGYPT,         "track": 4, "time": [1, 48, 45] },
+            { "id": 554509, "location": LOCATION_EGYPT,         "track": 5, "time": [2, 19, 02] },
+            { "id": 554510, "location": LOCATION_EGYPT,         "track": 6, "time": [2, 16, 89] },
+            { "id": 554511, "location": LOCATION_HONG_KONG,     "track": 1, "time": [1, 01, 60] },
+            { "id": 554512, "location": LOCATION_HONG_KONG,     "track": 2, "time": [0, 57, 61] },
+            { "id": 554513, "location": LOCATION_HONG_KONG,     "track": 3, "time": [0, 38, 89] },
+            { "id": 554514, "location": LOCATION_HONG_KONG,     "track": 4, "time": [0, 40, 55] },
+            { "id": 554515, "location": LOCATION_HONG_KONG,     "track": 5, "time": [1, 08, 17] },
+            { "id": 554516, "location": LOCATION_HONG_KONG,     "track": 6, "time": [1, 12, 57] },
+        ]
+
+        for definition in timeAttackAchievements {
+            trackPoints = [ 0, 3, 5, 5, 5, 10, 10 ]
+
+            genTitle = ""
+            genTitle = genTitle + locationLookup[ definition["location"] ]
+            genTitle = genTitle + " "
             genTitle = genTitle + definition["track"]
             genTitle = genTitle + " Time Trial"
 
             genDescription = ""
-            genDescription = genDescription + "Finish a lap under"
+            genDescription = genDescription + "Beat the default lap record of"
             genDescription = genDescription + " " 
-            genDescription = genDescription + definition["time"][0] + ":" + definition["time"][1] + ":" + definition["time"][2]
+            genDescription = genDescription + definition["time"][0]
+            if (definition["time"][1] <= 9)
+                genDescription = genDescription + ":0" + definition["time"][1]
+            else
+                genDescription = genDescription + ":" + definition["time"][1]
+            if (definition["time"][2] <= 9)
+                genDescription = genDescription + ":0" + definition["time"][2]
+            else
+                genDescription = genDescription + ":" + definition["time"][2]
             genDescription = genDescription + " "
-            genDescription = genDescription + "on the "
+            genDescription = genDescription + "on "
             genDescription = genDescription + locationLookup[ definition["location"] ]
             genDescription = genDescription + " "
             genDescription = genDescription + definition["track"]
             genDescription = genDescription + " "
-            genDescription = genDescription + "track"
+            genDescription = genDescription + "track in Time Attack, One Player of Season mode"
+
+            genPoints = trackPoints[ definition["track"] ]
 
             achievement(
+                id = definition["id"],
                 title = genTitle,
                 description = genDescription,
-                points = 5,
+                points = genPoints,
                 trigger = triggerTimeTrial(definition["location"], definition["track"], definition["time"])
             )
         }
@@ -745,12 +526,13 @@
         id          = 553226
     )
 
-    // achievement(
-    //     title       = "Gold Season",
-    //     description = "Win a Season by finishing first on all six races",
-    //     points      = 10,
-    //     trigger     = triggerGoldSeason(),
-    // )
+    achievement(
+        title       = "Gold Season",
+        description = "Win the Season by achieving a 1st place finish in every race",
+        points      = 10,
+        trigger     = triggerGoldSeason(),
+        id          = 554954
+    )
 
     achievement(
         title       = "Two Laps Magic",
