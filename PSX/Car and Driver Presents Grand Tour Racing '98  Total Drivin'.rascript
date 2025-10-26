@@ -94,14 +94,8 @@
 // #region Frame Functions
     function frameRaceCountdownTimerStarted() {
         return
-            prev(raceCountdownTimer()) == 0
+            prev(raceCountdownTimer()) != 0x5f
             && raceCountdownTimer() == 0x5f
-    }
-
-    function frameGameStateSwitchedToInGame() {
-        return
-            prev(gameState()) == GAME_STATE_NULL
-            && gameState() == GAME_STATE_IN_GAME
     }
 
     function frameSeasonRaceResultsAppeared() {
@@ -167,6 +161,15 @@
             && currentSeasonRaceNumber() == 6
             && frameSeasonRaceResultsAppeared()
     }
+
+    function whenNewRaceStarted() {
+        return
+            frameRaceCountdownTimerStarted()
+            && gameState() == GAME_STATE_IN_GAME
+            && playerLap() == 0
+            && playerRaceTime() == 0
+            && playerLap1Time() == 0
+    }
 // #endregion Complex Conditions
 
 // #region Achivement Triggers
@@ -178,8 +181,7 @@
 
             && frameRaceCompleted()
 
-            && once ( frameGameStateSwitchedToInGame())
-            && once ( frameRaceCountdownTimerStarted() )
+            && once ( whenNewRaceStarted() )
 
             && never( gameState() == GAME_STATE_DEMO_GAMEPLAY )
             && never( gameState() == GAME_STATE_EXIT_GAMEPLAY )
@@ -195,8 +197,7 @@
             && frameRaceCompleted()
             && playerPosition() == 1
 
-            && once ( frameGameStateSwitchedToInGame())
-            && once ( frameRaceCountdownTimerStarted() )
+            && once ( whenNewRaceStarted() )
 
             && never( gameState() == GAME_STATE_DEMO_GAMEPLAY )
             && never( gameState() == GAME_STATE_EXIT_GAMEPLAY )
@@ -216,8 +217,7 @@
                 ( playerLap() > 2 && playerLap2Time() < (time[0]*60*100 + time[1]*100 + time[2]) * 3/10 )
             )
 
-            && once ( frameGameStateSwitchedToInGame())
-            && once ( frameRaceCountdownTimerStarted() )
+            && once ( whenNewRaceStarted() )
 
             && never( gameState() == GAME_STATE_DEMO_GAMEPLAY )
             && never( gameState() == GAME_STATE_EXIT_GAMEPLAY )
@@ -233,8 +233,7 @@
             playerPointer() != 0
             && playerRaceTime() > delay * 3/10 * 100
             && currentRaceTotalLaps() == laps
-            && once ( frameGameStateSwitchedToInGame() )
-            && once ( frameRaceCountdownTimerStarted() )
+            && once ( whenNewRaceStarted() )
 
         cancelConditions =
             never( gameState() == GAME_STATE_DEMO_GAMEPLAY )
@@ -269,7 +268,7 @@
             && never(
                 gameState() == GAME_STATE_IN_GAME
                 && selectedPlayMode() == PLAY_MODE_SEASON
-                && frameRaceCountdownTimerStarted()
+                && whenNewRaceStarted()
                 && currentRaceTrack() < 6
             )
 
@@ -652,7 +651,7 @@
             && framePlayerLapIncreased()
     }
 
-    function cancelBestLapLeaderboard() {
+    function cancelBestLapLeaderboard(trackNumber) {
         return
             gameState() == GAME_STATE_EXIT_GAMEPLAY     // When player exited the gameplay
             || gameState() == GAME_STATE_IN_FRONTEND    // When in frontend
@@ -677,7 +676,7 @@
             format = "MILLISECS",
             lower_is_better = true,
             start = startBestLapLeaderboard(definition["locationId"], definition["trackNumber"]),
-            cancel = cancelBestLapLeaderboard(),
+            cancel = cancelBestLapLeaderboard(definition["trackNumber"]),
             submit = always_true(),
             value = valueBestLapLeaderboard()
         )
