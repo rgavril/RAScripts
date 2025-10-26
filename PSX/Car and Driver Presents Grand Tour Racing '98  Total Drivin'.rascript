@@ -62,6 +62,7 @@
     function playerLap2Time() => dword(tbyte(0x0b70f8)+0x580)
     function playerLap3Time() => dword(tbyte(0x0b70f8)+0x584)
     function playerRaceTime() => dword(tbyte(0x0b70f8)+0x578)
+    function playerSpeed() => dword(tbyte(0x0b70f8)+0x668)
 
     function speed() => word(0x0bca1c)
 
@@ -239,7 +240,7 @@
             never( gameState() == GAME_STATE_DEMO_GAMEPLAY )
             && never( gameState() == GAME_STATE_EXIT_GAMEPLAY )
             && never( playerGameOver() > 0 )
-            && never( speed() != 0 && playerRaceTime() <= delay * 3/10 * 100 )
+            && never( playerSpeed() != 0 && playerRaceTime() <= delay * 3/10 * 100 )
 
         return primingConditions && cancelConditions && trigger_when(winConditions)
     }
@@ -646,7 +647,7 @@
             gameState() == GAME_STATE_IN_GAME
             && playerPointer() != 0
             && selectedLocation() == locationId
-            && selectedRaceTrack() == trackNumber
+            && currentRaceTrack() == trackNumber
             && playerLap() > 1
             && framePlayerLapIncreased()
     }
@@ -657,7 +658,7 @@
             || gameState() == GAME_STATE_IN_FRONTEND    // When in frontend
             || playerGameOver() > 0                     // When player went game over
             || playerPointer() == 0                     // When player pointer is zero (demo or replay)
-            || selectedRaceTrack() != trackNumber       // When player warped to a secret track
+            || currentRaceTrack() != trackNumber       // When player warped to a secret track
     }
 
     function valueBestLapLeaderboard() {
@@ -708,7 +709,7 @@
 
         rich_presence_lookup("Team", playerteamID(), teamLookup, "Unknown"),             // 0 : Team
         rich_presence_lookup("Location", selectedLocation(), locationLookup, "Unknown"), // 1 : Location
-        rich_presence_macro("Number", selectedRaceTrack()),                              // 2 : Track
+        rich_presence_macro("Number", currentRaceTrack()),                               // 2 : Track
         rich_presence_macro("Number", playerPosition()),                                 // 3 : Position
         rich_presence_macro("Number", playerLap()),                                      // 4 : Current Lap
         rich_presence_macro("Number", currentRaceTotalLaps())                            // 5 : Total Laps
@@ -730,7 +731,7 @@
 
         rich_presence_lookup("Team", playerteamID(), teamLookup, "Unknown"),             // 0 : Team
         rich_presence_lookup("Location", selectedLocation(), locationLookup, "Unknown"), // 1 : Location
-        rich_presence_macro("Number", selectedRaceTrack()),                              // 2 : Track
+        rich_presence_macro("Number", currentRaceTrack()),                               // 2 : Track
         rich_presence_macro("Number", currentSeasonRaceNumber())                         // 3 : Season Race
     )
 
@@ -750,7 +751,7 @@
 
         rich_presence_lookup("Team", playerteamID(), teamLookup, "Unknown"),             // 0 : Team
         rich_presence_lookup("Location", selectedLocation(), locationLookup, "Unknown"), // 1 : Location
-        rich_presence_macro("Number", selectedRaceTrack())                               // 2 : Track
+        rich_presence_macro("Number", currentRaceTrack())                                // 2 : Track
     )
 
     // Two Player Modes
