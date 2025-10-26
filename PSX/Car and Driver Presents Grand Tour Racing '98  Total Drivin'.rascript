@@ -536,7 +536,7 @@
 
     achievement(
         title       = "Two Laps Magic",
-        description = "Win 2 lap race while delaying your start for at least 20 seconds",
+        description = "Win a 2 lap race while delaying your start for at least 20 seconds",
         points      = 5,
         trigger     = triggerLapMagic(laps=2, delay=20),
         id          = 554004
@@ -544,7 +544,7 @@
 
     achievement(
         title       = "Three Laps Magic",
-        description = "Win 3 lap race while delaying your start for at least 30 seconds",
+        description = "Win a 3 lap race while delaying your start for at least 30 seconds",
         points      = 10,
         trigger     = triggerLapMagic(laps=3, delay=30),
         id          = 554003
