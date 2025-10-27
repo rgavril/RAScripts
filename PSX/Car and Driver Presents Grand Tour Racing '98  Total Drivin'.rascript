@@ -64,8 +64,6 @@
     function playerRaceTime() => dword(tbyte(0x0b70f8)+0x578)
     function playerSpeed() => dword(tbyte(0x0b70f8)+0x668)
 
-    function speed() => word(0x0bca1c)
-
     function raceCountdownTimer() => dword(0x0bc394)
 
     function SplitScreenTopCarPointer() => dword(0x0c26a0)
@@ -526,7 +524,7 @@
             title       = "Xu's Ultimate Challenge",
             description = "Win a Season with Team Xu where every track raced is at Level 6",
             points      = 25,
-            trigger     = triggerUltimateSeason(TEAM_ROSSI),
+            trigger     = triggerUltimateSeason(TEAM_XU),
             id          = 553215
         )
 
