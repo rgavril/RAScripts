@@ -63,6 +63,7 @@
     function playerLap3Time() => dword(tbyte(0x0b70f8)+0x584)
     function playerRaceTime() => dword(tbyte(0x0b70f8)+0x578)
     function playerSpeed() => dword(tbyte(0x0b70f8)+0x668)
+    function playerGameOverTimer() => dword(tbyte(0x0b70f8)+0x54c)
 
     function raceCountdownTimer() => dword(0x0bc394)
 
@@ -154,14 +155,28 @@
         return betterSeasonPosition
     }
 
-    function whenLastSeasonRaceResultsAppeared() {
+    function onLastRaceSeasonResultsAppear() {
         return
             selectedPlayMode() == PLAY_MODE_SEASON
             && currentSeasonRaceNumber() == 6
             && frameSeasonRaceResultsAppeared()
     }
 
-    function whenNewRaceStarted() {
+    function onSeasonStatsUpdated() {
+        return
+            selectedPlayMode() == PLAY_MODE_SEASON
+            && currentSeasonRaceNumber() == 6
+
+            // Game finished animation timer reseted
+            && prev(playerGameOverTimer()) = 0xd3
+            && playerGameOverTimer() == 0x00
+
+            // Game state went from in game to something else
+            && prev(gameState()) == GAME_STATE_IN_GAME
+            && gameState() != GAME_STATE_IN_GAME
+    }
+
+    function onNewRaceStarted() {
         return
             frameRaceCountdownTimerStarted()
             && gameState() == GAME_STATE_IN_GAME
@@ -180,7 +195,7 @@
 
             && frameRaceCompleted()
 
-            && once ( whenNewRaceStarted() )
+            && once ( onNewRaceStarted() )
 
             && never( gameState() == GAME_STATE_DEMO_GAMEPLAY )
             && never( gameState() == GAME_STATE_EXIT_GAMEPLAY )
@@ -196,7 +211,7 @@
             && frameRaceCompleted()
             && playerPosition() == 1
 
-            && once ( whenNewRaceStarted() )
+            && once ( onNewRaceStarted() )
 
             && never( gameState() == GAME_STATE_DEMO_GAMEPLAY )
             && never( gameState() == GAME_STATE_EXIT_GAMEPLAY )
@@ -216,7 +231,7 @@
                 ( playerLap() > 2 && playerLap2Time() < (time[0]*60*100 + time[1]*100 + time[2]) * 3/10 )
             )
 
-            && once ( whenNewRaceStarted() )
+            && once ( onNewRaceStarted() )
 
             && never( gameState() == GAME_STATE_DEMO_GAMEPLAY )
             && never( gameState() == GAME_STATE_EXIT_GAMEPLAY )
@@ -232,7 +247,7 @@
             playerPointer() != 0
             && playerRaceTime() > delay * 3/10 * 100
             && currentRaceTotalLaps() == laps
-            && once ( whenNewRaceStarted() )
+            && once ( onNewRaceStarted() )
 
         cancelConditions =
             never( gameState() == GAME_STATE_DEMO_GAMEPLAY )
@@ -246,7 +261,7 @@
     function triggerUltimateSeason(teamID) {
         winConditions =
             currentSeasonTeam() == teamID
-            && whenLastSeasonRaceResultsAppeared()
+            && onLastRaceSeasonResultsAppear()
             && isTeamOnTopSeasonPosition(teamID)
 
         checkpointConditions =
@@ -267,7 +282,7 @@
             && never(
                 gameState() == GAME_STATE_IN_GAME
                 && selectedPlayMode() == PLAY_MODE_SEASON
-                && whenNewRaceStarted()
+                && onNewRaceStarted()
                 && currentRaceTrack() < 6
             )
 
@@ -276,7 +291,7 @@
 
     function triggerTopSeason() {
         winConditions =
-            whenLastSeasonRaceResultsAppeared()
+            onLastRaceSeasonResultsAppear()
             && any_of( range(0,7), teamID => 
                 currentSeasonTeam() == teamID 
                 && isTeamOnTopSeasonPosition(teamID)
