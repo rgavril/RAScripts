@@ -168,7 +168,7 @@
             && currentSeasonRaceNumber() == 6
 
             // Game finished animation timer reseted
-            && prev(playerGameOverTimer()) = 0xd3
+            && prev(playerGameOverTimer()) == 0xd3
             && playerGameOverTimer() == 0x00
 
             // Game state went from in game to something else
@@ -380,7 +380,7 @@
             genTitle = genTitle + trackDifficulty[ definition["track"] ]
 
             genDescription = ""
-            genDescription = genDescription + "Finish 1st place on "
+            genDescription = genDescription + "Finish in 1st place on the "
             genDescription = genDescription + locationLookup[ definition["location"] ]
             genDescription = genDescription + " "
             genDescription = genDescription + definition["track"]
@@ -491,7 +491,7 @@
             else
                 genDescription = genDescription + ":" + definition["time"][2]
             genDescription = genDescription + " "
-            genDescription = genDescription + "on "
+            genDescription = genDescription + "on the"
             genDescription = genDescription + locationLookup[ definition["location"] ]
             genDescription = genDescription + " "
             genDescription = genDescription + definition["track"]
@@ -513,7 +513,7 @@
     // #region Ultimate Season Wins
         achievement(
             title       = "Ahmed's Ultimate Challenge",
-            description = "Win a Season with Team Ahmed where every track raced is at Level 6",
+            description = "Win a Season with Team Ahmed where every race is held on a Track 6 variation",
             points      = 25,
             trigger     = triggerUltimateSeason(TEAM_AHMED),
             id          = 552824
@@ -521,7 +521,7 @@
 
         achievement(
             title       = "Morgen's Ultimate Challenge",
-            description = "Win a Season with Team Morgen where every track raced is at Level 6",
+            description = "Win a Season with Team Morgen where every race is held on a Track 6 variation",
             points      = 25,
             trigger     = triggerUltimateSeason(TEAM_MORGEN),
             id          = 552825
@@ -529,7 +529,7 @@
 
         achievement(
             title       = "Rossi's Ultimate Challenge",
-            description = "Win a Season with Team Rossi where every track raced is at Level 6",
+            description = "Win a Season with Team Rossi where every race is held on a Track 6 variation",
             points      = 25,
             trigger     = triggerUltimateSeason(TEAM_ROSSI),
             id          = 553214
@@ -537,7 +537,7 @@
 
         achievement(
             title       = "Xu's Ultimate Challenge",
-            description = "Win a Season with Team Xu where every track raced is at Level 6",
+            description = "Win a Season with Team Xu where every race is held on a Track 6 variation",
             points      = 25,
             trigger     = triggerUltimateSeason(TEAM_XU),
             id          = 553215
@@ -545,7 +545,7 @@
 
         achievement(
             title       = "Lumiere's Ultimate Challenge",
-            description = "Win a Season with Team Lumiere where every track raced is at Level 6",
+            description = "Win a Season with Team Lumiere where every race is held on a Track 6 variation",
             points      = 25,
             trigger     = triggerUltimateSeason(TEAM_LUMIERE),
             id          = 553216
@@ -553,7 +553,7 @@
 
         achievement(
             title       = "Roberts' Ultimate Challenge",
-            description = "Win a Season with Team Roberts where every track raced is at Level 6",
+            description = "Win a Season with Team Roberts where every race is held on a Track 6 variation",
             points      = 25,
             trigger     = triggerUltimateSeason(TEAM_ROBERTS),
             id          = 553217
@@ -561,7 +561,7 @@
 
         achievement(
             title       = "Ivanov's Ultimate Challenge",
-            description = "Win a Season with Team Ivanov where every track raced is at Level 6",
+            description = "Win a Season with Team Ivanov where every race is held on a Track 6 variation",
             points      = 25,
             trigger     = triggerUltimateSeason(TEAM_IVANOV),
             id          = 553218
@@ -569,7 +569,7 @@
 
         achievement(
             title       = "Baptiste's Ultimate Challenge",
-            description = "Win a Season with Team Baptiste where every track raced is at Level 6",
+            description = "Win a Season with Team Baptise where every race is held on a Track 6 variation",
             points      = 25,
             trigger     = triggerUltimateSeason(TEAM_BAPTISTE),
             id          = 553219
@@ -578,7 +578,7 @@
 
     achievement(
         title       = "Top Season",
-        description = "Finish a Season on the 1st place using any team",
+        description = "Finish Season Mode in 1st place overall with any team",
         points      = 5,
         trigger     = triggerTopSeason(),
         type        = "win_condition",
@@ -587,7 +587,7 @@
 
     achievement(
         title       = "Gold Season",
-        description = "Win the Season by achieving a 1st place finish in every race",
+        description = "Win Season Mode by achieving a 1st place finish in every race",
         points      = 10,
         trigger     = triggerGoldSeason(),
         id          = 554954
@@ -595,7 +595,7 @@
 
     achievement(
         title       = "Two Laps Magic",
-        description = "Win a 2 lap race while delaying your start for at least 20 seconds",
+        description = "Win a 2-lap race after remaining completely motionless at the starting position for at least 20 seconds",
         points      = 5,
         trigger     = triggerLapMagic(laps=2, delay=20),
         id          = 554004
@@ -603,7 +603,7 @@
 
     achievement(
         title       = "Three Laps Magic",
-        description = "Win a 3 lap race while delaying your start for at least 30 seconds",
+        description = "Win a 3-lap race after remaining completely motionless at the starting position for at least 30 seconds",
         points      = 10,
         trigger     = triggerLapMagic(laps=3, delay=30),
         id          = 554003
