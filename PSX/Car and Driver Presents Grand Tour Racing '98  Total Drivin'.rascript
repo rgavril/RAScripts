@@ -15,7 +15,15 @@
 
     function frontendScreen() => word(0x02690c)
     SCREEN_MAIN_MENU = 0x00
+    SCREEN_LOAD_MENU = 0x02
     SCREEN_RACE_RESULTS = 0x0c
+
+    function memoryCardMessage() => word(0x033ecc)
+    MEMCARD_SAVING = 0x10
+    MEMCARD_LOADING = 0x12
+    MEMCARD_CHECKING = 0x13
+    MEMCARD_LOADED = 0x14
+    MEMCARD_SAVED = 0x15
 
     function selectedLocation() => word(0x026910)
     LOCATION_MOSCOW = 0x00
@@ -184,6 +192,14 @@
             && playerRaceTime() == 0
             && playerLap1Time() == 0
     }
+
+    function onSavedStateLoaded() {
+        return
+            gameState() == GAME_STATE_IN_FRONTEND
+            && frontendScreen() == SCREEN_LOAD_MENU
+            && prev(memoryCardMessage()) == MEMCARD_LOADING
+            && memoryCardMessage() == MEMCARD_LOADED
+    }
 // #endregion Complex Conditions
 
 // #region Achivement Triggers
@@ -285,6 +301,9 @@
                 && onNewRaceStarted()
                 && currentRaceTrack() < 6
             )
+            
+            // Cancel if a save state was loaded
+            && never ( onSavedStateLoaded() )
 
         return checkpointConditions && cancelConditions && winConditions
     }
@@ -310,6 +329,9 @@
             never (
                 any_of(range(0,7), teamID => frameSeasonPointsDecreased(teamID))
             )
+            
+            // Cancel if a save state was loaded
+            && never ( onSavedStateLoaded() )
 
         return checkpointConditions && cancelConditions && winConditions
     }
