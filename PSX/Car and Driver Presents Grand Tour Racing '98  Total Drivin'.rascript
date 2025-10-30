@@ -79,6 +79,7 @@
     function SplitScreenBottomCarPointer() => dword(0x0c26a4)
 // #endregion Memory Addresses
 
+// #region Lookups
     teamLookup = {
         0: "Ahmed",
         1: "Morgen",
@@ -98,6 +99,7 @@
         4: "Hong Kong",
         5: "Egypt"
     }
+// #endregion Lookups
 
 // #region Frame Functions
     function frameRaceCountdownTimerStarted() {
@@ -139,6 +141,7 @@
             prev(playerLap()) == currentRaceTotalLaps()
             && playerLap() == currentRaceTotalLaps() + 1
     }
+
 // #endregion Frame Functions
 
 // #region Complex Conditions
@@ -202,7 +205,7 @@
     }
 // #endregion Complex Conditions
 
-// #region Achivement Triggers
+// #region Achievement Triggers
     function triggerRaceFinish(location, track) {
         return
             currentRaceLocation() == location
@@ -349,7 +352,7 @@
 
         return triggerTopSeason() && extraCancelConditions
     }
-// #endregion Achivement Triggers
+// #endregion Achievement Triggers
 
 // #region Achievements
     // #region Race Challanges
@@ -700,7 +703,9 @@
         return max_of(
             measured( tally(0, always_false())),
             measured( playerLap1Time() * 10/3, when = prev(playerLap()) == 1 ),
-            measured( playerLap2Time() * 10/3, when = prev(playerLap()) >= 2 )
+            measured( playerLap2Time() * 10/3, when = prev(playerLap()) == 2 ),
+            measured( playerLap3Time() * 10/3, when = prev(playerLap()) == 3 && currentRaceTotalLaps() == 3),
+            measured( playerLap2Time() * 10/3, when = prev(playerLap()) >= 3 && currentRaceTotalLaps() >= 4)
         )
     }
 
