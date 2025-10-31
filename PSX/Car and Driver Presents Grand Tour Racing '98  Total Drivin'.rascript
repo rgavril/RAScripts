@@ -699,7 +699,7 @@
             measured( playerLap2Time() * 10/3, when = prev(playerLap()) >= 3 && currentRaceTotalLaps() >= 4)
         )
     }
-
+    
     for definition in bestLapLeaderboardDefinitions {
         leaderboard(
             id = definition["id"],
@@ -713,6 +713,39 @@
             value = valueBestLapLeaderboard()
         )
     }
+
+    function startBestRaceTimeLeaderboard(locationId, trackNumber) {
+        return
+            gameState() == GAME_STATE_IN_GAME
+            && playerPointer() != 0
+            && selectedLocation() == locationId
+            && currentRaceTrack() == trackNumber
+            && frameRaceCompleted()
+            && (
+                selectedPlayMode() == PLAY_MODE_SINGLE_PLAYER
+                ||
+                selectedPlayMode() == PLAY_MODE_SEASON
+            )
+    }
+
+    function valueBestRaceTimeLeaderboard() {
+        return playerRaceTime() * 10/3
+    }
+
+    for definition in bestLapLeaderboardDefinitions {
+        leaderboard(
+            // id = definition["id"],
+            title = definition["trackName"] + " : Best Race Time",
+            description = "Fastest Race Time on the " + definition["trackName"] + " Track",
+            format = "MILLISECS",
+            lower_is_better = true,
+            start = startBestRaceTimeLeaderboard(definition["locationId"], definition["trackNumber"]),
+            cancel = always_false(),
+            submit = always_true(),
+            value = valueBestRaceTimeLeaderboard()
+        )
+    }
+
 // #endregion Leaderboards
 
 // #region Rich Presence
