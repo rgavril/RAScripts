@@ -690,15 +690,6 @@
             && framePlayerLapIncreased()
     }
 
-    function cancelBestLapLeaderboard(trackNumber) {
-        return
-            gameState() == GAME_STATE_EXIT_GAMEPLAY     // When player exited the gameplay
-            || gameState() == GAME_STATE_IN_FRONTEND    // When in frontend
-            || playerGameOver() > 0                     // When player went game over
-            || playerPointer() == 0                     // When player pointer is zero (demo or replay)
-            || currentRaceTrack() != trackNumber       // When player warped to a secret track
-    }
-
     function valueBestLapLeaderboard() {
         return max_of(
             measured( tally(0, always_false())),
@@ -717,7 +708,7 @@
             format = "MILLISECS",
             lower_is_better = true,
             start = startBestLapLeaderboard(definition["locationId"], definition["trackNumber"]),
-            cancel = cancelBestLapLeaderboard(definition["trackNumber"]),
+            cancel = always_false(),
             submit = always_true(),
             value = valueBestLapLeaderboard()
         )
