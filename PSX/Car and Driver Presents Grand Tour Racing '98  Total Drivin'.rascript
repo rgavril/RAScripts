@@ -750,11 +750,11 @@
 
 // #region Rich Presence
     playModeLookup = {
-        0: "single player",
-        1: "time attack",
-        2: "season",
-        3: "split screen",
-        4: "head to head"
+        0: "Single Player",
+        1: "Time Attack",
+        2: "Season",
+        3: "Split Screen",
+        4: "Head to Head"
     }
 
     // Single Player
@@ -827,7 +827,7 @@
         "Playing a Split Screen 2-Player Race"
     )
 
-    rich_presence_display("Preparing to start a new {0} race.",
+    rich_presence_display("Preparing for a {0} race.",
         rich_presence_lookup("PlayMode", selectedPlayMode(), playModeLookup, "Unknown")
     )
 // #endregion Rich Presence
