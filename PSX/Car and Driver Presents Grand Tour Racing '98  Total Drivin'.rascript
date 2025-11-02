@@ -423,7 +423,7 @@
 
         for definition in raceChallangeAchivements {
             trackDifficulty = ["", "Beginner", "Experienced", "Proficient", "Expert", "Master", "Champion"]
-            trackPoints     = [ 0, 3, 5, 5, 5, 10, 10 ]
+            trackPoints     = [ 0, 3, 3, 5, 5, 5, 10 ]
 
             genTitle = ""
             genTitle = genTitle + locationLookup[ definition["location"] ]
@@ -521,7 +521,7 @@
         ]
 
         for definition in timeAttackAchievements {
-            trackPoints = [ 0, 3, 5, 5, 5, 10, 10 ]
+            trackPoints = [ 0, 3, 3, 5, 5, 5, 10 ]
 
             genTitle = ""
             genTitle = genTitle + locationLookup[ definition["location"] ]
