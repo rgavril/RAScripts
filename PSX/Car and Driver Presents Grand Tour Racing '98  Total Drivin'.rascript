@@ -77,6 +77,10 @@
 
     function SplitScreenTopCarPointer() => dword(0x0c26a0)
     function SplitScreenBottomCarPointer() => dword(0x0c26a4)
+
+    function cameraTarget() => dword(0x0c9860)
+    CAMERA_TARGET_PLAYER = 0x80093cc0
+    CAMERA_TARGET_ROTATE = 0x80093ce0
 // #endregion Memory Addresses
 
 // #region Lookups
@@ -202,6 +206,13 @@
             && frontendScreen() == SCREEN_LOAD_MENU
             && prev(memoryCardMessage()) == MEMCARD_LOADING
             && memoryCardMessage() == MEMCARD_LOADED
+    }
+
+    function isGameplayActive() {
+        return
+            gameState() == GAME_STATE_IN_GAME
+            && playerPointer() != 0
+            && cameraTarget() == CAMERA_TARGET_PLAYER
     }
 // #endregion Complex Conditions
 
