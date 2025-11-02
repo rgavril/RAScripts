@@ -12,11 +12,16 @@
     GAME_STATE_PAUSE_MENU_QUIT = 0x800ac6a8
     GAME_STATE_DEMO_GAMEPLAY = 0x8009046c
     GAME_STATE_EXIT_GAMEPLAY = 0x800883e4
+    GAME_STATE_PAUSE_INSERT_CD = 0x800ac5a8
+    GAME_STATE_GAME_REPLAY = 0x80090824
 
     function frontendScreen() => word(0x02690c)
     SCREEN_MAIN_MENU = 0x00
     SCREEN_LOAD_MENU = 0x02
     SCREEN_RACE_RESULTS = 0x0c
+    SCREEN_NAME_INPUT_NAME_FL = 0x07
+    SCREEN_NAME_INPUT_NANE_TT = 0x08
+    SCREEN_NAME_INPUT_NAME_FLTT = 0x09
 
     function memoryCardMessage() => word(0x033ecc)
     MEMCARD_SAVING = 0x10
@@ -213,6 +218,16 @@
             gameState() == GAME_STATE_IN_GAME
             && playerPointer() != 0
             && cameraTarget() == CAMERA_TARGET_PLAYER
+    }
+
+    function isGameplayPaused() {
+        return
+            gameState() == GAME_STATE_PAUSE_INSERT_CD
+            || gameState() == GAME_STATE_PAUSE_MENU_MAIN
+            || gameState() == GAME_STATE_PAUSE_MENU_MAIN
+            || gameState() == GAME_STATE_PAUSE_MENU_PICTURE
+            || gameState() == GAME_STATE_PAUSE_MENU_SOUND
+            || gameState() == GAME_STATE_PAUSE_MENU_QUIT
     }
 // #endregion Complex Conditions
 
@@ -770,14 +785,7 @@
 
     // Single Player
     rich_presence_conditional_display(
-        (
-            gameState() == GAME_STATE_IN_GAME ||
-            gameState() == GAME_STATE_PAUSE_MENU_MAIN ||
-            gameState() == GAME_STATE_PAUSE_MENU_PICTURE ||
-            gameState() == GAME_STATE_PAUSE_MENU_SOUND ||
-            gameState() == GAME_STATE_PAUSE_MENU_QUIT
-        )
-        && playerPointer() != 0
+        isGameplayActive() 
         && selectedPlayMode() == PLAY_MODE_SINGLE_PLAYER,
 
         "Playing Single Race with Team {0} on {1} {2} • Position {3} • Lap {4}/{5}",
@@ -792,14 +800,7 @@
 
     // Season Race
     rich_presence_conditional_display(
-        (
-            gameState() == GAME_STATE_IN_GAME ||
-            gameState() == GAME_STATE_PAUSE_MENU_MAIN ||
-            gameState() == GAME_STATE_PAUSE_MENU_PICTURE ||
-            gameState() == GAME_STATE_PAUSE_MENU_SOUND ||
-            gameState() == GAME_STATE_PAUSE_MENU_QUIT
-        )
-        && playerPointer() != 0
+        isGameplayActive()
         && selectedPlayMode() == PLAY_MODE_SEASON,
 
         "Playing Season Race {3} with Team {0} on {1} {2}",
@@ -812,14 +813,7 @@
 
     // Time Attack
     rich_presence_conditional_display(
-        (
-            gameState() == GAME_STATE_IN_GAME ||
-            gameState() == GAME_STATE_PAUSE_MENU_MAIN ||
-            gameState() == GAME_STATE_PAUSE_MENU_PICTURE ||
-            gameState() == GAME_STATE_PAUSE_MENU_SOUND ||
-            gameState() == GAME_STATE_PAUSE_MENU_QUIT
-        )
-        && playerPointer() != 0
+        isGameplayActive()
         && selectedPlayMode() == PLAY_MODE_TIME_ATTACK,
 
         "Playing Time Attack with Team {0} on {1} {2}",
@@ -835,10 +829,31 @@
         && (selectedPlayMode() == PLAY_MODE_SPLIT_SCREEN || selectedPlayMode() == PLAY_MODE_HEAD_TO_HEAD)
         && SplitScreenBottomCarPointer() >= 0x80000000
         && SplitScreenTopCarPointer() >= 0x80000000,
+
         "Playing a Split Screen 2-Player Race"
     )
 
-    rich_presence_display("Preparing for a {0} race.",
+    // Race Replay
+    rich_presence_conditional_display(
+        gameState() == GAME_STATE_GAME_REPLAY,
+
+        "Watching Race Replay from {0} {1}",
+
+        rich_presence_lookup("Location", selectedLocation(), locationLookup, "Unknown"), // 0 : Location
+        rich_presence_macro("Number", currentRaceTrack())                                // 1 : Track
+    )
+
+    // Demo Gameplay
+    rich_presence_conditional_display(
+        gameState() == GAME_STATE_DEMO_GAMEPLAY,
+
+        "Watching Demo Gameplay from {0} {1}",
+
+        rich_presence_lookup("Location", selectedLocation(), locationLookup, "Unknown"), // 0 : Location
+        rich_presence_macro("Number", currentRaceTrack())                                // 1 : Track
+    )
+
+    rich_presence_display("Preparing for a {0} Race",
         rich_presence_lookup("PlayMode", selectedPlayMode(), playModeLookup, "Unknown")
     )
 // #endregion Rich Presence
