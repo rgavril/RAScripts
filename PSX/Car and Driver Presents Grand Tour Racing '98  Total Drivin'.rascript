@@ -542,7 +542,7 @@
             else
                 genDescription = genDescription + ":" + definition["time"][2]
             genDescription = genDescription + " "
-            genDescription = genDescription + "on the"
+            genDescription = genDescription + "on the "
             genDescription = genDescription + locationLookup[ definition["location"] ]
             genDescription = genDescription + " "
             genDescription = genDescription + definition["track"]
