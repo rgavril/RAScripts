@@ -740,6 +740,51 @@
         )
     }
 
+
+    bestRaceTimeLeaderboardDefinitions = [
+        {"id":144937, "trackName": "Moscow 1", "locationId": LOCATION_MOSCOW, "trackNumber": 1 },
+        {"id":144938, "trackName": "Moscow 2", "locationId": LOCATION_MOSCOW, "trackNumber": 2 },
+        {"id":144939, "trackName": "Moscow 3", "locationId": LOCATION_MOSCOW, "trackNumber": 3 },
+        {"id":144940, "trackName": "Moscow 4", "locationId": LOCATION_MOSCOW, "trackNumber": 4 },
+        {"id":144941, "trackName": "Moscow 5", "locationId": LOCATION_MOSCOW, "trackNumber": 5 },
+        {"id":144942, "trackName": "Moscow 6", "locationId": LOCATION_MOSCOW, "trackNumber": 6 },
+
+        {"id":144943, "trackName": "Easter Island 1", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 1 },
+        {"id":144944, "trackName": "Easter Island 2", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 2 },
+        {"id":144945, "trackName": "Easter Island 3", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 3 },
+        {"id":144946, "trackName": "Easter Island 4", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 4 },
+        {"id":144947, "trackName": "Easter Island 5", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 5 },
+        {"id":144948, "trackName": "Easter Island 6", "locationId": LOCATION_EASTER_ISLAND, "trackNumber": 6 },
+
+        {"id":144949, "trackName": "Switzerland 1", "locationId": LOCATION_SWITZERLAND, "trackNumber": 1 },
+        {"id":144950, "trackName": "Switzerland 2", "locationId": LOCATION_SWITZERLAND, "trackNumber": 2 },
+        {"id":144951, "trackName": "Switzerland 3", "locationId": LOCATION_SWITZERLAND, "trackNumber": 3 },
+        {"id":144952, "trackName": "Switzerland 4", "locationId": LOCATION_SWITZERLAND, "trackNumber": 4 },
+        {"id":144953, "trackName": "Switzerland 5", "locationId": LOCATION_SWITZERLAND, "trackNumber": 5 },
+        {"id":144954, "trackName": "Switzerland 6", "locationId": LOCATION_SWITZERLAND, "trackNumber": 6 },
+
+        {"id":144955, "trackName": "Scotland 1", "locationId": LOCATION_SCOTLAND, "trackNumber": 1 },
+        {"id":144956, "trackName": "Scotland 2", "locationId": LOCATION_SCOTLAND, "trackNumber": 2 },
+        {"id":144957, "trackName": "Scotland 3", "locationId": LOCATION_SCOTLAND, "trackNumber": 3 },
+        {"id":144958, "trackName": "Scotland 4", "locationId": LOCATION_SCOTLAND, "trackNumber": 4 },
+        {"id":144959, "trackName": "Scotland 5", "locationId": LOCATION_SCOTLAND, "trackNumber": 5 },
+        {"id":144960, "trackName": "Scotland 6", "locationId": LOCATION_SCOTLAND, "trackNumber": 6 },
+
+        {"id":144961, "trackName": "Hong Kong 1", "locationId": LOCATION_HONG_KONG, "trackNumber": 1 },
+        {"id":144962, "trackName": "Hong Kong 2", "locationId": LOCATION_HONG_KONG, "trackNumber": 2 },
+        {"id":144963, "trackName": "Hong Kong 3", "locationId": LOCATION_HONG_KONG, "trackNumber": 3 },
+        {"id":144964, "trackName": "Hong Kong 4", "locationId": LOCATION_HONG_KONG, "trackNumber": 4 },
+        {"id":144965, "trackName": "Hong Kong 5", "locationId": LOCATION_HONG_KONG, "trackNumber": 5 },
+        {"id":144966, "trackName": "Hong Kong 6", "locationId": LOCATION_HONG_KONG, "trackNumber": 6 },
+
+        {"id":144967, "trackName": "Egypt 1", "locationId": LOCATION_EGYPT, "trackNumber": 1 },
+        {"id":144968, "trackName": "Egypt 2", "locationId": LOCATION_EGYPT, "trackNumber": 2 },
+        {"id":144969, "trackName": "Egypt 3", "locationId": LOCATION_EGYPT, "trackNumber": 3 },
+        {"id":144970, "trackName": "Egypt 4", "locationId": LOCATION_EGYPT, "trackNumber": 4 },
+        {"id":144971, "trackName": "Egypt 5", "locationId": LOCATION_EGYPT, "trackNumber": 5 },
+        {"id":144972, "trackName": "Egypt 6", "locationId": LOCATION_EGYPT, "trackNumber": 6 }
+    ]
+
     function startBestRaceTimeLeaderboard(locationId, trackNumber) {
         return
             gameState() == GAME_STATE_IN_GAME
@@ -758,7 +803,7 @@
         return playerRaceTime() * 10/3
     }
 
-    for definition in bestLapLeaderboardDefinitions {
+    for definition in bestRaceTimeLeaderboardDefinitions {
         leaderboard(
             // id = definition["id"],
             title = definition["trackName"] + " : Best Race Time",
