@@ -708,8 +708,7 @@
 
     function startBestLapLeaderboard(locationId, trackNumber) {
         return
-            gameState() == GAME_STATE_IN_GAME
-            && playerPointer() != 0
+            isGameplayActive()
             && selectedLocation() == locationId
             && currentRaceTrack() == trackNumber
             && playerLap() > 1
@@ -787,15 +786,13 @@
 
     function startBestRaceTimeLeaderboard(locationId, trackNumber) {
         return
-            gameState() == GAME_STATE_IN_GAME
-            && playerPointer() != 0
+            isGameplayActive()
             && selectedLocation() == locationId
             && currentRaceTrack() == trackNumber
             && frameRaceCompleted()
-            && (
-                selectedPlayMode() == PLAY_MODE_SINGLE_PLAYER
-                ||
-                selectedPlayMode() == PLAY_MODE_SEASON
+            && any_of(
+                [ PLAY_MODE_SINGLE_PLAYER, PLAY_MODE_SEASON ],
+                playModeId => selectedPlayMode() == playModeId
             )
     }
 
