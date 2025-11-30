@@ -818,11 +818,11 @@
 
 // #region Rich Presence
     playModeLookup = {
-        0: "Single Player",
-        1: "Time Attack",
-        2: "Season",
-        3: "Split Screen",
-        4: "Head to Head"
+        0: "single player",
+        1: "time attack",
+        2: "season",
+        3: "split screen",
+        4: "head to head"
     }
 
     // Single Player
@@ -830,7 +830,7 @@
         isGameplayActive() 
         && selectedPlayMode() == PLAY_MODE_SINGLE_PLAYER,
 
-        "Playing Single Race with Team {0} on {1} {2} • Position {3} • Lap {4}/{5}",
+        "Playing single race with team {0} on {1} {2} • Position {3} • Lap {4}/{5}",
 
         rich_presence_lookup("Team", playerteamID(), teamLookup, "Unknown"),             // 0 : Team
         rich_presence_lookup("Location", selectedLocation(), locationLookup, "Unknown"), // 1 : Location
@@ -845,7 +845,7 @@
         isGameplayActive()
         && selectedPlayMode() == PLAY_MODE_SEASON,
 
-        "Playing Season Race {3} with Team {0} on {1} {2}",
+        "Competing in season race {3} with team {0} on {1} {2}",
 
         rich_presence_lookup("Team", playerteamID(), teamLookup, "Unknown"),             // 0 : Team
         rich_presence_lookup("Location", selectedLocation(), locationLookup, "Unknown"), // 1 : Location
@@ -858,7 +858,7 @@
         isGameplayActive()
         && selectedPlayMode() == PLAY_MODE_TIME_ATTACK,
 
-        "Playing Time Attack with Team {0} on {1} {2}",
+        "Hotlapping with team {0} on {1} {2}",
 
         rich_presence_lookup("Team", playerteamID(), teamLookup, "Unknown"),             // 0 : Team
         rich_presence_lookup("Location", selectedLocation(), locationLookup, "Unknown"), // 1 : Location
@@ -872,14 +872,14 @@
         && SplitScreenBottomCarPointer() >= 0x80000000
         && SplitScreenTopCarPointer() >= 0x80000000,
 
-        "Playing a Split Screen 2-Player Race"
+        "Playing a split screen 2-player race"
     )
 
     // Race Replay
     rich_presence_conditional_display(
         gameState() == GAME_STATE_GAME_REPLAY,
 
-        "Watching Race Replay from {0} {1}",
+        "Watching race replay from {0} {1}",
 
         rich_presence_lookup("Location", selectedLocation(), locationLookup, "Unknown"), // 0 : Location
         rich_presence_macro("Number", currentRaceTrack())                                // 1 : Track
@@ -889,13 +889,13 @@
     rich_presence_conditional_display(
         gameState() == GAME_STATE_DEMO_GAMEPLAY,
 
-        "Watching Demo Gameplay from {0} {1}",
+        "Watching demo gameplay from {0} {1}",
 
         rich_presence_lookup("Location", selectedLocation(), locationLookup, "Unknown"), // 0 : Location
         rich_presence_macro("Number", currentRaceTrack())                                // 1 : Track
     )
 
-    rich_presence_display("Preparing for a {0} Race",
+    rich_presence_display("Preparing for a {0} race",
         rich_presence_lookup("PlayMode", selectedPlayMode(), playModeLookup, "Unknown")
     )
 // #endregion Rich Presence
