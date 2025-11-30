@@ -529,6 +529,16 @@
             genTitle = genTitle + definition["track"]
             genTitle = genTitle + " Time Trial"
 
+            // round the time to the nearest 1/2 second
+            if (definition["time"][2] >= 75) {
+                definition["time"][2] = 0
+                definition["time"][1] = definition["time"][1] + 1
+            } else if (definition["time"][2] <= 25) {
+                definition["time"][2] = 0
+            } else {
+                definition["time"][2] = 50
+            }
+
             genDescription = ""
             genDescription = genDescription + "Finish a lap faster than"
             genDescription = genDescription + " " 
@@ -547,7 +557,7 @@
             genDescription = genDescription + " "
             genDescription = genDescription + definition["track"]
             genDescription = genDescription + " "
-            genDescription = genDescription + "track in Time Attack, One Player of Season mode"
+            genDescription = genDescription + "track in Time Attack, One Player or Season mode"
 
             genPoints = trackPoints[ definition["track"] ]
 
