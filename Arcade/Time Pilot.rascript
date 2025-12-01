@@ -501,19 +501,20 @@
         trigger = triggerRescueMission(year = AGE_1982, count = 3)
     )
 
-    // Achievement: Monoplane Formation Breaker
+    // Achievement: Biplane Formation Breaker
     achievement(
         id = 541536,
-        title = "Monoplane Formation Breaker",
-        description = "Destroy 4 monoplane formations from 1910 in a single game, on default settings.",
+        title = "Biplane Formation Breaker",
+        description = "Destroy 4 biplane formations from 1910 in a single game, on default settings.",
         points = 5,
         trigger = triggerForationKills(age=AGE_1910, count = 4)
     )
 
-    // Achievement: Biplane Squadron Crusher
+    // Achievement: Monoplane Squadron Crusher
     achievement(
-        title = "Biplane Squadron Crusher",
-        description = "Destroy 4 biplane formations from 1940 in a single game, on default settings.",
+        id = 542019,
+        title = "Monoplane Squadron Crusher",
+        description = "Destroy 4 monoplane formations from 1940 in a single game, on default settings.",
         points = 5,
         trigger = triggerForationKills(age=AGE_1940, count = 4)
     )
