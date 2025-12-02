@@ -69,6 +69,7 @@
     function playerPointer() => tbyte(0x0b70f8)
     function playerPosition() => dword(tbyte(0x0b70f8)+0x590)
     function playerteamID() => byte(tbyte(0x0b70f8)+0x128)
+    function playerStartGateCrossCounter() => byte(tbyte(0x0b70f8)+0x56c)
     function playerLap() => byte(tbyte(0x0b70f8)+0x574)
     function playerGameOver() => byte(tbyte(0x0b70f8)+0x619)
     function playerLap1Time() => dword(tbyte(0x0b70f8)+0x57c)
@@ -723,11 +724,21 @@
             && currentRaceTrack() == trackNumber
             && playerLap() > 1
             && framePlayerLapIncreased()
+            &&
+            // Ensure that a valid lap time is available for submission
+            (
+                (playerLap1Time() > 0 && playerLap() == 2)
+                ||
+                (playerLap2Time() > 0 && playerLap() == 3)
+                ||
+                (playerLap3Time() > 0 && playerLap() == 4 && currentRaceTotalLaps() == 3)
+                ||
+                (playerLap2Time() > 0 && playerLap() >= 4 && currentRaceTotalLaps() >= 4)
+            )
     }
 
     function valueBestLapLeaderboard() {
         return max_of(
-            measured( tally(0, always_false())),
             measured( playerLap1Time() * 10/3, when = prev(playerLap()) == 1 ),
             measured( playerLap2Time() * 10/3, when = prev(playerLap()) == 2 ),
             measured( playerLap3Time() * 10/3, when = prev(playerLap()) == 3 && currentRaceTotalLaps() == 3),
