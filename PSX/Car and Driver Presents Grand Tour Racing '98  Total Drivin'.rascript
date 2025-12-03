@@ -724,25 +724,21 @@
             && currentRaceTrack() == trackNumber
             && playerLap() > 1
             && framePlayerLapIncreased()
-            &&
             // Ensure that a valid lap time is available for submission
-            (
+            && ( 
                 (playerLap1Time() > 0 && playerLap() == 2)
-                ||
-                (playerLap2Time() > 0 && playerLap() == 3)
-                ||
-                (playerLap3Time() > 0 && playerLap() == 4 && currentRaceTotalLaps() == 3)
-                ||
-                (playerLap2Time() > 0 && playerLap() >= 4 && currentRaceTotalLaps() >= 4)
+                || (playerLap2Time() > 0 && playerLap() == 3)
+                || (playerLap3Time() > 0 && playerLap() == 4 && currentRaceTotalLaps() == 3)
+                || (playerLap2Time() > 0 && playerLap() >= 4 && currentRaceTotalLaps() >= 4)
             )
     }
 
     function valueBestLapLeaderboard() {
         return max_of(
-            measured( playerLap1Time() * 10/3, when = prev(playerLap()) == 1 ),
-            measured( playerLap2Time() * 10/3, when = prev(playerLap()) == 2 ),
-            measured( playerLap3Time() * 10/3, when = prev(playerLap()) == 3 && currentRaceTotalLaps() == 3),
-            measured( playerLap2Time() * 10/3, when = prev(playerLap()) >= 3 && currentRaceTotalLaps() >= 4)
+            measured( playerLap1Time() * 10/3, when = playerLap() == 2 ),
+            measured( playerLap2Time() * 10/3, when = playerLap() == 3 ),
+            measured( playerLap3Time() * 10/3, when = playerLap() == 4 && currentRaceTotalLaps() == 3),
+            measured( playerLap2Time() * 10/3, when = playerLap() >= 4 && currentRaceTotalLaps() >= 4)
         )
     }
     
