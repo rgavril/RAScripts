@@ -26,6 +26,7 @@
 	function gameScreen() => byte(0x008f)
 	GAMESCREEN_LEVEL_BRIEFING = 0x1a   // Level briefing screen, at gamestart and in between stages.
     GAMESCREEN_GAMEOVER_CONTNUE = 0x78 // Game Over and Continue screen.
+    GAMESCREEN_INPUT_NAME = 0x10       // Input Name screen.
 
 	// Addresses : Entity Slots (0x03da, 0x03d9, 0x03d8, 0x03d7)
 	// The type of entity in the specified slot.
@@ -301,6 +302,7 @@
 // #region Achievement Definitions
     // Achievement : Parking Garage 3F
     achievement(
+        id = 564738,
         title = "Parking Garage 3F",
         description = "Complete Stage 1",
         points = 5,
@@ -310,6 +312,7 @@
 
     // Achievement : Parking Garage 2F
     achievement(
+        id = 564739,
         title = "Parking Garage 2F",
         description = "Complete Stage 2",
         points = 5,
@@ -319,6 +322,7 @@
 
     // Achievement : Parking Garage 1F
     achievement(
+        id = 564740,
         title = "Parking Garage 1F",
         description = "Complete Stage 3",
         points = 5,
@@ -328,6 +332,7 @@
 
     // Achievement : Downtown
     achievement(
+        id = 564741,
         title = "Downtown",
         description = "Complete Stage 4",
         points = 10,
@@ -337,6 +342,7 @@
 
     // Achievement : The Park
     achievement(
+        id = 564742,
         title = "The Park",
         description = "Complete Stage 5",
         points = 10,
@@ -346,6 +352,7 @@
 
     // Achievement : Uptown
     achievement(
+        id = 564743,
         title = "Uptown",
         description = "Complete Stage 6",
         points = 10,
@@ -355,6 +362,7 @@
 
     // Achievement : The Pig Pen
     achievement(
+        id = 564744,
         title = "The Pig Pen",
         description = "Complete Stage 7",
         points = 10,
@@ -478,69 +486,53 @@
         0x04: "Downtown",
         0x05: "the Park",
         0x06: "Uptown",
-        0x07: "the Pig Pen"
-    }
-
-    enemyNamesLookup = {
-        0x02: "Motocycles",
-        0x04: "Sleazy Riders",
-        0x10: "Sleazy Rideress",
-        0x16: "Bat Bosses",
-        0x1a: "South Side Stranglers",
-        0x1e: "Dagger Dudes",
-        0x26: "Skate Lords",
-        0x2e: "Hammer Heads",
-        0x30: "Karate Clan",
-        0x32: "Bouncers",
-        0x34: "Bruise Brigade",
-        0x0a: "Achiles",
-        0x14: "Siggy",
-        0x1c: "Big Bob",
-        0x3a: "Mr. Big"
+        0x07: "the Pig Pen",
     }
 
     // Rich Presence : Briefing Screen
     rich_presence_conditional_display (
-        gameplayState() == GAMEPLAY_STATE_PLAYING && gameScreen() == GAMESCREEN_LEVEL_BRIEFING,
-        "{1} Briefing Screen",
+        gameplayState() == GAMEPLAY_STATE_PLAYING && gameScreen() == GAMESCREEN_LEVEL_BRIEFING && stage() <= 7,
+        "Preparing for {1} ⸱ Score: {2}",
         rich_presence_value("StageNumber", stage()),
-        rich_presence_lookup("StageName", stage(), stageNamesLookup)
+        rich_presence_lookup("StageName", stage(), stageNamesLookup),
+        rich_presence_macro("Score", score())
+    )
+    
+    rich_presence_conditional_display (
+        gameplayState() == GAMEPLAY_STATE_PLAYING && gameScreen() == GAMESCREEN_LEVEL_BRIEFING,
+        "Preparing for {1}",
+        rich_presence_value("StageNumber", 1),
+        rich_presence_lookup("StageName", 1, stageNamesLookup)
     )
 
     rich_presence_conditional_display (
         gameplayState() == GAMEPLAY_STATE_PLAYING && gameScreen() == GAMESCREEN_GAMEOVER_CONTNUE,
-        "Suffered a defeat in {1}",
+        "Defeated in {1} ⸱ Score: {2}",
         rich_presence_value("StageNumber", stage()),
-        rich_presence_lookup("StageName", stage(), stageNamesLookup)
+        rich_presence_lookup("StageName", stage(), stageNamesLookup),
+        rich_presence_macro("Score", score())
     )
 
-    // Rich Presence : Enemies on Screen
-    for enemyType in enemyNamesLookup {
-        rich_presence_conditional_display(
-            gameplayState() == GAMEPLAY_STATE_PLAYING && any_of(range(1,4), slot => entityType(slot) == enemyType),
-
-            "Fighting {6} in {1} ⸱ ❤️ {2}% ⸱ ⏱️ {3}:{4}{5}",
-            rich_presence_value("StageNumber", stage()),
-            rich_presence_lookup("StageName", stage(), stageNamesLookup),
-            rich_presence_value("PlayerLife", playerEnergy() * 100 / 0x40),
-            rich_presence_value("TimeMinutes", byte(0x00e8)),
-            rich_presence_value("TimeSecondsX0", byte(0x00ea)),
-            rich_presence_value("TimeSeconds0X", byte(0x00eb)),
-            enemyNamesLookup[enemyType]
-        )
-    }
+    rich_presence_conditional_display (
+        gameplayState() == GAMEPLAY_STATE_PLAYING && gameScreen() == GAMESCREEN_INPUT_NAME,
+        "Defeated in {1} ⸱ Score: {2}",
+        rich_presence_value("StageNumber", stage()),
+        rich_presence_lookup("StageName", stage(), stageNamesLookup),
+        rich_presence_macro("Score", score())
+    )
 
     // Rich Presence : In Gameplay
     rich_presence_conditional_display(
         gameplayState() == GAMEPLAY_STATE_PLAYING,
 
-        "Fighting in {1} ⸱ ❤️ {2}% ⸱ ⏱️ {3}:{4}{5}",
+        "Fighting in {1} ⸱ Life: {2}% ⸱ Time: {3}:{4}{5} ⸱ Score: {6}",
         rich_presence_value("StageNumber", stage()),
         rich_presence_lookup("StageName", stage(), stageNamesLookup),
         rich_presence_value("PlayerLife", playerEnergy() * 100 / 0x40),
         rich_presence_value("TimeMinutes", byte(0x00e8)),
         rich_presence_value("TimeSecondsX0", byte(0x00ea)),
-        rich_presence_value("TimeSeconds0X", byte(0x00eb))
+        rich_presence_value("TimeSeconds0X", byte(0x00eb)),
+        rich_presence_macro("Score", score())
     )
 
     // Rich Presence : Default
