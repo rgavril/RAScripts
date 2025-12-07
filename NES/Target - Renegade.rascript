@@ -24,7 +24,8 @@
 	// Addresses : Game Screen (0x008f)
 	// Value varies throughout the gameplay, but it seams stable on few specific screens.
 	function gameScreen() => byte(0x008f)
-	GAMESCREEN_LEVEL_BRIEFING = 0x1a // Level briefing screen, at gamestart and in between stages.
+	GAMESCREEN_LEVEL_BRIEFING = 0x1a   // Level briefing screen, at gamestart and in between stages.
+    GAMESCREEN_GAMEOVER_CONTNUE = 0x78 // Game Over and Continue screen.
 
 	// Addresses : Entity Slots (0x03da, 0x03d9, 0x03d8, 0x03d7)
 	// The type of entity in the specified slot.
@@ -361,10 +362,11 @@
         trigger = triggerStageCompleted(7)
     )
 
+    /*
     // Achievement : Achiles Belly-Kick Ballet
     achievement (
         title = "Achiles Belly-Kick Ballet",
-        description = "Defeat Achiles without taking damage.",
+        description = "Defeat Achiles without taking damage",
         points = 5,
         trigger = triggerPerfectBossFight(ENTITY_TYPE["Boss"]["Achiles"])
     )
@@ -372,7 +374,7 @@
     // Achievement : Siggy's Hysteria Treatment
     achievement (
         title = "Siggy's Hysteria Treatment",
-        description = "Defeat Siggy without taking damage.",
+        description = "Defeat Siggy without taking damage",
         points = 5,
         trigger = triggerPerfectBossFight(ENTITY_TYPE["Boss"]["Siggy"])
     )
@@ -380,7 +382,7 @@
     // Achievement : Big Bob's Abs Check
     achievement (
         title = "Big Bob's Abs Check",
-        description = "Defeat Big Bob without taking damage.",
+        description = "Defeat Big Bob without taking damage",
         points = 5,
         trigger = triggerPerfectBossFight(ENTITY_TYPE["Boss"]["Big Bob"])
     )
@@ -388,7 +390,7 @@
     // Achievement : Mr. Big Disapointment
     achievement (
         title = "Mr. Big Disapointment",
-        description = "Defeat Mr. Big without taking damage.",
+        description = "Defeat Mr. Big without taking damage",
         points = 10,
         trigger = triggerPerfectBossFight(ENTITY_TYPE["Boss"]["Mr. Big"])
     )
@@ -396,7 +398,7 @@
     // Achievement : Headbutt Sensei
     achievement (
         title = "Headbutt Sensei",
-        description = "Kill 15 enemies by headbutting before game over.",
+        description = "Kill 15 enemies by headbutting before game over",
         points = 5,
         trigger = triggerAttackMastery("Headbutt", totalKills=15)
     )
@@ -404,7 +406,7 @@
     // Achievement : Baseball Superstar
     achievement (
         title = "Baseball Superstar",
-        description = "Kill 10 enemies using the Baseball Bat before game over.",
+        description = "Kill 10 enemies using the Baseball Bat before game over",
         points = 5,
         trigger = triggerAttackMastery("Swing Baseball Bat", totalKills=10)
     )
@@ -412,7 +414,7 @@
     // Achievement : Master Firefighter
     achievement (
         title = "Master Firefighter",
-        description = "Kill 5 enemies using the Extinguisher before game over.",
+        description = "Kill 5 enemies using the Extinguisher before game over",
         points = 10,
         trigger = triggerAttackMastery("Throw Extinguisher", totalKills=5)
     )
@@ -420,7 +422,7 @@
     // Achievement : Skilled Trashman
     achievement (
         title = "Skilled Trashman",
-        description = "Kill 3 enemies using the Trash Bin before game over.",
+        description = "Kill 3 enemies using the Trash Bin before game over",
         points = 10,
         trigger = triggerAttackMastery("Throw Trash Bin", totalKills=3)
     )
@@ -428,7 +430,7 @@
     // Achievement : Heart Collector
     achievement (
         title = "Heart Collector",
-        description = "Collect 20 hearts before game over.",
+        description = "Collect 20 hearts before game over",
         points = 10,
         trigger = triggerHeartsChallange(20)
     )
@@ -436,7 +438,7 @@
     // Achivement : One Credit Clear
     achievement (
         title = "One Credit Clear",
-        description = "Complete the game without using a continue.",
+        description = "Complete the game without using a continue",
         points = 25,
         trigger = triggerOneCreditClear()
     )
@@ -444,7 +446,7 @@
     // Achivement : 5000 Points
     achievement (
         title = "5000 Points",
-        description = "Score 5000 points without using a continue.",
+        description = "Score 5000 points without using a continue",
         points = 5,
         trigger = triggerScoreChallenge(5000)
     )
@@ -452,7 +454,7 @@
     // Achivement : 10000 Points
     achievement (
         title = "10000 Points",
-        description = "Score 10000 points without using a continue.",
+        description = "Score 10000 points without using a continue",
         points = 5,
         trigger = triggerScoreChallenge(10000)
     )
@@ -460,22 +462,23 @@
     // Achivement : 20000 Points
     achievement (
         title = "20000 Points",
-        description = "Score 20000 points without using a continue.",
+        description = "Score 20000 points without using a continue",
         points = 10,
         trigger = triggerScoreChallenge(20000)
     )
+    */
 // #endregion Achievement Definitions
 
 // #region Rich Presence
     // Rich Presence : Lookups
     stageNamesLookup = {
-        0x01: "parking garage",
-        0x02: "parking garage",
-        0x03: "garage 1st Level",
-        0x04: "downtown",
-        0x05: "the park",
-        0x06: "uptown",
-        0x07: "'The Pig Pen'"
+        0x01: "Parking Garage 3F",
+        0x02: "Parking Garage 2F",
+        0x03: "Parking Garage 1F",
+        0x04: "Downtown",
+        0x05: "the Park",
+        0x06: "Uptown",
+        0x07: "the Pig Pen"
     }
 
     enemyNamesLookup = {
@@ -498,21 +501,31 @@
 
     // Rich Presence : Briefing Screen
     rich_presence_conditional_display (
-        gameplayState() == GAMEPLAY_STATE_PLAYING
-        && gameScreen() == GAMESCREEN_LEVEL_BRIEFING,
+        gameplayState() == GAMEPLAY_STATE_PLAYING && gameScreen() == GAMESCREEN_LEVEL_BRIEFING,
+        "{1} Briefing Screen",
+        rich_presence_value("StageNumber", stage()),
+        rich_presence_lookup("StageName", stage(), stageNamesLookup)
+    )
 
-        "In {0}, resting.",
+    rich_presence_conditional_display (
+        gameplayState() == GAMEPLAY_STATE_PLAYING && gameScreen() == GAMESCREEN_GAMEOVER_CONTNUE,
+        "Suffered a defeat in {1}",
+        rich_presence_value("StageNumber", stage()),
         rich_presence_lookup("StageName", stage(), stageNamesLookup)
     )
 
     // Rich Presence : Enemies on Screen
     for enemyType in enemyNamesLookup {
         rich_presence_conditional_display(
-            gameplayState() == GAMEPLAY_STATE_PLAYING
-            && any_of(range(1,4), slot => entityType(slot) == enemyType),
+            gameplayState() == GAMEPLAY_STATE_PLAYING && any_of(range(1,4), slot => entityType(slot) == enemyType),
 
-            "In {0}, fighting {1}",
+            "Fighting {6} in {1} ⸱ ❤️ {2}% ⸱ ⏱️ {3}:{4}{5}",
+            rich_presence_value("StageNumber", stage()),
             rich_presence_lookup("StageName", stage(), stageNamesLookup),
+            rich_presence_value("PlayerLife", playerEnergy() * 100 / 0x40),
+            rich_presence_value("TimeMinutes", byte(0x00e8)),
+            rich_presence_value("TimeSecondsX0", byte(0x00ea)),
+            rich_presence_value("TimeSeconds0X", byte(0x00eb)),
             enemyNamesLookup[enemyType]
         )
     }
@@ -521,12 +534,17 @@
     rich_presence_conditional_display(
         gameplayState() == GAMEPLAY_STATE_PLAYING,
 
-        "In {0}, walking.",
-        rich_presence_lookup("StageName", stage(), stageNamesLookup)
+        "Fighting in {1} ⸱ ❤️ {2}% ⸱ ⏱️ {3}:{4}{5}",
+        rich_presence_value("StageNumber", stage()),
+        rich_presence_lookup("StageName", stage(), stageNamesLookup),
+        rich_presence_value("PlayerLife", playerEnergy() * 100 / 0x40),
+        rich_presence_value("TimeMinutes", byte(0x00e8)),
+        rich_presence_value("TimeSecondsX0", byte(0x00ea)),
+        rich_presence_value("TimeSeconds0X", byte(0x00eb))
     )
 
     // Rich Presence : Default
     rich_presence_display(
-        "Getting ready to rumble."
+        "Getting Ready to Rumble"
     )
 // #endregion Rich Presence
