@@ -735,10 +735,10 @@
 
     function valueBestLapLeaderboard() {
         return max_of(
-            measured( playerLap1Time() * 10/3, when = playerLap() == 2 ),
-            measured( playerLap2Time() * 10/3, when = playerLap() == 3 ),
-            measured( playerLap3Time() * 10/3, when = playerLap() == 4 && currentRaceTotalLaps() == 3),
-            measured( playerLap2Time() * 10/3, when = playerLap() >= 4 && currentRaceTotalLaps() >= 4)
+            measured( playerLap1Time() * 10/3 + 0.0000001, when = playerLap() == 2 ),
+            measured( playerLap2Time() * 10/3 + 0.0000001, when = playerLap() == 3 ),
+            measured( playerLap3Time() * 10/3 + 0.0000001, when = playerLap() == 4 && currentRaceTotalLaps() == 3),
+            measured( playerLap2Time() * 10/3 + 0.0000001, when = playerLap() >= 4 && currentRaceTotalLaps() >= 4)
         )
     }
     
