@@ -576,7 +576,7 @@
     // #region Ultimate Season Wins
         achievement(
             title       = "Ahmed's Ultimate Challenge",
-            description = "Win a Season with Team Ahmed where every race is held on a Track 6 variation",
+            description = "Win a Season with Team Ahmed where every race is held on a Track 6 variation, without loading to retry races",
             points      = 25,
             trigger     = triggerUltimateSeason(TEAM_AHMED),
             id          = 552824
@@ -584,7 +584,7 @@
 
         achievement(
             title       = "Morgen's Ultimate Challenge",
-            description = "Win a Season with Team Morgen where every race is held on a Track 6 variation",
+            description = "Win a Season with Team Morgen where every race is held on a Track 6 variation, without loading to retry races",
             points      = 25,
             trigger     = triggerUltimateSeason(TEAM_MORGEN),
             id          = 552825
@@ -592,7 +592,7 @@
 
         achievement(
             title       = "Rossi's Ultimate Challenge",
-            description = "Win a Season with Team Rossi where every race is held on a Track 6 variation",
+            description = "Win a Season with Team Rossi where every race is held on a Track 6 variation, without loading to retry races",
             points      = 25,
             trigger     = triggerUltimateSeason(TEAM_ROSSI),
             id          = 553214
@@ -600,7 +600,7 @@
 
         achievement(
             title       = "Xu's Ultimate Challenge",
-            description = "Win a Season with Team Xu where every race is held on a Track 6 variation",
+            description = "Win a Season with Team Xu where every race is held on a Track 6 variation, without loading to retry races",
             points      = 25,
             trigger     = triggerUltimateSeason(TEAM_XU),
             id          = 553215
@@ -608,7 +608,7 @@
 
         achievement(
             title       = "Lumiere's Ultimate Challenge",
-            description = "Win a Season with Team Lumiere where every race is held on a Track 6 variation",
+            description = "Win a Season with Team Lumiere where every race is held on a Track 6 variation, without loading to retry races",
             points      = 25,
             trigger     = triggerUltimateSeason(TEAM_LUMIERE),
             id          = 553216
@@ -616,7 +616,7 @@
 
         achievement(
             title       = "Roberts' Ultimate Challenge",
-            description = "Win a Season with Team Roberts where every race is held on a Track 6 variation",
+            description = "Win a Season with Team Roberts where every race is held on a Track 6 variation, without loading to retry races",
             points      = 25,
             trigger     = triggerUltimateSeason(TEAM_ROBERTS),
             id          = 553217
@@ -624,7 +624,7 @@
 
         achievement(
             title       = "Ivanov's Ultimate Challenge",
-            description = "Win a Season with Team Ivanov where every race is held on a Track 6 variation",
+            description = "Win a Season with Team Ivanov where every race is held on a Track 6 variation, without loading to retry races",
             points      = 25,
             trigger     = triggerUltimateSeason(TEAM_IVANOV),
             id          = 553218
@@ -632,7 +632,7 @@
 
         achievement(
             title       = "Baptiste's Ultimate Challenge",
-            description = "Win a Season with Team Baptise where every race is held on a Track 6 variation",
+            description = "Win a Season with Team Baptise where every race is held on a Track 6 variation, without loading to retry races",
             points      = 25,
             trigger     = triggerUltimateSeason(TEAM_BAPTISTE),
             id          = 553219
@@ -641,7 +641,7 @@
 
     achievement(
         title       = "Top Season",
-        description = "Finish Season Mode in 1st place overall with any team",
+        description = "Finish Season Mode in 1st place overall with any team, without loading to retry races",
         points      = 5,
         trigger     = triggerTopSeason(),
         type        = "win_condition",
@@ -650,7 +650,7 @@
 
     achievement(
         title       = "Gold Season",
-        description = "Win Season Mode by achieving a 1st place finish in every race",
+        description = "Win Season Mode by achieving a 1st place finish in every race, without loading to retry races",
         points      = 10,
         trigger     = triggerGoldSeason(),
         id          = 554954
