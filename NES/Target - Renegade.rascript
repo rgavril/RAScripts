@@ -300,51 +300,51 @@
 // #endregion Achievement Triggers
 
 // #region Achievement Definitions
-    // Achievement : Parking Garage 3F
+    // Achievement : Top Floor Brawl
     achievement(
         id = 564738,
-        title = "Parking Garage 3F",
-        description = "Complete Stage 1",
+        title = "Top Floor Brawl",
+        description = "Clear Stage 1: Parking Garage 3rd Floor",
         points = 5,
         type = "progression",
         trigger = triggerStageCompleted(1)
     )
 
-    // Achievement : Parking Garage 2F
+    // Achievement : Second Story Slugfest
     achievement(
         id = 564739,
-        title = "Parking Garage 2F",
-        description = "Complete Stage 2",
+        title = "Second Story Slugfest",
+        description = "Clear Stage 2: Parking Garage 2nd Floor",
         points = 5,
         type = "progression",
         trigger = triggerStageCompleted(2)
     )
 
-    // Achievement : Parking Garage 1F
+    // Achievement : Ground Floor Zero
     achievement(
         id = 564740,
-        title = "Parking Garage 1F",
-        description = "Complete Stage 3",
+        title = "Ground Floor Zero",
+        description = "Clear Stage 3: Parking Garage 1st Floor",
         points = 5,
         type = "progression",
         trigger = triggerStageCompleted(3)
     )
 
-    // Achievement : Downtown
+    // Achievement : Big City Beatdown
     achievement(
         id = 564741,
-        title = "Downtown",
-        description = "Complete Stage 4",
+        title = "Big City Beatdown",
+        description = "Clear Stage 4: Downtown",
         points = 10,
         type = "progression",
         trigger = triggerStageCompleted(4)
     )
 
-    // Achievement : The Park
+    // Achievement : Playground Purgatory
     achievement(
         id = 564742,
-        title = "The Park",
-        description = "Complete Stage 5",
+        title = "Playground Purgatory",
+        description = "Clear Stage 5: The Park",
         points = 10,
         type = "progression",
         trigger = triggerStageCompleted(5)
@@ -354,17 +354,17 @@
     achievement(
         id = 564743,
         title = "Uptown",
-        description = "Complete Stage 6",
+        description = "Clear Stage 6: Uptown",
         points = 10,
         type = "progression",
         trigger = triggerStageCompleted(6)
     )
 
-    // Achievement : The Pig Pen
+    // Achievement : Bar Fight Legend
     achievement(
         id = 564744,
-        title = "The Pig Pen",
-        description = "Complete Stage 7",
+        title = "Bar Fight Legend",
+        description = "Clear Stage 7: The Pig Pen",
         points = 10,
         type = "win_condition",
         trigger = triggerStageCompleted(7)
@@ -402,11 +402,12 @@
         points = 10,
         trigger = triggerPerfectBossFight(ENTITY_TYPE["Boss"]["Mr. Big"])
     )
+    */
 
     // Achievement : Headbutt Sensei
     achievement (
         title = "Headbutt Sensei",
-        description = "Kill 15 enemies by headbutting before game over",
+        description = "Execute 15 fatal Headbutt strikes in a single life",
         points = 5,
         trigger = triggerAttackMastery("Headbutt", totalKills=15)
     )
@@ -414,27 +415,31 @@
     // Achievement : Baseball Superstar
     achievement (
         title = "Baseball Superstar",
-        description = "Kill 10 enemies using the Baseball Bat before game over",
+        description = "Deliver 10 fatal strikes with the Baseball Bat in a single life",
         points = 5,
+        type = "missable",
         trigger = triggerAttackMastery("Swing Baseball Bat", totalKills=10)
     )
 
     // Achievement : Master Firefighter
     achievement (
         title = "Master Firefighter",
-        description = "Kill 5 enemies using the Extinguisher before game over",
+        description = "KO 5 enemies by throwing an Extinguisher at their heads in a single life",
         points = 10,
+        type = "missable",
         trigger = triggerAttackMastery("Throw Extinguisher", totalKills=5)
     )
 
     // Achievement : Skilled Trashman
     achievement (
         title = "Skilled Trashman",
-        description = "Kill 3 enemies using the Trash Bin before game over",
+        description = "Achieve 3 fatal blows by throwing a Trash Bin in a single life",
         points = 10,
+        type = "missable",
         trigger = triggerAttackMastery("Throw Trash Bin", totalKills=3)
     )
-
+    
+    /*
     // Achievement : Heart Collector
     achievement (
         title = "Heart Collector",
@@ -442,7 +447,7 @@
         points = 10,
         trigger = triggerHeartsChallange(20)
     )
-
+    */
     // Achivement : One Credit Clear
     achievement (
         title = "One Credit Clear",
@@ -474,7 +479,7 @@
         points = 10,
         trigger = triggerScoreChallenge(20000)
     )
-    */
+
 // #endregion Achievement Definitions
 
 // #region Rich Presence
