@@ -112,10 +112,10 @@
 // #endregion Lookups
 
 // #region Frame Functions
-    function frameRaceCountdownTimerStarted() {
+    function frameRaceCountdownTimerEnded() {
         return
-            prev(raceCountdownTimer()) != 0x5f
-            && raceCountdownTimer() == 0x5f
+            prev(raceCountdownTimer()) == 0x01
+            && raceCountdownTimer() == 0x00
     }
 
     function frameSeasonRaceResultsAppeared() {
@@ -199,7 +199,7 @@
 
     function onNewRaceStarted() {
         return
-            frameRaceCountdownTimerStarted()
+            frameRaceCountdownTimerEnded()
             && gameState() == GAME_STATE_IN_GAME
             && playerLap() == 0
             && playerRaceTime() == 0
@@ -272,9 +272,10 @@
             
             && frameLapCompleted()
             && (
-                ( playerLap() == 2 && playerLap1Time() < (time[0]*60*100 + time[1]*100 + time[2]) * 3/10 )
-                ||
-                ( playerLap() > 2 && playerLap2Time() < (time[0]*60*100 + time[1]*100 + time[2]) * 3/10 )
+                ( playerLap1Time() < (time[0]*60*100 + time[1]*100 + time[2]) * 3/10 && playerLap() == 2 )
+                || ( playerLap2Time() < (time[0]*60*100 + time[1]*100 + time[2]) * 3/10 && playerLap() == 3 )
+                || ( playerLap3Time() < (time[0]*60*100 + time[1]*100 + time[2]) * 3/10 && playerLap() == 4 && currentRaceTotalLaps() == 3 )
+                || ( playerLap2Time() < (time[0]*60*100 + time[1]*100 + time[2]) * 3/10 && playerLap() >= 4 && currentRaceTotalLaps() >= 4 )
             )
 
             && once ( onNewRaceStarted() )
