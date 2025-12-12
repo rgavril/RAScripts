@@ -52,7 +52,7 @@
 		},
 		"Prop" : {
 			"Motocycle": 0x02,
-			"Fire Extinguisher": 0x12,
+			"Fire Extinguisher": 0x0e,
 			"Baseball Bat": 0x18,
 			"Trash Bin": 0x2a,
 			"Heart": 0x3e,
@@ -275,6 +275,30 @@
         return requiredConditions && measured(goalConditions) && resetConditions
     }
 
+    function triggerFirefighter() {
+        // Required Conditions
+        requiredConditions =
+            gameplayState() == GAMEPLAY_STATE_PLAYING
+
+        // Goal Conditions
+        goalConditions =
+            tally_of(range(1,4), 2, slot =>
+                entityType(slot) == ENTITY_TYPE["Enemy"]["Sleezy Rideress"]
+                && frameEnemyHit(slot)
+                && playerLastAction() == PLAYER_LAST_ACTION["Throw Extinguisher"]
+            )
+
+        // Cancel Conditions
+        resetConditions =
+            never(frameGameOver())
+            && never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
+            && never(any_of(range(1,4), slot =>
+                entityType(slot) == ENTITY_TYPE["Prop"]["Fire Extinguisher"]
+            ))
+
+        return requiredConditions && goalConditions && resetConditions
+    }
+
     // Trigger : Hearts Challenge
     // Pick up a certain number of hearts before game over.
     function triggerHeartsChallange(size) {
@@ -445,7 +469,7 @@
     achievement (
         id = 566805,
         title = "Headbutt Sensei",
-        description = "Execute 10 fatal Headbutt strikes in a single life",
+        description = "Finish 10 enemies using a headbutt strikes, in a single life",
         points = 5,
         trigger = triggerFatalAttackMastery("Headbutt", totalKills=10)
     )
@@ -464,20 +488,21 @@
     achievement (
         id = 565083,
         title = "Master Firefighter",
-        description = "Finish 3 enemies by throwing an Extinguisher at their heads in a single life",
+        description = "Hit two enemies as onece by bouncing the fire extinguisher on their heads",
         points = 5,
         type = "missable",
-        trigger = triggerFatalAttackMastery("Throw Extinguisher", totalKills=3)
+        // trigger = triggerFatalAttackMastery("Throw Extinguisher", totalKills=3)
+        trigger = triggerFirefighter()
     )
 
     // Achievement : Skilled Trashman
     achievement (
         id = 565084,
         title = "Skilled Trashman",
-        description = "Achieve 4 fatal blows by throwing a Trash Bin in a single life",
+        description = "Deliver 5 hits by throwing the trash bin on a enemy, in a single life",
         points = 5,
         type = "missable",
-        trigger = triggerAttackMastery("Throw Trash Bin", totalHits=4)
+        trigger = triggerAttackMastery("Throw Trash Bin", totalHits=5)
     )
     
     /*
