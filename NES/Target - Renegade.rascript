@@ -406,37 +406,41 @@
 
     // Achievement : Headbutt Sensei
     achievement (
+        id = 565081,
         title = "Headbutt Sensei",
-        description = "Execute 15 fatal Headbutt strikes in a single life",
+        description = "Execute 10 fatal Headbutt strikes in a single life",
         points = 5,
-        trigger = triggerAttackMastery("Headbutt", totalKills=15)
+        trigger = triggerAttackMastery("Headbutt", totalKills=10)
     )
 
     // Achievement : Baseball Superstar
     achievement (
+        id = 565082,
         title = "Baseball Superstar",
-        description = "Deliver 10 fatal strikes with the Baseball Bat in a single life",
+        description = "Deliver 5 fatal strikes with the Baseball Bat in a single life",
         points = 5,
         type = "missable",
-        trigger = triggerAttackMastery("Swing Baseball Bat", totalKills=10)
+        trigger = triggerAttackMastery("Swing Baseball Bat", totalKills=5)
     )
 
     // Achievement : Master Firefighter
     achievement (
+        id = 565083,
         title = "Master Firefighter",
-        description = "KO 5 enemies by throwing an Extinguisher at their heads in a single life",
-        points = 10,
+        description = "Finish 3 enemies by throwing an Extinguisher at their heads in a single life",
+        points = 5,
         type = "missable",
-        trigger = triggerAttackMastery("Throw Extinguisher", totalKills=5)
+        trigger = triggerAttackMastery("Throw Extinguisher", totalKills=3)
     )
 
     // Achievement : Skilled Trashman
     achievement (
+        id = 565084,
         title = "Skilled Trashman",
-        description = "Achieve 3 fatal blows by throwing a Trash Bin in a single life",
-        points = 10,
+        description = "Achieve 2 fatal blows by throwing a Trash Bin in a single life",
+        points = 5,
         type = "missable",
-        trigger = triggerAttackMastery("Throw Trash Bin", totalKills=3)
+        trigger = triggerAttackMastery("Throw Trash Bin", totalKills=2)
     )
     
     /*
@@ -450,6 +454,7 @@
     */
     // Achivement : One Credit Clear
     achievement (
+        id = 565085,
         title = "One Credit Clear",
         description = "Complete the game without using a continue",
         points = 25,
@@ -458,14 +463,16 @@
 
     // Achivement : 5000 Points
     achievement (
+        id = 565086,
         title = "5000 Points",
         description = "Score 5000 points without using a continue",
-        points = 5,
+        points = 3,
         trigger = triggerScoreChallenge(5000)
     )
 
     // Achivement : 10000 Points
     achievement (
+        id = 565087,
         title = "10000 Points",
         description = "Score 10000 points without using a continue",
         points = 5,
@@ -474,6 +481,7 @@
 
     // Achivement : 20000 Points
     achievement (
+        id = 565088,
         title = "20000 Points",
         description = "Score 20000 points without using a continue",
         points = 10,
