@@ -77,6 +77,8 @@
     function enemyState(slot) => byte(0x03f3-(slot-1))
     ENEMY_STATE_DYING = 0x0c  // The enemy is in the process of dying, this state lasts for few frames.
 
+    function enemyEnergy(slot) => byte(0x0407-(slot-1))
+
 	// Addresses : Player Energy (0x00da)
 	// Current player energy, which is a value between 0x00 and 0x40.
 	function playerEnergy() => byte(0x00da)
@@ -89,6 +91,7 @@
 		"Punch 1": 0x02b,
 		"Punch 2": 0x30,
 		"Headbutt": 0x3a,
+        "Low Kick": 0x3d,
 		"Pickup": 0x42,
 		"Throw Extinguisher": 0x57,
 		"Swing Baseball Bat": 0x5e,
@@ -164,6 +167,14 @@
             prev(enemyState(slot)) != ENEMY_STATE_DYING
             && enemyState(slot) == ENEMY_STATE_DYING
     }
+
+    // Frame : Enemy Hit
+    // If an enemy entity from a specific slot has been hit.
+    function frameEnemyHit(slot) {
+        return
+            prev(enemyEnergy(slot)) != enemyEnergy(slot)
+            && prev(entityType(slot)) != 0xff
+    }
 // #endregion Frame Functions
 
 // #region Achievement Triggers
@@ -210,9 +221,9 @@
         return requiredConditions && startAndTriggerConditions && cancelConditions
     }
 
-    // Trigger : Attack Mastery
+    // Trigger : Fatal Attack Mastery
     // Make a certain number of kills using a specific attack before game over.
-    function triggerAttackMastery(attackAction, totalKills) {
+    function triggerFatalAttackMastery(attackAction, totalKills) {
         // Required Conditions
         requiredConditions =
             gameplayState() == GAMEPLAY_STATE_PLAYING
@@ -227,6 +238,32 @@
                 )
                 // and the player last action was the specified attack action
                 && frameEnemyDied(slot)
+                && playerLastAction() == PLAYER_LAST_ACTION[attackAction]
+            )
+
+        // Cancel Conditions
+        resetConditions =
+            never(frameGameOver())
+            && never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
+
+        return requiredConditions && measured(goalConditions) && resetConditions
+    }
+
+    // Trigger : Attack Mastery
+    // Make a certain number of hits using a specific attack before game over
+    function triggerAttackMastery(attackAction, totalHits) {
+        // Required Conditions
+        requiredConditions =
+            gameplayState() == GAMEPLAY_STATE_PLAYING
+
+        // Goal Conditions
+        goalConditions =
+            // Count when in any of the 4 entity slots
+            tally_of( range(1,4), totalHits, slot =>
+                any_of( ENTITY_TYPE["Enemy"], enemyName =>
+                    entityType(slot) == ENTITY_TYPE["Enemy"][enemyName]
+                )
+                && frameEnemyHit(slot)
                 && playerLastAction() == PLAYER_LAST_ACTION[attackAction]
             )
 
@@ -305,7 +342,7 @@
         id = 564738,
         title = "Top Floor Brawl",
         description = "Clear Stage 1: Parking Garage 3rd Floor",
-        points = 5,
+        points = 3,
         type = "progression",
         trigger = triggerStageCompleted(1)
     )
@@ -406,11 +443,11 @@
 
     // Achievement : Headbutt Sensei
     achievement (
-        id = 565081,
+        id = 566805,
         title = "Headbutt Sensei",
         description = "Execute 10 fatal Headbutt strikes in a single life",
         points = 5,
-        trigger = triggerAttackMastery("Headbutt", totalKills=10)
+        trigger = triggerFatalAttackMastery("Headbutt", totalKills=10)
     )
 
     // Achievement : Baseball Superstar
@@ -420,7 +457,7 @@
         description = "Deliver 5 fatal strikes with the Baseball Bat in a single life",
         points = 5,
         type = "missable",
-        trigger = triggerAttackMastery("Swing Baseball Bat", totalKills=5)
+        trigger = triggerFatalAttackMastery("Swing Baseball Bat", totalKills=5)
     )
 
     // Achievement : Master Firefighter
@@ -430,17 +467,17 @@
         description = "Finish 3 enemies by throwing an Extinguisher at their heads in a single life",
         points = 5,
         type = "missable",
-        trigger = triggerAttackMastery("Throw Extinguisher", totalKills=3)
+        trigger = triggerFatalAttackMastery("Throw Extinguisher", totalKills=3)
     )
 
     // Achievement : Skilled Trashman
     achievement (
         id = 565084,
         title = "Skilled Trashman",
-        description = "Achieve 2 fatal blows by throwing a Trash Bin in a single life",
+        description = "Achieve 4 fatal blows by throwing a Trash Bin in a single life",
         points = 5,
         type = "missable",
-        trigger = triggerAttackMastery("Throw Trash Bin", totalKills=2)
+        trigger = triggerAttackMastery("Throw Trash Bin", totalHits=4)
     )
     
     /*
@@ -489,6 +526,32 @@
     )
 
 // #endregion Achievement Definitions
+
+// #region Leaderboards
+    // Leaderboard : High Score
+    leaderboard(
+        id = 148893,
+        title = "High Score",
+        description = "Achieve the highest score possible",
+        format = "SCORE",
+        start = gameplayState() == GAMEPLAY_STATE_PLAYING && frameGameOver(),
+        cancel = always_false(),
+        submit = always_true(),
+        value = score()
+    )
+
+    // Leaderboard : High Score One Credit
+    leaderboard(
+        id = 148894,
+        title = "High Score Without Continues",
+        description = "Achieve the highest score possible without using a continue",
+        format = "SCORE",
+        start = gameplayState() == GAMEPLAY_STATE_PLAYING && frameGameOver() && playerDeathCount() == 0,
+        cancel = always_false(),
+        submit = always_true(),
+        value = score()
+    )
+// #endregion Leaderboards
 
 // #region Rich Presence
     // Rich Presence : Lookups
