@@ -77,6 +77,8 @@
     function enemyState(slot) => byte(0x03f3-(slot-1))
     ENEMY_STATE_DYING = 0x0c  // The enemy is in the process of dying, this state lasts for few frames.
 
+    // Addresses : Enemy Energy (0x0407, 0x0406, 0x0405, 0x0404)
+    // Current energy of the enemy in the specified slot
     function enemyEnergy(slot) => byte(0x0407-(slot-1))
 
 	// Addresses : Player Energy (0x00da)
@@ -174,6 +176,13 @@
         return
             prev(enemyEnergy(slot)) != enemyEnergy(slot)
             && prev(entityType(slot)) != 0xff
+    }
+
+    // Frame: Player Got Hit
+    // If the player has taken damage in the current frame.
+    function framePlayerGotHit() {
+        return
+            prev(playerEnergy()) > playerEnergy()
     }
 // #endregion Frame Functions
 
@@ -275,6 +284,8 @@
         return requiredConditions && measured(goalConditions) && resetConditions
     }
 
+    // Trigger : Firefighter
+    // Hit two enemies simultaneously on their heads with a single Fire Extinguisher throw
     function triggerFirefighter() {
         // Required Conditions
         requiredConditions =
@@ -297,6 +308,33 @@
             ))
 
         return requiredConditions && goalConditions && resetConditions
+    }
+
+    // Trigger : Weapon Consecutive Hits
+    // Hit enemies a certain number of times with the baseball without droping it
+    function triggerBaseballSuperstar(totalHits) {
+        // Required Conditions
+        requiredConditions =
+            gameplayState() == GAMEPLAY_STATE_PLAYING
+
+        // Goal Conditions
+        goalConditions =
+            // Count when in any of the 4 entity slots
+            tally_of( range(1,4), totalHits, slot =>
+                any_of( ENTITY_TYPE["Enemy"], enemyName =>
+                    entityType(slot) == ENTITY_TYPE["Enemy"][enemyName]
+                )
+                && frameEnemyHit(slot)
+                && playerLastAction() == PLAYER_LAST_ACTION["Swing Baseball Bat"]
+            )
+
+        // Cancel Conditions
+        resetConditions =
+            never(frameGameOver())
+            && never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
+            && never(framePlayerGotHit())
+
+        return requiredConditions && measured(goalConditions) && resetConditions
     }
 
     // Trigger : Hearts Challenge
@@ -431,7 +469,86 @@
         trigger = triggerStageCompleted(7)
     )
 
-    /*
+    // Achievement : Headbutt Sensei
+    achievement(
+        id = 566805,
+        title = "Headbutt Sensei",
+        description = "Finish 10 enemies using a headbutt strikes, in a single life",
+        points = 5,
+        trigger = triggerFatalAttackMastery("Headbutt", totalKills=10)
+    )
+
+    // Achievement : Baseball Superstar
+    achievement(
+        id = 565082,
+        title = "Baseball Superstar",
+        description = "Swing the Baseball Bat to hit enemies 20 times without dropping it",
+        points = 5,
+        type = "missable",
+        trigger = triggerBaseballSuperstar(totalHits=20)
+    )
+
+    // Achievement : Master Firefighter
+    achievement(
+        id = 565083,
+        title = "Master Firefighter",
+        description = "Hit two enemies simultaneously with a single Fire Extinguisher throw",
+        points = 5,
+        type = "missable",
+        trigger = triggerFirefighter()
+    )
+
+    // Achievement : Skilled Trashman
+    achievement(
+        id = 565084,
+        title = "Skilled Trashman",
+        description = "Hit enemies 5 times with a Trash Bin in single life",
+        points = 5,
+        type = "missable",
+        trigger = triggerAttackMastery("Throw Trash Bin", totalHits=5)
+    )
+
+    // Achivement : One Credit Clear
+    achievement(
+        id = 565085,
+        title = "One Credit Clear",
+        description = "Complete the game without using a continue",
+        points = 25,
+        trigger = triggerOneCreditClear()
+    )
+
+    // Achivement : 5000 Points
+    achievement(
+        id = 565086,
+        title = "5000 Points",
+        description = "Score over 5,000 points without using a continue",
+        points = 3,
+        trigger = triggerScoreChallenge(5000)
+    )
+
+    // Achivement : 10000 Points
+    achievement(
+        id = 565087,
+        title = "10000 Points",
+        description = "Score over 10,000 points without using a continue",
+        points = 5,
+        trigger = triggerScoreChallenge(10000)
+    )
+
+    // Achivement : 20000 Points
+    achievement(
+        id = 565088,
+        title = "20000 Points",
+        description = "Score over 20,000 points without using a continue",
+        points = 10,
+        trigger = triggerScoreChallenge(20000)
+    )
+// #endregion Achievement Definitions
+
+// #region Disabled Achievement Definitions
+    /* 
+    Don't like these, have them disabled for now:
+
     // Achievement : Achiles Belly-Kick Ballet
     achievement (
         title = "Achiles Belly-Kick Ballet",
@@ -463,49 +580,7 @@
         points = 10,
         trigger = triggerPerfectBossFight(ENTITY_TYPE["Boss"]["Mr. Big"])
     )
-    */
 
-    // Achievement : Headbutt Sensei
-    achievement (
-        id = 566805,
-        title = "Headbutt Sensei",
-        description = "Finish 10 enemies using a headbutt strikes, in a single life",
-        points = 5,
-        trigger = triggerFatalAttackMastery("Headbutt", totalKills=10)
-    )
-
-    // Achievement : Baseball Superstar
-    achievement (
-        id = 565082,
-        title = "Baseball Superstar",
-        description = "Deliver 5 fatal strikes with the Baseball Bat in a single life",
-        points = 5,
-        type = "missable",
-        trigger = triggerFatalAttackMastery("Swing Baseball Bat", totalKills=5)
-    )
-
-    // Achievement : Master Firefighter
-    achievement (
-        id = 565083,
-        title = "Master Firefighter",
-        description = "Hit two enemies as onece by bouncing the fire extinguisher on their heads",
-        points = 5,
-        type = "missable",
-        // trigger = triggerFatalAttackMastery("Throw Extinguisher", totalKills=3)
-        trigger = triggerFirefighter()
-    )
-
-    // Achievement : Skilled Trashman
-    achievement (
-        id = 565084,
-        title = "Skilled Trashman",
-        description = "Deliver 5 hits by throwing the trash bin on a enemy, in a single life",
-        points = 5,
-        type = "missable",
-        trigger = triggerAttackMastery("Throw Trash Bin", totalHits=5)
-    )
-    
-    /*
     // Achievement : Heart Collector
     achievement (
         title = "Heart Collector",
@@ -514,43 +589,7 @@
         trigger = triggerHeartsChallange(20)
     )
     */
-    // Achivement : One Credit Clear
-    achievement (
-        id = 565085,
-        title = "One Credit Clear",
-        description = "Complete the game without using a continue",
-        points = 25,
-        trigger = triggerOneCreditClear()
-    )
-
-    // Achivement : 5000 Points
-    achievement (
-        id = 565086,
-        title = "5000 Points",
-        description = "Score 5000 points without using a continue",
-        points = 3,
-        trigger = triggerScoreChallenge(5000)
-    )
-
-    // Achivement : 10000 Points
-    achievement (
-        id = 565087,
-        title = "10000 Points",
-        description = "Score 10000 points without using a continue",
-        points = 5,
-        trigger = triggerScoreChallenge(10000)
-    )
-
-    // Achivement : 20000 Points
-    achievement (
-        id = 565088,
-        title = "20000 Points",
-        description = "Score 20000 points without using a continue",
-        points = 10,
-        trigger = triggerScoreChallenge(20000)
-    )
-
-// #endregion Achievement Definitions
+// #endregion Disabled Achievement Definitions
 
 // #region Leaderboards
     // Leaderboard : High Score
