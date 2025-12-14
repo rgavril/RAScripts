@@ -424,6 +424,37 @@
 
         return requiredConditions && measured(goalConditions) && resetConditions
     }
+
+    // Trigger : Perfect Any Boss Fight
+    // Win any boss fight without taking damage.
+    function triggerPerfectAnyBossFight() {
+        // Required Conditions
+        requiredConditions =
+            gameplayState() == GAMEPLAY_STATE_PLAYING
+
+        // Start & Trigger Conditions
+        startAndTriggerConditions =
+            // For any of the 4 entity slots
+            any_of(ENTITY_TYPE["Boss"], bossName =>
+                // For any of the 4 entity slots
+                any_of(range(1,4), slot =>
+                    // Start when the boss entity has appeared
+                    once(frameEntityAppeared(slot, ENTITY_TYPE["Boss"][bossName]))
+
+                    // Trigger when the boss entity has vanished
+                    && trigger_when(frameEntityVanished(slot, ENTITY_TYPE["Boss"][bossName]))
+                )
+            )
+
+        // Cancel Conditions
+        cancelConditions =
+            never(frameGameOver())
+            && never(framePlayerEnergyDecreased())
+            && never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
+
+        // Return
+        return requiredConditions && startAndTriggerConditions && cancelConditions
+    }
 // #endregion Achievement Triggers
 
 // #region Achievement Definitions
@@ -579,6 +610,15 @@
         description = "Defeat 10 enemies in a row without taking damage",
         points = 5,
         trigger = triggerKillChainWithoutDamage(10)
+    )
+
+    // Achievement : Flawless Victory
+    achievement(
+        id = 567200,
+        title = "Flawless Victory",
+        description = "Win any boss fight without taking damage",
+        points = 10,
+        trigger = triggerPerfectAnyBossFight()
     )
 
 // #endregion Achievement Definitions
