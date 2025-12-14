@@ -617,7 +617,7 @@
         id = 567200,
         title = "Flawless Victory",
         description = "Win any boss fight without taking damage",
-        points = 10,
+        points = 5,
         trigger = triggerPerfectAnyBossFight()
     )
 
