@@ -473,9 +473,9 @@
     achievement(
         id = 566805,
         title = "Headbutt Sensei",
-        description = "Finish 10 enemies using a headbutt strikes, in a single life",
+        description = "Finish 5 enemies using a headbutt strikes, in a single life",
         points = 5,
-        trigger = triggerFatalAttackMastery("Headbutt", totalKills=10)
+        trigger = triggerFatalAttackMastery("Headbutt", totalKills=5)
     )
 
     // Achievement : Baseball Superstar
