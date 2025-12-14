@@ -396,6 +396,34 @@
 
         return requiredConditions && goalConditions
     }
+
+    // Trigger : Kill Chain Without Damage
+    // Defeat a certain number of enemies in a row without taking damage.
+    function triggerKillChainWithoutDamage(targetKills) {
+        // Required Conditions
+        requiredConditions =
+            gameplayState() == GAMEPLAY_STATE_PLAYING
+
+        // Goal Conditions
+        goalConditions =
+            tally_of( range(1,4), targetKills, slot =>
+                (any_of( ENTITY_TYPE["Enemy"], enemyName =>
+                    entityType(slot) == ENTITY_TYPE["Enemy"][enemyName]
+                ) ||
+                any_of( ENTITY_TYPE["Boss"], bossName =>
+                    entityType(slot) == ENTITY_TYPE["Boss"][bossName]
+                ))
+                && frameEnemyDied(slot)
+            )
+
+        // Reset Conditions
+        resetConditions =
+            never(frameGameOver())
+            && never(framePlayerGotHit())
+            && never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
+
+        return requiredConditions && measured(goalConditions) && resetConditions
+    }
 // #endregion Achievement Triggers
 
 // #region Achievement Definitions
@@ -543,6 +571,16 @@
         points = 10,
         trigger = triggerScoreChallenge(20000)
     )
+
+    // Achivement : The Perfect Ten
+    achievement(
+        id = 567199,
+        title = "The Perfect Ten",
+        description = "Defeat 10 enemies in a row without taking damage",
+        points = 5,
+        trigger = triggerKillChainWithoutDamage(10)
+    )
+
 // #endregion Achievement Definitions
 
 // #region Disabled Achievement Definitions
