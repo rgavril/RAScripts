@@ -455,6 +455,83 @@
         // Return
         return requiredConditions && startAndTriggerConditions && cancelConditions
     }
+
+    // Trigger : Bare Knuckles
+    // Defeat a certain number of enemies using only your fists, in a single life.
+    function triggerBareKnuckles(totalKills) {
+        // Required Conditions
+        requiredConditions =
+            gameplayState() == GAMEPLAY_STATE_PLAYING
+
+        // Goal Conditions
+        goalConditions =
+            tally(totalKills,
+                    // Slot 1 - Punch 1
+                    any_of( ENTITY_TYPE["Enemy"], enemyName =>
+                        entityType(1) == ENTITY_TYPE["Enemy"][enemyName]
+                    )
+                    && frameEnemyDied(1)
+                    && playerLastAction() == PLAYER_LAST_ACTION["Punch 1"]
+                    ,
+                    // Slot 2 - Punch 1
+                    any_of( ENTITY_TYPE["Enemy"], enemyName =>
+                        entityType(2) == ENTITY_TYPE["Enemy"][enemyName]
+                    )
+                    && frameEnemyDied(2)
+                    && playerLastAction() == PLAYER_LAST_ACTION["Punch 1"]
+                    ,
+                    // Slot 3 - Punch 1
+                    any_of( ENTITY_TYPE["Enemy"], enemyName =>
+                        entityType(3) == ENTITY_TYPE["Enemy"][enemyName]
+                    )
+                    && frameEnemyDied(3)
+                    && playerLastAction() == PLAYER_LAST_ACTION["Punch 1"]
+                    ,
+                    // Slot 4 - Punch 1
+                    any_of( ENTITY_TYPE["Enemy"], enemyName =>
+                        entityType(4) == ENTITY_TYPE["Enemy"][enemyName]
+                    )
+                    && frameEnemyDied(4)
+                    && playerLastAction() == PLAYER_LAST_ACTION["Punch 1"]
+                    ,
+
+                    // Slot 1 - Punch 2
+                    any_of( ENTITY_TYPE["Enemy"], enemyName =>
+                        entityType(1) == ENTITY_TYPE["Enemy"][enemyName]
+                    )
+                    && frameEnemyDied(1)
+                    && playerLastAction() == PLAYER_LAST_ACTION["Punch 2"]
+                    ,
+                    // Slot 2 - Punch 2
+                    any_of( ENTITY_TYPE["Enemy"], enemyName =>
+                        entityType(2) == ENTITY_TYPE["Enemy"][enemyName]
+                    )
+                    && frameEnemyDied(2)
+                    && playerLastAction() == PLAYER_LAST_ACTION["Punch 2"]
+                    ,
+                    // Slot 3 - Punch 2
+                    any_of( ENTITY_TYPE["Enemy"], enemyName =>
+                        entityType(3) == ENTITY_TYPE["Enemy"][enemyName]
+                    )
+                    && frameEnemyDied(3)
+                    && playerLastAction() == PLAYER_LAST_ACTION["Punch 2"]
+                    ,
+                    // Slot 4 - Punch 2
+                    any_of( ENTITY_TYPE["Enemy"], enemyName =>
+                        entityType(4) == ENTITY_TYPE["Enemy"][enemyName]
+                    )
+                    && frameEnemyDied(4)
+                    && playerLastAction() == PLAYER_LAST_ACTION["Punch 2"]
+            )
+
+
+        // Cancel Conditions
+        resetConditions =
+            never(frameGameOver())
+            && never(gameplayState() == GAMEPLAY_STATE_ATTRACT)
+
+        return requiredConditions && measured(goalConditions) && resetConditions
+    }
 // #endregion Achievement Triggers
 
 // #region Achievement Definitions
@@ -508,10 +585,10 @@
         trigger = triggerStageCompleted(5)
     )
 
-    // Achievement : Uptown
+    // Achievement : Uptown Lockdown
     achievement(
         id = 564743,
-        title = "Uptown",
+        title = "Uptown Lockdown",
         description = "Clear Stage 6: Uptown",
         points = 10,
         type = "progression",
@@ -532,7 +609,7 @@
     achievement(
         id = 566805,
         title = "Headbutt Sensei",
-        description = "Finish 5 enemies using a headbutt strikes, in a single life",
+        description = "Finish 5 enemies using a headbutt as the final attack, in a single life",
         points = 5,
         trigger = triggerFatalAttackMastery("Headbutt", totalKills=5)
     )
@@ -541,7 +618,7 @@
     achievement(
         id = 565082,
         title = "Baseball Superstar",
-        description = "Swing the Baseball Bat to hit enemies 20 times without dropping it",
+        description = "Hit the enemies 20 times with the Baseball Bat without dropping it",
         points = 5,
         type = "missable",
         trigger = triggerBaseballSuperstar(totalHits=20)
@@ -579,7 +656,7 @@
     // Achivement : 5000 Points
     achievement(
         id = 565086,
-        title = "5000 Points",
+        title = "Apprentice Brawler",
         description = "Score over 5,000 points without using a continue",
         points = 3,
         trigger = triggerScoreChallenge(5000)
@@ -588,7 +665,7 @@
     // Achivement : 10000 Points
     achievement(
         id = 565087,
-        title = "10000 Points",
+        title = "Street Smart",
         description = "Score over 10,000 points without using a continue",
         points = 5,
         trigger = triggerScoreChallenge(10000)
@@ -597,7 +674,7 @@
     // Achivement : 20000 Points
     achievement(
         id = 565088,
-        title = "20000 Points",
+        title = "Master Punisher",
         description = "Score over 20,000 points without using a continue",
         points = 10,
         trigger = triggerScoreChallenge(20000)
@@ -619,6 +696,15 @@
         description = "Win any boss fight without taking damage",
         points = 5,
         trigger = triggerPerfectAnyBossFight()
+    )
+
+    // Achivement : Bare Knucles
+    achievement(
+        id = 567201,
+        title = "Bare Knuckles",
+        description = "Finish 30 enemies using a punch as the final attack, in a single life",
+        points = 5,
+        trigger = triggerBareKnuckles(totalKills=30)
     )
 
 // #endregion Achievement Definitions
@@ -685,7 +771,7 @@
     // Leaderboard : High Score One Credit
     leaderboard(
         id = 148894,
-        title = "High Score Without Continues",
+        title = "High Score First Life",
         description = "Achieve the highest score possible without using a continue",
         format = "SCORE",
         start = gameplayState() == GAMEPLAY_STATE_PLAYING && frameGameOver() && playerDeathCount() == 0,
