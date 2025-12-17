@@ -559,7 +559,7 @@
     achievement(
         id = 564740,
         title = "Ground Floor Zero",
-        description = "Clear Stage 3: Parking Garage 1st Floor",
+        description = "Clear Stage 3: Parking Garage Ground Floor",
         points = 5,
         type = "progression",
         trigger = triggerStageCompleted(3)
@@ -609,7 +609,7 @@
     achievement(
         id = 566805,
         title = "Headbutt Sensei",
-        description = "Finish 5 enemies using a headbutt as the final attack, in a single life",
+        description = "Finish 5 enemies by using a headbutt as the final attack without dying",
         points = 5,
         trigger = triggerFatalAttackMastery("Headbutt", totalKills=5)
     )
@@ -618,7 +618,7 @@
     achievement(
         id = 565082,
         title = "Baseball Superstar",
-        description = "Hit the enemies 20 times with the Baseball Bat without dropping it",
+        description = "Hit enemies 20 times with the baseball bat without dropping it",
         points = 5,
         type = "missable",
         trigger = triggerBaseballSuperstar(totalHits=20)
@@ -628,7 +628,7 @@
     achievement(
         id = 565083,
         title = "Master Firefighter",
-        description = "Hit two enemies simultaneously with a single Fire Extinguisher throw",
+        description = "Hit two enemies simultaneously while throwing a fire extinguisher",
         points = 5,
         type = "missable",
         trigger = triggerFirefighter()
@@ -638,7 +638,7 @@
     achievement(
         id = 565084,
         title = "Skilled Trashman",
-        description = "Hit enemies 5 times with a Trash Bin in single life",
+        description = "Hit enemies 5 times with a trash bin without dying",
         points = 5,
         type = "missable",
         trigger = triggerAttackMastery("Throw Trash Bin", totalHits=5)
@@ -684,7 +684,7 @@
     achievement(
         id = 567199,
         title = "The Perfect Ten",
-        description = "Defeat 10 enemies in a row without taking damage",
+        description = "Defeat 10 enemies in a row without taking any damage",
         points = 5,
         trigger = triggerKillChainWithoutDamage(10)
     )
@@ -693,7 +693,7 @@
     achievement(
         id = 567200,
         title = "Flawless Victory",
-        description = "Win any boss fight without taking damage",
+        description = "Win any boss fight without taking any damage",
         points = 5,
         trigger = triggerPerfectAnyBossFight()
     )
@@ -702,7 +702,7 @@
     achievement(
         id = 567201,
         title = "Bare Knuckles",
-        description = "Finish 30 enemies using a punch as the final attack, in a single life",
+        description = "Finish 30 enemies by using a punch as the final attack without dying",
         points = 5,
         trigger = triggerBareKnuckles(totalKills=30)
     )
