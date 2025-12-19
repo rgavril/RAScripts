@@ -184,6 +184,8 @@
         return
             prev(playerEnergy()) > playerEnergy()
     }
+
+    function soundFX() => byte(0x0008)
 // #endregion Frame Functions
 
 // #region Achievement Triggers
@@ -296,7 +298,10 @@
             tally_of(range(1,4), 2, slot =>
                 entityType(slot) == ENTITY_TYPE["Enemy"]["Sleezy Rideress"]
                 && frameEnemyHit(slot)
-                && playerLastAction() == PLAYER_LAST_ACTION["Throw Extinguisher"]
+                && (soundFX() == 0xdc || soundFX() == 0xe5)
+            )
+            && once(
+                playerLastAction() == PLAYER_LAST_ACTION["Throw Extinguisher"]
             )
 
         // Cancel Conditions
