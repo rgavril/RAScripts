@@ -26,7 +26,7 @@ TRUE  = 0x01
     function postStatus() => byte(0x00d3)
     POST_STATUS_FINISHED = 0x01
 
-    function scene() => byte(0x0101)
+    function scene() => byte(0x0100)
     function lives() => byte(0x0103)
     function enemyCount() => byte(0x0104)
     function cherryRemaining() => byte(0x0105)
@@ -61,12 +61,154 @@ TRUE  = 0x01
     function framePlayer1ScoreOverflowed() {
         return
             gameplayActive() == TRUE
-            && prev(activePlayer()) == ACTIVE_PLAYER_1
-            && activePlayer() == ACTIVE_PLAYER_1
+            && prev(activePlayer()) == ACTIVE_PLAYER_1 && activePlayer() == ACTIVE_PLAYER_1
             && prev(score_XX0000()) == 99
             && score_XX0000() == 00
     }
+
+    function framePlayer1CompletedScene(scene) {
+        return
+            gameplayActive() == TRUE
+
+            && prev(activePlayer()) == ACTIVE_PLAYER_1 
+            && prev(sceneCompletedFlag()) != SCENE_COMPLETED_FLAG_ON
+
+            && activePlayer() == ACTIVE_PLAYER_1
+            && sceneCompletedFlag() == SCENE_COMPLETED_FLAG_ON
+            && scene() == scene
+    }
+
+    function frameAdvancedToScene(scene) {
+        return
+            gameplayActive() == TRUE
+            
+            && prev(activePlayer()) == ACTIVE_PLAYER_1
+            && prev(scene()) == scene-1 
+            
+            && activePlayer() == ACTIVE_PLAYER_1
+            && scene() == scene   
+    }
+
+    function frameGameStarted() {
+        return
+            prev(gameplayActive()) == FALSE
+            && gameplayActive() == TRUE
+    }
+
+    function framePlayerDied() {
+        return
+            prev(activePlayer()) == ACTIVE_PLAYER_1
+            && prev(playerDying()) == FALSE
+
+            && activePlayer() == ACTIVE_PLAYER_1
+            && playerDying() == TRUE
+    }
+
+    function frameAllCherriesPicked() {
+        return
+            gameplayActive() == TRUE
+
+            && prev(activePlayer()) == ACTIVE_PLAYER_1
+            && prev(cherryRemaining()) == 1
+
+            && activePlayer() == ACTIVE_PLAYER_1
+            && cherryRemaining() == 0
+    }
 // #endregion Frame IDs
+
+// #region Triggers
+    function triggerSceneProgression(startScene, endScene) {
+        requiredConditions = 
+            postStatus() == POST_STATUS_FINISHED
+            && gameplayActive() == TRUE
+            && activePlayer() == ACTIVE_PLAYER_1
+
+        for sceneIndex in range(startScene, endScene) {
+            requiredConditions = requiredConditions
+                && once (framePlayer1CompletedScene(sceneIndex))
+        }
+
+        cancelConditions =
+            never(gameplayActive() != TRUE)
+            && never(framePlayer1LivesZeroed())
+
+        return cancelConditions && requiredConditions
+    }
+
+    function triggerCherryPicker(scene) {
+        requiredConditions = 
+            postStatus() == POST_STATUS_FINISHED
+            && gameplayActive() == TRUE
+            && activePlayer() == ACTIVE_PLAYER_1
+            && once( frameAdvancedToScene(scene) )
+
+        goalConditions = 
+            frameAllCherriesPicked()
+
+        cancelConditions =
+            never (gameplayActive() != TRUE)
+            && never(scene() != scene)
+            && never(framePlayerDied())
+
+        return cancelConditions && requiredConditions && goalConditions
+    }
+// #endregion Triggers
+
+// #region Achievements
+    // #region Progress Achievements
+        achievement(
+            title = "Gatehouse Guardian",
+            description = "Complete Scenes 1 to 3 starting with 3 lives or less",
+            type = "progression",
+            points = 5,
+            trigger = triggerSceneProgression(1, 3)
+        )
+
+        achievement(
+            title = "Great Hall Hero",
+            description = "Complete Scenes 1 to 6 starting with 3 lives or less",
+            type = "progression",
+            points = 10,
+            trigger = triggerSceneProgression(1, 6)
+        )
+
+        achievement(
+            title = "Citadel Sovereign",
+            description = "Complete Scenes 1 to 9 starting with 3 lives or less",
+            type = "win_condition",
+            points = 25,
+            trigger = triggerSceneProgression(1, 9)
+        )
+    // #endregion
+
+    // #region Cherry Picker Achievements
+        cherryPickerAchievements = [
+            { "scene": 1, "points": 5, "title": "Cherry Snack" },
+            { "scene": 2, "points": 5, "title": "Cherry Jam" },
+            { "scene": 3, "points": 5, "title": "Cherry Muffin" },
+            { "scene": 4, "points": 5, "title": "Cherry Turnover" },
+            { "scene": 5, "points": 5, "title": "Cherry Pie" },
+            { "scene": 6, "points": 5, "title": "Cherry Strudel" },
+            { "scene": 7, "points": 5, "title": "Cherry Trifle" },
+            { "scene": 8, "points": 5, "title": "Cherry Jubilee" },
+            { "scene": 9, "points": 5, "title": "Cherry Cake" }
+        ]
+        for definition in cherryPickerAchievements {
+            genDescription = format(
+                "Clear Scene {0} by destroying all Cherry blocks in a single life, rack skip allowed",
+                definition["scene"]
+            )
+
+            achievement(
+                // id = definition["id"],
+                title = definition["title"],
+                description = genDescription,
+                points = definition["points"],
+                trigger = triggerCherryPicker(definition["scene"])
+            )
+        }
+    // #endregion    
+// #endregion Achievements
 
 // #region Leaderboards
     function startHighscoreLeaderboard() {
