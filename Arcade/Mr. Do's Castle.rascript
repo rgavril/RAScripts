@@ -89,6 +89,14 @@ TRUE  = 0x01
             && scene() == scene   
     }
 
+    function frameSceneStarted() {
+        return
+            gameplayActive() == TRUE
+            && prev(activePlayer()) == ACTIVE_PLAYER_1
+            && activePlayer() == ACTIVE_PLAYER_1
+            && scene() == prev(scene()-1)
+    }
+
     function frameGameStarted() {
         return
             prev(gameplayActive()) == FALSE
@@ -152,6 +160,24 @@ TRUE  = 0x01
 
         return cancelConditions && requiredConditions && goalConditions
     }
+
+    function triggerAlphaStreak(size) {
+        requiredConditions =
+            postStatus() == POST_STATUS_FINISHED
+            && gameplayActive() == TRUE
+            && activePlayer() == ACTIVE_PLAYER_1
+            && once(frameSceneStarted())
+
+        goalConditions = 
+            always_false()
+
+        cancelConditions =
+            never(gameplayActive() != TRUE)
+            && never(scene() != scene())
+        
+        return cancelConditions && requiredConditions && goalConditions
+        //return goalConditions
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -207,7 +233,15 @@ TRUE  = 0x01
                 trigger = triggerCherryPicker(definition["scene"])
             )
         }
-    // #endregion    
+    // #endregion
+
+    // #region Alphamonster Challanges
+    achievement(
+        title = "Alphabet Soup",
+        description = "Kill at least 4 alphamonsters in a single scene",
+        points = 5,
+        trigger = triggerAlphaStreak(size=4)
+    )
 // #endregion Achievements
 
 // #region Leaderboards
