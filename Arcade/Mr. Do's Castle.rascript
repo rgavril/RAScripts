@@ -47,6 +47,19 @@ TRUE  = 0x01
     function playerFalling() => bit1(playerState())
     function playerDying() => bit2(playerState())
     function playerUsingHammer() => bit5(playerState())
+    function shieldCollected() => byte(0x011b)
+
+    class monster {
+        index = 0
+
+        function deathSequenceStarted() => bit1(0x179 + this.index*0x20)
+
+        function frameIsDyeing() {
+            return 
+                prev(this.deathSequenceStarted() == FALSE)
+                && this.deathSequenceStarted() == TRUE
+        }
+    }
 // #endregion Memory Addresses
 
 // #region Frame IDs
@@ -162,21 +175,17 @@ TRUE  = 0x01
     }
 
     function triggerAlphaStreak(size) {
-        requiredConditions =
-            postStatus() == POST_STATUS_FINISHED
-            && gameplayActive() == TRUE
-            && activePlayer() == ACTIVE_PLAYER_1
-            && once(frameSceneStarted())
-
         goalConditions = 
-            always_false()
+            tally_of(range(1,8), size, difference => prev(enemyCount()) - enemyCount() >= difference)
 
         cancelConditions =
-            never(gameplayActive() != TRUE)
+            never(postStatus() != POST_STATUS_FINISHED)
+            && never(gameplayActive() != TRUE)
+            && never(activePlayer() != ACTIVE_PLAYER_1)
+            && never(shieldCollected() != TRUE)
             && never(scene() != scene())
         
-        return cancelConditions && requiredConditions && goalConditions
-        //return goalConditions
+        return cancelConditions && measured(goalConditions)
     }
 // #endregion Triggers
 
