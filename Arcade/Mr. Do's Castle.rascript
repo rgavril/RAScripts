@@ -125,7 +125,7 @@ TRUE  = 0x01
             && playerDying() == TRUE
     }
 
-    function frameAllCherriesPicked() {
+    function framePlayer1CherryPickedScene(scene) {
         return
             gameplayActive() == TRUE
 
@@ -134,6 +134,8 @@ TRUE  = 0x01
 
             && activePlayer() == ACTIVE_PLAYER_1
             && cherryRemaining() == 0
+
+            && scene() == scene
     }
 // #endregion Frame IDs
 
@@ -156,22 +158,21 @@ TRUE  = 0x01
         return cancelConditions && requiredConditions
     }
 
-    function triggerCherryPicker(scene) {
+    function triggerCherryPicker(startScene, endScene) {
         requiredConditions = 
             postStatus() == POST_STATUS_FINISHED
             && gameplayActive() == TRUE
             && activePlayer() == ACTIVE_PLAYER_1
-            && once( frameAdvancedToScene(scene) )
 
-        goalConditions = 
-            frameAllCherriesPicked()
+        for sceneIndex in range(startScene, endScene) {
+            requiredConditions = requiredConditions
+                && once (framePlayer1CherryPickedScene(sceneIndex))
+        }
 
         cancelConditions =
             never (gameplayActive() != TRUE)
-            && never(scene() != scene)
-            && never(framePlayerDied())
 
-        return cancelConditions && requiredConditions && goalConditions
+        return cancelConditions && requiredConditions
     }
 
     function triggerAlphaStreak(size) {
@@ -217,31 +218,26 @@ TRUE  = 0x01
     // #endregion
 
     // #region Cherry Picker Achievements
-        cherryPickerAchievements = [
-            { "scene": 1, "points": 5, "title": "Cherry Snack" },
-            { "scene": 2, "points": 5, "title": "Cherry Jam" },
-            { "scene": 3, "points": 5, "title": "Cherry Muffin" },
-            { "scene": 4, "points": 5, "title": "Cherry Turnover" },
-            { "scene": 5, "points": 5, "title": "Cherry Pie" },
-            { "scene": 6, "points": 5, "title": "Cherry Strudel" },
-            { "scene": 7, "points": 5, "title": "Cherry Trifle" },
-            { "scene": 8, "points": 5, "title": "Cherry Jubilee" },
-            { "scene": 9, "points": 5, "title": "Cherry Cake" }
-        ]
-        for definition in cherryPickerAchievements {
-            genDescription = format(
-                "Clear Scene {0} by destroying all Cherry blocks in a single life, rack skip allowed",
-                definition["scene"]
-            )
+        achievement(
+            title = "Cherry Snack",
+            description = "Destroy all chery block from scenes 1 to 3 in a single 3 lives game, rack skip allowed",
+            points = 10,
+            trigger = triggerCherryPicker(1,3)
+        )
 
-            achievement(
-                // id = definition["id"],
-                title = definition["title"],
-                description = genDescription,
-                points = definition["points"],
-                trigger = triggerCherryPicker(definition["scene"])
-            )
-        }
+        achievement(
+            title = "Cherry Jam",
+            description = "Destroy all chery block from scenes 4 to 6 in a single 3 lives game, rack skip allowed",
+            points = 10,
+            trigger = triggerCherryPicker(4,6)
+        )
+
+        achievement(
+            title = "Cherry Pie",
+            description = "Destroy all chery block from scenes 7 to 9 in a single 3 lives game, rack skip allowed",
+            points = 10,
+            trigger = triggerCherryPicker(7,9)
+        )
     // #endregion
 
     // #region Alphamonster Challanges
