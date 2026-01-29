@@ -7,6 +7,7 @@ TRUE  = 0x01
 // #region Memory Addresses
     function gameState() => byte(0x0001)
     function gameplayActive() => bit7(0x0001)
+    function multiplayerMode() => bit5(0x0001)
     function activePlayer() => bit4(0x0001)
     ACTIVE_PLAYER_1 = 0
     ACTIVE_PLAYER_2 = 1
@@ -21,7 +22,7 @@ TRUE  = 0x01
     DIFFICULTY_DEFAULT = DIFFICULTY_1
 
     function sceneCompletedFlag() => byte(0x00a0)
-    SCENE_COMPLETED_FLAG_ON = 0x0c
+    SCENE_COMPLETED_FLAG_ON = 0xc0
 
     function postStatus() => byte(0x00d3)
     POST_STATUS_FINISHED = 0x01
@@ -79,16 +80,10 @@ TRUE  = 0x01
             && score_XX0000() == 00
     }
 
-    function framePlayer1CompletedScene(scene) {
+    function frameSceneCompletedFlagRaised() {
         return
-            gameplayActive() == TRUE
-
-            && prev(activePlayer()) == ACTIVE_PLAYER_1 
-            && prev(sceneCompletedFlag()) != SCENE_COMPLETED_FLAG_ON
-
-            && activePlayer() == ACTIVE_PLAYER_1
+            prev(sceneCompletedFlag()) != SCENE_COMPLETED_FLAG_ON
             && sceneCompletedFlag() == SCENE_COMPLETED_FLAG_ON
-            && scene() == scene
     }
 
     function frameAdvancedToScene(scene) {
@@ -141,21 +136,21 @@ TRUE  = 0x01
 
 // #region Triggers
     function triggerSceneProgression(startScene, endScene) {
-        requiredConditions = 
-            postStatus() == POST_STATUS_FINISHED
-            && gameplayActive() == TRUE
-            && activePlayer() == ACTIVE_PLAYER_1
-
+        goalConditions = always_true()
         for sceneIndex in range(startScene, endScene) {
-            requiredConditions = requiredConditions
-                && once (framePlayer1CompletedScene(sceneIndex))
+            goalConditions = goalConditions && once (
+                   scene() == sceneIndex 
+                && frameSceneCompletedFlagRaised()
+            )
         }
 
         cancelConditions =
-            never(gameplayActive() != TRUE)
-            && never(framePlayer1LivesZeroed())
+               never( postStatus()      != POST_STATUS_FINISHED )
+            && never( gameplayActive()  != TRUE                 )
+            && never( multiplayerMode() == TRUE                 )
+            && never( framePlayer1LivesZeroed()                 )
 
-        return cancelConditions && requiredConditions
+        return cancelConditions && goalConditions
     }
 
     function triggerCherryPicker(startScene, endScene) {
