@@ -72,6 +72,10 @@ TRUE  = 0x01
             && prev(lives()) == 1 && lives() == 0
     }
 
+    function frameLivesZeroed() {
+        return prev(lives()) == 1 && lives() == 0
+    }
+
     function framePlayer1ScoreOverflowed() {
         return
             gameplayActive() == TRUE
@@ -120,17 +124,8 @@ TRUE  = 0x01
             && playerDying() == TRUE
     }
 
-    function framePlayer1CherryPickedScene(scene) {
-        return
-            gameplayActive() == TRUE
-
-            && prev(activePlayer()) == ACTIVE_PLAYER_1
-            && prev(cherryRemaining()) == 1
-
-            && activePlayer() == ACTIVE_PLAYER_1
-            && cherryRemaining() == 0
-
-            && scene() == scene
+    function frameCherriesRemainingZeroed() {
+        return prev(cherryRemaining()) == 1 && cherryRemaining() == 0
     }
 // #endregion Frame IDs
 
@@ -138,36 +133,33 @@ TRUE  = 0x01
     function triggerSceneProgression(startScene, endScene) {
         goalConditions = always_true()
         for sceneIndex in range(startScene, endScene) {
-            goalConditions = goalConditions && once (
-                   scene() == sceneIndex 
-                && frameSceneCompletedFlagRaised()
-            )
+            goalConditions = goalConditions 
+                && once ( scene() == sceneIndex && frameSceneCompletedFlagRaised() )
         }
 
         cancelConditions =
                never( postStatus()      != POST_STATUS_FINISHED )
             && never( gameplayActive()  != TRUE                 )
             && never( multiplayerMode() == TRUE                 )
-            && never( framePlayer1LivesZeroed()                 )
+            && never( frameLivesZeroed() )
 
         return cancelConditions && goalConditions
     }
 
     function triggerCherryPicker(startScene, endScene) {
-        requiredConditions = 
-            postStatus() == POST_STATUS_FINISHED
-            && gameplayActive() == TRUE
-            && activePlayer() == ACTIVE_PLAYER_1
-
+        goalConditions = always_true()
         for sceneIndex in range(startScene, endScene) {
-            requiredConditions = requiredConditions
-                && once (framePlayer1CherryPickedScene(sceneIndex))
+            goalConditions = goalConditions
+                && once ( scene() == sceneIndex && frameCherriesRemainingZeroed() )
         }
 
         cancelConditions =
-            never (gameplayActive() != TRUE)
+               never( postStatus()      != POST_STATUS_FINISHED )
+            && never( gameplayActive()  != TRUE                 )
+            && never( multiplayerMode() == TRUE                 )
+            && never( frameLivesZeroed() )
 
-        return cancelConditions && requiredConditions
+        return cancelConditions && goalConditions
     }
 
     function triggerAlphaStreak(size) {
