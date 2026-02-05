@@ -210,6 +210,18 @@ TRUE  = 0x01
         
         return cancelConditions && measured(goalConditions)
     }
+
+    function triggerExtraLife() {
+        goalConditions =
+               postStatus()      == POST_STATUS_FINISHED
+            && dipSwitchLives()  <=  3
+            && gameplayActive()  == TRUE
+            && multiplayerMode() == FALSE
+            && prev(lettersCollected()) & 0xf8 != 0xf8
+            && lettersCollected() & 0xf8 == 0xf8
+        
+        return goalConditions
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -288,6 +300,13 @@ TRUE  = 0x01
         description = "Slay at least 4 Alphamonsters in a single scene",
         points = 5,
         trigger = triggerAlphaStreak(size=4)
+    )
+
+    achievement(
+        title = "Banner of Life",
+        description = "Complete the EXTRA flags and earn an extra life, starting with 3 lives or less",
+        points = 5,
+        trigger = triggerExtraLife()
     )
     // #endregion Shield Challanges
 // #endregion Achievements
