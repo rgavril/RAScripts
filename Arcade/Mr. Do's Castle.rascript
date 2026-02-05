@@ -127,6 +127,7 @@ TRUE  = 0x01
 
         cancelConditions =
                never( postStatus()      != POST_STATUS_FINISHED )
+            && never( dipSwitchLives()  >  3                    )
             && never( gameplayActive()  != TRUE                 )
             && never( multiplayerMode() == TRUE                 )
             && never( frameLivesZeroed() )
@@ -154,6 +155,25 @@ TRUE  = 0x01
             && never( frameLivesDecreased() )
 
         return cancelConditions && primingConditions && requiredConditions && trigger_when(goalConditions)
+    }
+
+    function triggerStarvation() {
+        primingConditions =
+            once(scene() == 1 && frameCherriesRemainingZeroed())
+        
+        goalConditions =
+            once(scene() == 2 && frameCherriesRemainingZeroed())
+            && once(scene() == 3 && frameCherriesRemainingZeroed())
+            && once(scene() == 4 && frameCherriesRemainingZeroed())
+
+        cancelConditions =
+               never( postStatus()      != POST_STATUS_FINISHED )
+            && never( dipSwitchLives()  >  3                    )
+            && never( gameplayActive()  != TRUE                 )
+            && never( multiplayerMode() == TRUE                 )
+            && never( frameLivesZeroed() )
+        
+        return cancelConditions && primingConditions && trigger_when(goalConditions)
     }
 
     function triggerAlphaStreak(size) {
@@ -197,33 +217,40 @@ TRUE  = 0x01
         )
     // #endregion
 
-    // #region Cherry Picker Achievements
+    // #region Cherry Related Achievements
         achievement(
             title = "Cherry Snack",
-            description = "Destroy all cherry blocks from Scenes 1 without dyeing",
+            description = "Clear all Cherry blocks from Scenes 1 without dyeing",
             points = 5,
             trigger = triggerCherryPicker(1)
         )
 
         achievement(
             title = "Cherry Jam",
-            description = "Destroy all cherry blocks from Scenes 2 without dyeing, rack skip allowed",
+            description = "Clear all Cherry blocks from Scenes 2 without dyeing, rack skip allowed",
             points = 5,
             trigger = triggerCherryPicker(2)
         )
 
         achievement(
             title = "Cherry Pie",
-            description = "Destroy all cherry blocks from Scenes 3 without dyeing, rack skip allowed",
+            description = "Clear all Cherry blocks from Scenes 3 without dyeing, rack skip allowed",
             points = 5,
             trigger = triggerCherryPicker(3)
         )
 
         achievement(
             title = "Cherry Cake",
-            description = "Destroy all cherry blocks from Scenes 4 without dyeing, rack skip allowed",
+            description = "Clear all Cherry blocks from Scenes 4 without dyeing, rack skip allowed",
             points = 5,
             trigger = triggerCherryPicker(4)
+        )
+
+        achievement(
+            title = "Starvation Strategy",
+            description = "Clear all Cherry blocks from Scenes 1 to 4 starting with 3 lives or less",
+            points = 25,
+            trigger = triggerStarvation()
         )
     // #endregion
 
