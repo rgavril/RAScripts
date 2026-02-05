@@ -101,14 +101,6 @@ TRUE  = 0x01
             && scene() == scene   
     }
 
-    function frameSceneStarted() {
-        return
-            gameplayActive() == TRUE
-            && prev(activePlayer()) == ACTIVE_PLAYER_1
-            && activePlayer() == ACTIVE_PLAYER_1
-            && scene() == prev(scene()-1)
-    }
-
     function frameGameStarted() {
         return
             prev(gameplayActive()) == FALSE
@@ -117,10 +109,7 @@ TRUE  = 0x01
 
     function framePlayerDied() {
         return
-            prev(activePlayer()) == ACTIVE_PLAYER_1
-            && prev(playerDying()) == FALSE
-
-            && activePlayer() == ACTIVE_PLAYER_1
+            prev(playerDying()) == FALSE
             && playerDying() == TRUE
     }
 
@@ -146,20 +135,23 @@ TRUE  = 0x01
         return cancelConditions && goalConditions
     }
 
-    function triggerCherryPicker(startScene, endScene) {
-        goalConditions = always_true()
-        for sceneIndex in range(startScene, endScene) {
-            goalConditions = goalConditions
-                && once ( scene() == sceneIndex && frameCherriesRemainingZeroed() )
-        }
+    function triggerCherryPicker(sceneNumber) {
+        primingConditions = once(
+            prev(scene() == sceneNumber - 1 )
+            && scene() == sceneNumber
+        )
+
+        goalConditions =
+            scene() == sceneNumber
+            && frameCherriesRemainingZeroed()
 
         cancelConditions =
                never( postStatus()      != POST_STATUS_FINISHED )
             && never( gameplayActive()  != TRUE                 )
             && never( multiplayerMode() == TRUE                 )
-            && never( frameLivesZeroed() )
+            && never( framePlayerDied() )
 
-        return cancelConditions && goalConditions
+        return cancelConditions && primingConditions && goalConditions
     }
 
     function triggerAlphaStreak(size) {
@@ -180,50 +172,56 @@ TRUE  = 0x01
 // #region Achievements
     // #region Progress Achievements
         achievement(
-            title = "Gatehouse Guardian",
-            description = "Complete Scenes 1 to 3 starting with 3 lives or less",
+            title = "Castle Castellan",
+            description = "Complete Scenes 1 to 2 starting with 3 lives or less",
             type = "progression",
             points = 5,
-            trigger = triggerSceneProgression(1, 3)
+            trigger = triggerSceneProgression(1, 2)
         )
 
         achievement(
-            title = "Great Hall Hero",
-            description = "Complete Scenes 1 to 6 starting with 3 lives or less",
-            type = "progression",
-            points = 10,
-            trigger = triggerSceneProgression(1, 6)
-        )
-
-        achievement(
-            title = "Citadel Sovereign",
-            description = "Complete Scenes 1 to 9 starting with 3 lives or less",
+            title = "High Citadel Lord",
+            description = "Complete Scenes 1 to 4 starting with 3 lives or less",
             type = "win_condition",
-            points = 25,
-            trigger = triggerSceneProgression(1, 9)
+            points = 10,
+            trigger = triggerSceneProgression(1, 4)
+        )
+
+        achievement(
+            title = "Emperor of the Infinite Loop",
+            description = "Complete Scenes 1 to 8 starting with 3 lives or less",
+            points = 10,
+            trigger = triggerSceneProgression(1, 8)
         )
     // #endregion
 
     // #region Cherry Picker Achievements
         achievement(
             title = "Cherry Snack",
-            description = "Destroy all chery block from scenes 1 to 3 in a single 3 lives game, rack skip allowed",
+            description = "Destroy all cherry blocks from Scenes 1 without dyeing",
             points = 10,
-            trigger = triggerCherryPicker(1,3)
+            trigger = triggerCherryPicker(1)
         )
 
         achievement(
             title = "Cherry Jam",
-            description = "Destroy all chery block from scenes 4 to 6 in a single 3 lives game, rack skip allowed",
+            description = "Destroy all cherry blocks from Scenes 2 without dyeing, rack skip allowed",
             points = 10,
-            trigger = triggerCherryPicker(4,6)
+            trigger = triggerCherryPicker(2)
         )
 
         achievement(
             title = "Cherry Pie",
-            description = "Destroy all chery block from scenes 7 to 9 in a single 3 lives game, rack skip allowed",
+            description = "Destroy all cherry blocks from Scenes 3 without dyeing, rack skip allowed",
             points = 10,
-            trigger = triggerCherryPicker(7,9)
+            trigger = triggerCherryPicker(3)
+        )
+
+        achievement(
+            title = "Cherry Cake",
+            description = "Destroy all cherry blocks from Scenes 4 without dyeing, rack skip allowed",
+            points = 10,
+            trigger = triggerCherryPicker(4)
         )
     // #endregion
 
