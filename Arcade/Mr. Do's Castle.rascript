@@ -121,6 +121,12 @@ TRUE  = 0x01
             prev(shieldCollected()) == FALSE
             && shieldCollected() == TRUE
     }
+
+    function frameExtraFlagsCompleted() {
+        return
+            prev(lettersCollected()) & 0xf8 != 0xf8
+            && lettersCollected() & 0xf8 == 0xf8
+    }
 // #endregion Frame IDs
 
 // #region Triggers
@@ -217,10 +223,23 @@ TRUE  = 0x01
             && dipSwitchLives()  <=  3
             && gameplayActive()  == TRUE
             && multiplayerMode() == FALSE
-            && prev(lettersCollected()) & 0xf8 != 0xf8
-            && lettersCollected() & 0xf8 == 0xf8
+            && frameExtraFlagsCompleted()
         
         return goalConditions
+    }
+
+    function triggerExtraLives(size) {
+        goalCondition =
+            repeated(size, frameExtraFlagsCompleted())
+
+        cancelConditions =
+               never( postStatus()      != POST_STATUS_FINISHED )
+            && never( dipSwitchLives()  >  3                    )
+            && never( gameplayActive()  != TRUE                 )
+            && never( multiplayerMode() == TRUE                 )
+            && never( frameLivesZeroed() )
+
+        return cancelConditions && measured(goalCondition)
     }
 // #endregion Triggers
 
@@ -253,28 +272,28 @@ TRUE  = 0x01
     // #region Cherry Related Achievements
         achievement(
             title = "Cherry Snack",
-            description = "Clear all Cherry blocks from Scenes 1 without dyeing",
+            description = "Clear all Cherry blocks from Scenes 1 without dying",
             points = 5,
             trigger = triggerCherryPicker(1)
         )
 
         achievement(
             title = "Cherry Jam",
-            description = "Clear all Cherry blocks from Scenes 2 without dyeing, rack skip allowed",
+            description = "Clear all Cherry blocks from Scenes 2 without dying, rack skip allowed",
             points = 5,
             trigger = triggerCherryPicker(2)
         )
 
         achievement(
             title = "Cherry Pie",
-            description = "Clear all Cherry blocks from Scenes 3 without dyeing, rack skip allowed",
+            description = "Clear all Cherry blocks from Scenes 3 without dying, rack skip allowed",
             points = 5,
             trigger = triggerCherryPicker(3)
         )
 
         achievement(
             title = "Cherry Cake",
-            description = "Clear all Cherry blocks from Scenes 4 without dyeing, rack skip allowed",
+            description = "Clear all Cherry blocks from Scenes 4 without dying, rack skip allowed",
             points = 5,
             trigger = triggerCherryPicker(4)
         )
@@ -307,6 +326,13 @@ TRUE  = 0x01
         description = "Complete the EXTRA flags and earn an extra life, starting with 3 lives or less",
         points = 5,
         trigger = triggerExtraLife()
+    )
+
+    achievement(
+        title = "Succession Strategy",
+        description = "Earn two extra lives in a single game, starting with 3 lives or less",
+        points = 10,
+        trigger = triggerExtraLives(size=2)
     )
     // #endregion Shield Challanges
 // #endregion Achievements
