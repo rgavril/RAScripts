@@ -115,6 +115,12 @@ TRUE  = 0x01
     function frameCherriesRemainingZeroed() {
         return prev(cherryRemaining()) == 1 && cherryRemaining() == 0
     }
+
+    function frameShieldCollected() {
+        return
+            prev(shieldCollected()) == FALSE
+            && shieldCollected() == TRUE
+    }
 // #endregion Frame IDs
 
 // #region Triggers
@@ -189,6 +195,21 @@ TRUE  = 0x01
         
         return cancelConditions && measured(goalConditions)
     }
+
+    function triggerShieldStreak(size) {
+        goalConditions = 
+            repeated(size, frameShieldCollected())
+
+        cancelConditions =
+               never( postStatus()      != POST_STATUS_FINISHED )
+            && never( dipSwitchLives()  >  3                    )
+            && never( gameplayActive()  != TRUE                 )
+            && never( multiplayerMode() == TRUE                 )
+            && never( frameLivesZeroed() )
+            && never( frameSceneCompletedFlagRaised() && keysCollected() != 0xff)
+        
+        return cancelConditions && measured(goalConditions)
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -254,13 +275,21 @@ TRUE  = 0x01
         )
     // #endregion
 
-    // #region Alphamonster Challanges
+    // #region Shield Challanges
+    achievement(
+        title = "Unbroken Aegis",
+        description = "Collect the Shield in 4 consecutive scenes, starting with 3 lives or less",
+        points = 10,
+        trigger = triggerShieldStreak(size=4)
+    )
+
     achievement(
         title = "Alphabet Soup",
         description = "Slay at least 4 Alphamonsters in a single scene",
         points = 5,
         trigger = triggerAlphaStreak(size=4)
     )
+    // #endregion Shield Challanges
 // #endregion Achievements
 
 // #region Leaderboards
