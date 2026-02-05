@@ -76,6 +76,11 @@ TRUE  = 0x01
         return prev(lives()) == 1 && lives() == 0
     }
 
+    function frameLivesDecreased() {
+        return
+            lives() < prev(lives()) 
+    }
+
     function framePlayer1ScoreOverflowed() {
         return
             gameplayActive() == TRUE
@@ -107,12 +112,6 @@ TRUE  = 0x01
             && gameplayActive() == TRUE
     }
 
-    function framePlayerDied() {
-        return
-            prev(playerDying()) == FALSE
-            && playerDying() == TRUE
-    }
-
     function frameCherriesRemainingZeroed() {
         return prev(cherryRemaining()) == 1 && cherryRemaining() == 0
     }
@@ -141,17 +140,20 @@ TRUE  = 0x01
             && scene() == sceneNumber
         )
 
-        goalConditions =
+        requiredConditions =
             scene() == sceneNumber
-            && frameCherriesRemainingZeroed()
+        
+        goalConditions =
+            frameCherriesRemainingZeroed()
 
         cancelConditions =
                never( postStatus()      != POST_STATUS_FINISHED )
             && never( gameplayActive()  != TRUE                 )
             && never( multiplayerMode() == TRUE                 )
-            && never( framePlayerDied() )
+            && never( scene()           != sceneNumber          )
+            && never( frameLivesDecreased() )
 
-        return cancelConditions && primingConditions && goalConditions
+        return cancelConditions && primingConditions && requiredConditions && trigger_when(goalConditions)
     }
 
     function triggerAlphaStreak(size) {
@@ -175,7 +177,7 @@ TRUE  = 0x01
             title = "Castle Castellan",
             description = "Complete Scenes 1 to 2 starting with 3 lives or less",
             type = "progression",
-            points = 5,
+            points = 3,
             trigger = triggerSceneProgression(1, 2)
         )
 
@@ -183,7 +185,7 @@ TRUE  = 0x01
             title = "High Citadel Lord",
             description = "Complete Scenes 1 to 4 starting with 3 lives or less",
             type = "win_condition",
-            points = 10,
+            points = 5,
             trigger = triggerSceneProgression(1, 4)
         )
 
@@ -199,28 +201,28 @@ TRUE  = 0x01
         achievement(
             title = "Cherry Snack",
             description = "Destroy all cherry blocks from Scenes 1 without dyeing",
-            points = 10,
+            points = 5,
             trigger = triggerCherryPicker(1)
         )
 
         achievement(
             title = "Cherry Jam",
             description = "Destroy all cherry blocks from Scenes 2 without dyeing, rack skip allowed",
-            points = 10,
+            points = 5,
             trigger = triggerCherryPicker(2)
         )
 
         achievement(
             title = "Cherry Pie",
             description = "Destroy all cherry blocks from Scenes 3 without dyeing, rack skip allowed",
-            points = 10,
+            points = 5,
             trigger = triggerCherryPicker(3)
         )
 
         achievement(
             title = "Cherry Cake",
             description = "Destroy all cherry blocks from Scenes 4 without dyeing, rack skip allowed",
-            points = 10,
+            points = 5,
             trigger = triggerCherryPicker(4)
         )
     // #endregion
@@ -228,7 +230,7 @@ TRUE  = 0x01
     // #region Alphamonster Challanges
     achievement(
         title = "Alphabet Soup",
-        description = "Kill at least 4 alphamonsters in a single scene",
+        description = "Slay at least 4 Alphamonsters in a single scene",
         points = 5,
         trigger = triggerAlphaStreak(size=4)
     )
