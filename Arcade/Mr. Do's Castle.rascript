@@ -241,6 +241,19 @@ TRUE  = 0x01
 
         return cancelConditions && measured(goalCondition)
     }
+
+    function triggerScoreXX0000(tensOfThousands) {
+        goalConditions =
+               postStatus()      == POST_STATUS_FINISHED
+            && dipSwitchLives()  <=  3
+            && gameplayActive()  == TRUE
+            && multiplayerMode() == FALSE
+            
+            && prev(bcd(score_XX0000())) < tensOfThousands
+            && bcd(score_XX0000())   >= tensOfThousands
+        
+        return goalConditions
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -335,6 +348,22 @@ TRUE  = 0x01
         trigger = triggerExtraLives(size=2)
     )
     // #endregion Shield Challanges
+
+    // #region Score Achievements
+        achievement(
+            title = "Noble Reward",
+            description = "Reach a score of 40,000 points starting with 3 lives or less",
+            points = 10,
+            trigger = triggerScoreXX0000(4)
+        )
+
+        achievement(
+            title = "Sovereign Wealth",
+            description = "Reach a score of 100,000 points starting with 3 lives or less",
+            points = 25,
+            trigger = triggerScoreXX0000(10)
+        )
+    // #endregion Score Achievements
 // #endregion Achievements
 
 // #region Leaderboards
