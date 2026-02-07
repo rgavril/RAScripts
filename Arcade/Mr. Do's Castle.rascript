@@ -48,7 +48,10 @@ TRUE  = 0x01
     function playerFalling() => bit1(playerState())
     function playerDying() => bit2(playerState())
     function playerUsingHammer() => bit5(playerState())
+    function playerIsSpawned() => bit6(0x0150)
     function shieldCollected() => byte(0x011b)
+
+    function enemiesSpawned() => bit6(0x02b0)
 
     class monster {
         index = 0
@@ -196,7 +199,7 @@ TRUE  = 0x01
             never(postStatus() != POST_STATUS_FINISHED)
             && never(gameplayActive() != TRUE)
             && never(activePlayer() != ACTIVE_PLAYER_1)
-            && never(shieldCollected() != TRUE)
+            && never(shieldActive() != TRUE)
             && never(scene() != scene())
         
         return cancelConditions && measured(goalConditions)
@@ -253,6 +256,23 @@ TRUE  = 0x01
             && bcd(score_XX0000())   >= tensOfThousands
         
         return goalConditions
+    }
+
+    function triggerUnicornStreak(size) {
+        goalConditions = 
+            tally_of(range(1,8), size, difference => prev(enemyCount()) - enemyCount() >= difference)
+
+        cancelConditions =
+               never( postStatus()     != POST_STATUS_FINISHED)
+            && never( gameplayActive() != TRUE                )
+            && never( activePlayer()   != ACTIVE_PLAYER_1     )
+            && never( frameLivesDecreased() )
+
+        pauseConditions =
+               unless ( shieldActive()   == TRUE  )
+            && unless ( enemiesSpawned() == FALSE )
+        
+        return cancelConditions && pauseConditions && measured(goalConditions)
     }
 // #endregion Triggers
 
@@ -320,34 +340,43 @@ TRUE  = 0x01
     // #endregion
 
     // #region Shield Challanges
-    achievement(
-        title = "Unbroken Aegis",
-        description = "Collect the Shield in 4 consecutive scenes, starting with 3 lives or less",
-        points = 10,
-        trigger = triggerShieldStreak(size=4)
-    )
+        achievement(
+            title = "Unbroken Aegis",
+            description = "Collect the Shield in 4 consecutive scenes, starting with 3 lives or less",
+            points = 10,
+            trigger = triggerShieldStreak(size=4)
+        )
 
-    achievement(
-        title = "Alphabet Soup",
-        description = "Slay at least 4 Alphamonsters in a single scene",
-        points = 5,
-        trigger = triggerAlphaStreak(size=4)
-    )
+        achievement(
+            title = "Alphabet Soup",
+            description = "Slay at least 4 Alphamonsters in a single scene",
+            points = 5,
+            trigger = triggerAlphaStreak(size=4)
+        )
 
-    achievement(
-        title = "Banner of Life",
-        description = "Complete the EXTRA flags and earn an extra life, starting with 3 lives or less",
-        points = 5,
-        trigger = triggerExtraLife()
-    )
+        achievement(
+            title = "Banner of Life",
+            description = "Complete the EXTRA flags and earn an extra life, starting with 3 lives or less",
+            points = 5,
+            trigger = triggerExtraLife()
+        )
 
-    achievement(
-        title = "Succession Strategy",
-        description = "Earn two extra lives in a single game, starting with 3 lives or less",
-        points = 10,
-        trigger = triggerExtraLives(size=2)
-    )
+        achievement(
+            title = "Succession Strategy",
+            description = "Earn two extra lives in a single game, starting with 3 lives or less",
+            points = 10,
+            trigger = triggerExtraLives(size=2)
+        )
     // #endregion Shield Challanges
+
+    // #region Monster Related Achievements
+        achievement(
+            title = "Monster Hunter",
+            description = "Slay 30 Unicorns in a single life",
+            points = 10,
+            trigger = triggerUnicornStreak(size=30)
+        )
+    // #endregion Monster Related Achievements
 
     // #region Score Achievements
         achievement(
