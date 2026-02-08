@@ -52,6 +52,7 @@ TRUE  = 0x01
     function shieldCollected() => byte(0x011b)
 
     function enemiesSpawned() => bit6(0x02b0)
+    function enemiesDieying() => bit2(0x02b0)
 
     class monster {
         index = 0
@@ -260,14 +261,14 @@ TRUE  = 0x01
         return goalConditions
     }
 
-    function triggerUnicornStreak(size) {
+    function triggerOneLifeStreak(size) {
         goalConditions = 
             tally_of(range(1,8), size, difference => prev(enemyCount()) - enemyCount() >= difference)
 
         cancelConditions =
-               never( postStatus()     != POST_STATUS_FINISHED)
-            && never( gameplayActive() != TRUE                )
-            && never( activePlayer()   != ACTIVE_PLAYER_1     )
+               never( postStatus()      != POST_STATUS_FINISHED)
+            && never( gameplayActive()  != TRUE                )
+            && never( multiplayerMode() == TRUE                )
             && never( frameLivesDecreased() )
 
         pauseConditions =
@@ -275,6 +276,22 @@ TRUE  = 0x01
             && unless ( enemiesSpawned() == FALSE )
         
         return cancelConditions && pauseConditions && measured(goalConditions)
+    }
+
+    function triggerOneHitStreak(size) {
+        goalConditions = 
+            tally_of(range(1,8), size, difference => prev(enemyCount()) - enemyCount() >= difference)
+
+        cancelConditions =
+               never( postStatus()      != POST_STATUS_FINISHED )
+            && never( gameplayActive()  != TRUE                 )
+            && never( multiplayerMode() == TRUE                 )
+            && never( enemiesDieying() == FALSE )
+
+        pauseConditions =
+            unless ( enemiesSpawned() == FALSE )
+        
+        return cancelConditions && pauseConditions && goalConditions
     }
 
     function triggerUnicornDrop(floors) {
@@ -288,7 +305,7 @@ TRUE  = 0x01
                 && monster(index).floorsDropped() == floors
             )
 
-        return goalConditions
+        return goalConditions 
     }
 // #endregion Triggers
 
@@ -390,14 +407,21 @@ TRUE  = 0x01
             title = "Monster Hunter",
             description = "Slay 30 Unicorns in a single life",
             points = 10,
-            trigger = triggerUnicornStreak(30)
+            trigger = triggerOneLifeStreak(30)
         )
 
         achievement(
             title = "Long Way Down",
-            description = "Send a Unicorn plummeting down at least 3 floors",
-            points = 10,
-            trigger = triggerUnicornDrop(3)
+            description = "Send a Unicorn plummeting down 4 floors",
+            points = 25,
+            trigger = triggerUnicornDrop(4)
+        )
+
+        achievement(
+            title = "Crowd Control",
+            description = "Slay 4 or more Unicorns simultaneously using a single block or trap",
+            points = 5,
+            trigger = triggerOneHitStreak(4)
         )
     // #endregion Monster Related Achievements
 
