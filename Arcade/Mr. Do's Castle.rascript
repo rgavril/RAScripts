@@ -263,7 +263,11 @@ TRUE  = 0x01
 
     function triggerOneLifeStreak(size) {
         goalConditions = 
-            tally_of(range(1,8), size, difference => prev(enemyCount()) - enemyCount() >= difference)
+            tally_of(range(1,8), size, 
+            difference => 
+                enemiesSpawned() == TRUE &&
+                prev(enemyCount()) - enemyCount() >= difference
+        )
 
         cancelConditions =
                never( postStatus()      != POST_STATUS_FINISHED)
@@ -272,24 +276,27 @@ TRUE  = 0x01
             && never( frameLivesDecreased() )
 
         pauseConditions =
-               unless ( shieldActive()   == TRUE  )
-            && unless ( enemiesSpawned() == FALSE )
+            unless( shieldActive() == TRUE )
         
         return cancelConditions && pauseConditions && measured(goalConditions)
     }
 
     function triggerOneHitStreak(size) {
         goalConditions = 
-            tally_of(range(1,8), size, difference => prev(enemyCount()) - enemyCount() >= difference)
+            tally_of(range(1,8), size, 
+            difference => 
+                enemiesSpawned() == TRUE &&
+                prev(enemyCount()) - enemyCount() >= difference
+        )
 
         cancelConditions =
                never( postStatus()      != POST_STATUS_FINISHED )
             && never( gameplayActive()  != TRUE                 )
             && never( multiplayerMode() == TRUE                 )
-            && never( enemiesDieying() == FALSE )
+            && never( enemiesDieying()  == FALSE                )
 
         pauseConditions =
-            unless ( enemiesSpawned() == FALSE )
+            unless( shieldActive() == TRUE )
         
         return cancelConditions && pauseConditions && goalConditions
     }
