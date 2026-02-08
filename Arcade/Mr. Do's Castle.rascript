@@ -63,6 +63,8 @@ TRUE  = 0x01
                 prev(this.deathSequenceStarted() == FALSE)
                 && this.deathSequenceStarted() == TRUE
         }
+
+        function floorsDropped() => byte(0x018d + this.index*0x20)
     }
 // #endregion Memory Addresses
 
@@ -274,6 +276,20 @@ TRUE  = 0x01
         
         return cancelConditions && pauseConditions && measured(goalConditions)
     }
+
+    function triggerUnicornDrop(floors) {
+        goalConditions =
+               postStatus()      == POST_STATUS_FINISHED
+            && gameplayActive()  == TRUE
+            && multiplayerMode() == FALSE
+            
+            && any_of(range(0,7), index => 
+                prev(monster(index).floorsDropped() == floors-1) 
+                && monster(index).floorsDropped() == floors
+            )
+
+        return goalConditions
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -374,7 +390,14 @@ TRUE  = 0x01
             title = "Monster Hunter",
             description = "Slay 30 Unicorns in a single life",
             points = 10,
-            trigger = triggerUnicornStreak(size=30)
+            trigger = triggerUnicornStreak(30)
+        )
+
+        achievement(
+            title = "Long Way Down",
+            description = "Send a Unicorn plummeting down at least 3 floors",
+            points = 10,
+            trigger = triggerUnicornDrop(3)
         )
     // #endregion Monster Related Achievements
 
