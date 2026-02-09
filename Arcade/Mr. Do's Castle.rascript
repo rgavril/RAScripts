@@ -320,7 +320,7 @@ TRUE  = 0x01
     // #region Progress Achievements
         achievement(
             title = "Castle Castellan",
-            description = "Complete Scenes 1 to 2 starting with 3 lives or less",
+            description = "Complete Scene 2 in a 3 lives or less game",
             type = "progression",
             points = 3,
             trigger = triggerSceneProgression(1, 2)
@@ -328,7 +328,7 @@ TRUE  = 0x01
 
         achievement(
             title = "High Citadel Lord",
-            description = "Complete Scenes 1 to 4 starting with 3 lives or less",
+            description = "Complete Scene 4 in a 3 lives or less game",
             type = "win_condition",
             points = 5,
             trigger = triggerSceneProgression(1, 4)
@@ -336,7 +336,7 @@ TRUE  = 0x01
 
         achievement(
             title = "Emperor of the Infinite Loop",
-            description = "Complete Scenes 1 to 8 starting with 3 lives or less",
+            description = "Complete Scene 8 in a 3 lives or less game",
             points = 10,
             trigger = triggerSceneProgression(1, 8)
         )
@@ -373,7 +373,7 @@ TRUE  = 0x01
 
         achievement(
             title = "Starvation Strategy",
-            description = "Clear all Cherry blocks from Scenes 1 to 4 starting with 3 lives or less",
+            description = "Clear all Cherry blocks from Scenes 1 to 4 in a 3 lives or less game",
             points = 25,
             trigger = triggerStarvation()
         )
@@ -389,7 +389,7 @@ TRUE  = 0x01
 
         achievement(
             title = "Alphabet Soup",
-            description = "Slay at least 4 Alphamonsters in a single scene",
+            description = "Slay at least 4 Alphamonsters within one scene",
             points = 5,
             trigger = triggerAlphaStreak(size=4)
         )
@@ -411,22 +411,22 @@ TRUE  = 0x01
 
     // #region Monster Related Achievements
         achievement(
-            title = "Monster Hunter",
-            description = "Slay 30 Unicorns in a single life",
-            points = 10,
-            trigger = triggerOneLifeStreak(30)
+            title = "Hunting Strategy",
+            description = "Slay 35 Unicorns without losing a life",
+            points = 25,
+            trigger = triggerOneLifeStreak(35)
         )
 
         achievement(
             title = "Long Way Down",
             description = "Send a Unicorn plummeting down 4 floors",
-            points = 25,
+            points = 10,
             trigger = triggerUnicornDrop(4)
         )
 
         achievement(
             title = "Crowd Control",
-            description = "Slay 4 or more Unicorns simultaneously using a single block or trap",
+            description = "Slay at least 4 Unicorns with a single block or trap",
             points = 5,
             trigger = triggerOneHitStreak(4)
         )
@@ -435,14 +435,14 @@ TRUE  = 0x01
     // #region Score Achievements
         achievement(
             title = "Noble Reward",
-            description = "Reach a score of 40,000 points starting with 3 lives or less",
+            description = "Reach a score of 40,000 points in a 3 lives or less game",
             points = 10,
             trigger = triggerScoreXX0000(4)
         )
 
         achievement(
             title = "Sovereign Wealth",
-            description = "Reach a score of 100,000 points starting with 3 lives or less",
+            description = "Reach a score of 100,000 points in a 3 lives or less game",
             points = 25,
             trigger = triggerScoreXX0000(10)
         )
