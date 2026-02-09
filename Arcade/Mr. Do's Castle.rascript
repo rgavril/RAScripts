@@ -240,7 +240,6 @@ TRUE  = 0x01
 
         cancelConditions =
                never( postStatus()      != POST_STATUS_FINISHED )
-            && never( dipSwitchLives()  >  3                    )
             && never( gameplayActive()  != TRUE                 )
             && never( multiplayerMode() == TRUE                 )
             && never( frameLivesZeroed() )
@@ -345,35 +344,35 @@ TRUE  = 0x01
     // #region Cherry Related Achievements
         achievement(
             title = "Cherry Snack",
-            description = "Clear all Cherry blocks from Scenes 1 without dying",
+            description = "Clear all Cherry blocks from Scene 1 without dying",
             points = 5,
             trigger = triggerCherryPicker(1)
         )
 
         achievement(
             title = "Cherry Jam",
-            description = "Clear all Cherry blocks from Scenes 2 without dying, rack skip allowed",
+            description = "Clear all Cherry blocks from Scene 2 without dying, rack skip allowed",
             points = 5,
             trigger = triggerCherryPicker(2)
         )
 
         achievement(
             title = "Cherry Pie",
-            description = "Clear all Cherry blocks from Scenes 3 without dying, rack skip allowed",
+            description = "Clear all Cherry blocks from Scene 3 without dying, rack skip allowed",
             points = 5,
             trigger = triggerCherryPicker(3)
         )
 
         achievement(
             title = "Cherry Cake",
-            description = "Clear all Cherry blocks from Scenes 4 without dying, rack skip allowed",
+            description = "Clear all Cherry blocks from Scene 4 without dying, rack skip allowed",
             points = 5,
             trigger = triggerCherryPicker(4)
         )
 
         achievement(
             title = "Starvation Strategy",
-            description = "Clear all Cherry blocks from Scenes 1 to 4 in a 3 lives or less game",
+            description = "Clear all Cherry blocks from Scenes 1 to 4, in a 3 lives or less game",
             points = 25,
             trigger = triggerStarvation()
         )
@@ -382,7 +381,7 @@ TRUE  = 0x01
     // #region Shield Challanges
         achievement(
             title = "Unbroken Aegis",
-            description = "Collect the Shield in 4 consecutive scenes, starting with 3 lives or less",
+            description = "Collect the Shield in 4 consecutive scenes, in a 3 lives or less game",
             points = 10,
             trigger = triggerShieldStreak(size=4)
         )
@@ -396,14 +395,14 @@ TRUE  = 0x01
 
         achievement(
             title = "Banner of Life",
-            description = "Complete the EXTRA flags and earn an extra life, starting with 3 lives or less",
+            description = "Spell EXTRA to earn an extra life in a 3 lives or less game",
             points = 5,
             trigger = triggerExtraLife()
         )
 
         achievement(
             title = "Succession Strategy",
-            description = "Earn two extra lives in a single game, starting with 3 lives or less",
+            description = "Spell EXTRA twice in a single life",
             points = 10,
             trigger = triggerExtraLives(size=2)
         )
@@ -419,7 +418,7 @@ TRUE  = 0x01
 
         achievement(
             title = "Long Way Down",
-            description = "Send a Unicorn plummeting down 4 floors",
+            description = "Slay a Unicorn by sending it plummeting down 4 floors",
             points = 10,
             trigger = triggerUnicornDrop(4)
         )
@@ -435,14 +434,14 @@ TRUE  = 0x01
     // #region Score Achievements
         achievement(
             title = "Noble Reward",
-            description = "Reach a score of 40,000 points in a 3 lives or less game",
+            description = "Reach a score of 40,000 points, in a 3 lives or less game",
             points = 10,
             trigger = triggerScoreXX0000(4)
         )
 
         achievement(
             title = "Sovereign Wealth",
-            description = "Reach a score of 100,000 points in a 3 lives or less game",
+            description = "Reach a score of 100,000 points, in a 3 lives or less game",
             points = 25,
             trigger = triggerScoreXX0000(10)
         )
@@ -476,12 +475,30 @@ TRUE  = 0x01
 
     leaderboard(
         title = "High Score",
-        description = "Highest score starting with maximum 3 lives at any difficulty",
+        description = "Highest score in a 3 lives or less game at any difficulty",
         format = "SCORE",
         start = startHighscoreLeaderboard(),
         cancel = always_false(),
         submit = framePlayer1LivesZeroed(),
         value = valueHighscoreLeaderboard()
+    )
+
+    function startSceneLeaderboard() {
+        return
+            postStatus() == POST_STATUS_FINISHED
+            && dipSwitchLives() <= 3
+            && gameplayActive() == TRUE
+            && multiplayerMode() == FALSE
+            && frameLivesZeroed()
+    }
+    leaderboard(
+        title = "Highest Scene",
+        description = "Highest scene reached in a 3 lives or less game at any difficulty",
+        format = "VALUE",
+        start = startSceneLeaderboard(),
+        cancel = always_false(),
+        submit = always_true(),
+        value = scene()
     )
 // #endregion Leaderboards
 
