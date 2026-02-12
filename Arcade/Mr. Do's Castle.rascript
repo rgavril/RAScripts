@@ -403,7 +403,7 @@ TRUE  = 0x01
         achievement(
             title = "Succession Strategy",
             description = "Spell EXTRA twice in a single life",
-            points = 10,
+            points = 25,
             trigger = triggerExtraLives(size=2)
         )
     // #endregion Shield Challanges
