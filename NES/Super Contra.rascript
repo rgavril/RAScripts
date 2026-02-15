@@ -11,6 +11,8 @@
 
     function currentArea() => byte(0x0050) + 1
     function currentAreaSection() => byte(0x0016)
+    function currentAreaHorizontalPosition() => word(0x0064)
+    function currentAreaVerticalPosition() => word(0x0073)
     function numberOfPlayers() => byte(0x0022) + 1
 
     function player1Weapon() => low4(0x00b8)
@@ -23,6 +25,7 @@
     function player1Lives() => byte(0x0053)
 
     function cheatExtraLives() => byte(0x07ec)
+
 
     class gameObject {
         index = 0
@@ -49,6 +52,40 @@
 // #endregion Frames
 
 // #region Triggers
+    function triggerArea1GreenSoldiersChallange() {
+        cancelConditions =
+               never( gameState()         != GAME_STATE_INGAME )
+            && never( currentArea()       != 1                 )
+
+        greenSoldierKilledCondition =
+            any_of(range(0, 13), index =>
+                gameObject(index).type() == 0x03 &&
+                gameObject(index).state() == 0x05
+            )
+
+        turretDestroyedCondition =
+            any_of(range(0, 13), index =>
+                gameObject(index).type() == 0x20 &&
+                gameObject(index).state() == 0x06
+            )
+        
+        primingCondition =
+            once(
+                currentArea() == 1
+                && currentAreaHorizontalPosition() == 0x0104 // Start of Area 1 (Helicopter)
+            )
+
+        targetConditions =
+            currentArea() == 1
+            && prev(currentAreaHorizontalPosition()) < 0x0b00 // Fourth Upward Slope Start
+            && currentAreaHorizontalPosition() >= 0x0b00 // Fourth Upward Slope Start
+
+        return 
+            primingCondition && trigger_when(targetConditions)
+            && cancelConditions
+            && never(greenSoldierKilledCondition) && never(turretDestroyedCondition)
+    }
+
     function triggerArea2BossChallenge() {
         cancelConditions =
                never( gameState()         != GAME_STATE_INGAME )
@@ -141,6 +178,16 @@
 // #endregion Triggers
 
 // #region Achievements
+    // #region Area 1 Challanges
+        achievement(
+            id = 50936,
+            title = "Gun Hurdling Champion",
+            description = "Reach the fourth upward slope in Area 1 without killing any green soldiers or destroying any turrets",
+            points = 25,
+            trigger = triggerArea1GreenSoldiersChallange()
+        )
+    // #endregion Area 1 Challanges
+
     // #region Area 2 Challanges
         achievement(
             id = 50860,
