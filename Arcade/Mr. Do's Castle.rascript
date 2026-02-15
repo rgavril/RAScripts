@@ -218,9 +218,21 @@ TRUE  = 0x01
             && never( gameplayActive()  != TRUE                 )
             && never( multiplayerMode() == TRUE                 )
             && never( frameLivesZeroed() )
-            && never( frameSceneCompletedFlagRaised() && keysCollected() != 0xff)
+            && never( 
+                frameSceneCompletedFlagRaised()
+                && keysCollected() != 0xff
+            )
         
-        return cancelConditions && measured(goalConditions)
+        pauseConditions =
+            unless(once(
+                // PauseIf
+                prev(byte(0x00b0)) == 0xf8 
+                &&
+                // ResetNextIf 
+                never(prev(scene()) < scene())
+            ))
+        
+        return cancelConditions && measured(goalConditions) && pauseConditions
     }
 
     function triggerExtraLife() {
