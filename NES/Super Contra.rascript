@@ -23,6 +23,9 @@
     WEAPON_FIREBALL = 0x04
     function player1JumpButton() => bit7(0x00f7)
     function player1Lives() => byte(0x0053)
+    function player1PositionX() => word(0x054c)
+    function player1InvincibilityFrames() => byte(0x00c4)
+    function player1State() => byte(0x00a0)
 
     function cheatExtraLives() => byte(0x07ec)
 
@@ -116,6 +119,30 @@
         return cancelConditions && bossDiedCondition && redSoldierKilledCondition
     }
 
+    function triggerArea4RightSideAscend() {
+        cancelConditions =
+               never( gameState()         != GAME_STATE_INGAME )
+            && never( currentArea()       != 4                 )
+
+        startConditions =
+            once(
+                prev(currentAreaVerticalPosition()) == 0x0c00
+                && currentAreaVerticalPosition() < 0x0c00
+            )
+
+        triggerConditions =
+            prev(currentAreaVerticalPosition()) != 0x001a
+            && currentAreaVerticalPosition() == 0x001a
+
+        P1OnTheLeft =
+            player1InvincibilityFrames() == 0
+            && player1State() == 0x02
+            && (currentAreaVerticalPosition() < 0x0500 || currentAreaVerticalPosition() > 0x050e)
+            && player1PositionX() < (0xff / 2)
+
+        return startConditions && trigger_when(triggerConditions) && cancelConditions && never(P1OnTheLeft)
+    }
+
     function trigerArea7CrawlersChallange() {
         startConditions = 
             once(
@@ -197,6 +224,15 @@
             trigger = triggerArea2BossChallenge()
         )
     // #endregion Area 2 Challanges
+
+    // #region Area 4 Challanges
+        achievement(
+            title = "The Right Way Up",
+            description = "Ascend Area 4 while staying on the right half of the screen. Left half allowed only for knockback, respawning and the elevator 2 access platform. Extra lives code not allowed",
+            points = 10,
+            trigger = triggerArea4RightSideAscend()
+        )
+    // #endregion Area 4 Challanges
 
     // #region Area 7 Challanges
         achievement(
