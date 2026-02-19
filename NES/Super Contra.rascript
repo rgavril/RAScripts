@@ -5,9 +5,17 @@
     TRUE = 0x01
     FALSE = 0x00
 
-    function gameState() => byte(0x0018)
-    GAME_STATE_DEMO = 0x01
-    GAME_STATE_INGAME = 0x04
+    function gameplayState() => byte(0x0018)
+    GAMEPLAY_DEMO = 0x01
+    GAMEPLAY_STARTED = 0x04
+
+    function gameState() => byte(0x0038)
+    GAMESTATE_MAIN_MENU = 0x00
+    GAMESTATE_AREA_INTRO = 0x01
+    GAMESTATE_IN_GAME = 0x03
+    GAMESTATE_AREA_COMPLETE = 0x04
+    GAMESTATE_GAME_OVER = 0x05
+    GAMESTATE_GAME_OVER_SCREEN = 0x06
 
     function currentArea() => byte(0x0050) + 1
     function currentAreaSection() => byte(0x0016)
@@ -52,12 +60,25 @@
     function framePlayer1Died() {
         return prev(player1Lives()) > player1Lives()
     }
+
+    function frameAreaCompleted() {
+        return 
+            prev(gameState()) != GAMESTATE_IN_GAME
+            && gameState() == GAMESTATE_AREA_COMPLETE
+    }
 // #endregion Frames
 
 // #region Triggers
+    function triggerAreaClear(area) {
+        return
+            gameplayState() == GAMEPLAY_STARTED
+            && currentArea() == area
+            && frameAreaCompleted()
+    }
+
     function triggerArea1GreenSoldiersChallange() {
         cancelConditions =
-               never( gameState()         != GAME_STATE_INGAME )
+               never( gameplayState()     != GAMEPLAY_STARTED  )
             && never( currentArea()       != 1                 )
 
         greenSoldierKilledCondition =
@@ -91,7 +112,7 @@
 
     function triggerArea2BossChallenge() {
         cancelConditions =
-               never( gameState()         != GAME_STATE_INGAME )
+               never( gameplayState()     != GAMEPLAY_STARTED  )
             && never( currentArea()       != 2                 )
             && never( cheatExtraLives()   == TRUE              )
 
@@ -121,7 +142,7 @@
 
     function triggerArea4RightSideAscend() {
         cancelConditions =
-               never( gameState()         != GAME_STATE_INGAME )
+               never( gameplayState()     != GAMEPLAY_STARTED  )
             && never( currentArea()       != 4                 )
 
         startConditions =
@@ -156,7 +177,7 @@
             )
 
         cancelConditions =
-            never(gameState()       != GAME_STATE_INGAME )
+            never(gameplayState()      != GAMEPLAY_STARTED  )
             && never(currentArea()     != 7                 )
             && never(numberOfPlayers() == 2                 )
 
@@ -176,7 +197,7 @@
 
     function triggerArea7BossChallenge() {
         cancelConditions =
-               never( gameState()         != GAME_STATE_INGAME )
+               never( gameplayState()     != GAMEPLAY_STARTED  )
             && never( currentArea()       != 7                 )
             && never( numberOfPlayers()   != 1                 )
             && never( player1Weapon()     != WEAPON_STANDARD   )
@@ -205,6 +226,72 @@
 // #endregion Triggers
 
 // #region Achievements
+    // #region Area Clear Achievements
+        achievement(
+            title = "Lightning and Grenades",
+            description = "Clear Area 1",
+            points = 5,
+            trigger = triggerAreaClear(1),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Military Fortress",
+            description = "Clear Area 2",
+            points = 5,
+            trigger = triggerAreaClear(2),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Return to the Jungle",
+            description = "Clear Area 3",
+            points = 5,
+            trigger = triggerAreaClear(3),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Mechanical Factory",
+            description = "Clear Area 4",
+            points = 10,
+            trigger = triggerAreaClear(4),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Perilous Cliff",
+            description = "Clear Area 5",
+            points = 10,
+            trigger = triggerAreaClear(5),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Terror Under your Feet",
+            description = "Clear Area 6",
+            points = 10,
+            trigger = triggerAreaClear(6),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Belly of the Beast",
+            description = "Clear Area 7",
+            points = 10,
+            trigger = triggerAreaClear(7),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Crushing Catastrophe",
+            description = "Clear Area 8 and beat the game",
+            points = 10,
+            trigger = triggerAreaClear(8),
+            type = "win_condition"
+        )
+    // #endregion Area Clear Achievements
+
     // #region Area 1 Challanges
         achievement(
             id = 50936,
