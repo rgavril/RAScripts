@@ -54,6 +54,10 @@
             "Death": 0x04,
         }
     }
+
+    function objectType(index) => byte(0x06d8 + index)
+    function objectState(index) => byte(0x0668 + index)
+    function objectXPosition(index) => byte(0x053c + index)
 // #endregion Memory Addresses
 
 // #region Frames
@@ -223,6 +227,40 @@
 
         return cancelConditions && enemyConditions
     }
+
+    function triggerArea8RunningEnemies() {
+        startConditions = once(
+            currentArea() == 8
+            && prev(currentAreaSection()) == 0x00 // Stage Start
+            && currentAreaSection() == 0x01 // First Area with Running Enemies
+        )
+
+        targetConditions = once(
+            currentArea() == 8
+            && prev(currentAreaSection()) == 0x0d // Pre-Boss Room
+            && currentAreaSection() == 0x0e // Boss Room
+        )
+
+        cancelConditions =
+               never( gameplayState()     != GAMEPLAY_STARTED  )
+            && never( currentArea()       != 8                 )
+
+        enemyEscapeOnRight =
+            never(any_of(range(0, 13), index =>
+                objectType(index) == 0x03
+                && prev(objectXPosition(index)) < 0xfe
+                && objectXPosition(index) >= 0xfe
+            ))
+
+        enemyEscapeOnLeft = 
+            never(any_of(range(0, 13), index =>
+                objectType(index) == 0x03
+                && prev(objectXPosition(index)) > 0x06
+                && objectXPosition(index) <= 0x06
+            ))
+
+        return startConditions && trigger_when(targetConditions) && cancelConditions && enemyEscapeOnLeft && enemyEscapeOnRight
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -338,4 +376,13 @@
             trigger = triggerArea7BossChallenge()   
         )
     // #endregion Area 7 Challanges
+
+    // #region Area 8 Challanges
+        achievement(
+            title = "The Only Way to be Sure",
+            description = "Don't let any of the running enemies for Area 8 get from one side of the screen to the other.",
+            points = 10,
+            trigger = triggerArea8RunningEnemies()
+        )
+    // #endregion Area 8 Challanges
 // #endregion Achievements
