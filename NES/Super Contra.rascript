@@ -37,24 +37,6 @@
 
     function cheatExtraLives() => byte(0x07ec)
 
-
-    class gameObject {
-        index = 0
-
-        function type() => byte(0x06d8 + this.index)
-        function state() => byte(0x0668 + this.index)
-    }
-
-    GAME_OBJECT_TYPES = {
-        "Facehugger": 0x3e
-    }
-
-    GAME_OBJECT_STATES = {
-        "Facehugger": {
-            "Death": 0x04,
-        }
-    }
-
     function objectType(index) => byte(0x06d8 + index)
     function objectState(index) => byte(0x0668 + index)
     function objectXPosition(index) => byte(0x053c + index)
@@ -87,14 +69,14 @@
 
         greenSoldierKilledCondition =
             any_of(range(0, 13), index =>
-                gameObject(index).type() == 0x03 &&
-                gameObject(index).state() == 0x05
+                objectType(index) == 0x03 &&
+                objectState(index) == 0x05
             )
 
         turretDestroyedCondition =
             any_of(range(0, 13), index =>
-                gameObject(index).type() == 0x20 &&
-                gameObject(index).state() == 0x06
+                objectType(index) == 0x20 &&
+                objectState(index) == 0x06
             )
         
         primingCondition =
@@ -122,23 +104,31 @@
 
         bossDiedCondition =
             any_of(range(0, 13), index =>
+                // Priming Condition: Green Gunner is Spawned
                 once(
-                    gameObject(index).type() == 0x69
-                    && prev(gameObject(index).state()) == 0x02
-                    && gameObject(index).state() == 0x03
+                    objectType(index) == 0x69 // Green Gunner
+                    && prev(objectState(index)) == 0x02 // Spawning in previous frame
+                    && objectState(index) == 0x03 // Active
                 )
                 &&
+
+                // Trigger Condition: Green Gunner is Dead
                 trigger_when (
-                    gameObject(index).type() == 0x69
-                    && gameObject(index).state() == 0x07
-                    && prev(gameObject(index).state()) != 0x07  
+                    objectType(index) == 0x69 // Green Gunner
+                    && objectState(index) == 0x07 // Dead
+                    && prev(objectState(index)) != 0x07 // Not Dead 
                 )
             )
 
         redSoldierKilledCondition =
+            // Cancel Condition: Any of the two red gunners are killed
             never(any_of(range(0, 13), index =>
-                prev(gameObject(index).type()) == 0x6a && 
-                prev(gameObject(index).state()) == 0x04
+                prev(objectType(index)) == 0x6a // Red Gunner
+                && prev(objectState(index)) == 0x04 // Died
+
+                // NOTE: We check for the death condition in the previous frame to avoid
+                // cancelling the challange when the green gunner dies, as the red gunners
+                // die in the same frame as the green gunner due to a shared death effect.
             ))
 
         return cancelConditions && bossDiedCondition && redSoldierKilledCondition
@@ -187,8 +177,8 @@
 
         deathCrawlerCondition = 
             any_of(range(0, 13), index =>
-                gameObject(index).type() == GAME_OBJECT_TYPES["Facehugger"]
-                && gameObject(index).state() == GAME_OBJECT_STATES["Facehugger"]["Death"]
+                objectType(index) == 0x3e // Facehugger
+                && objectState(index) == 0x04 // Dead
             )
 
         triggerCondition = 
@@ -212,16 +202,16 @@
             any_of(range(0, 13), index =>
                 // Priming Condition
                 once(
-                    gameObject(index).type() == 0x51
-                    && prev(gameObject(index).state()) == 0x02
-                    && gameObject(index).state() == 0x03
+                    objectType(index) == 0x51
+                    && prev(objectState(index)) == 0x02
+                    && objectState(index) == 0x03
                 )
                 &&
                 // Trigger Condition
                 trigger_when (
-                    gameObject(index).type() == 0x51
-                    && gameObject(index).state() == 0x08
-                    && prev(gameObject(index).state()) != 0x08
+                    objectType(index) == 0x51
+                    && objectState(index) == 0x08
+                    && prev(objectState(index)) != 0x08
                 )
             )
 
@@ -379,7 +369,7 @@
 
     // #region Area 8 Challanges
         achievement(
-            title = "The Only Way to be Sure",
+            title = "None Shall Pass",
             description = "Don't let any of the running enemies for Area 8 get from one side of the screen to the other.",
             points = 10,
             trigger = triggerArea8RunningEnemies()
