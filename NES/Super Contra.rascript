@@ -220,33 +220,34 @@
 
     function triggerArea8RunningEnemies() {
         startConditions = once(
-            currentArea() == 8
-            && prev(currentAreaSection()) == 0x00 // Stage Start
-            && currentAreaSection() == 0x01 // First Area with Running Enemies
+            currentArea()           == 8
+            && currentAreaSection() == 0x00 // Stage Start
         )
 
         targetConditions = once(
-            currentArea() == 8
+            currentArea()                 == 8
             && prev(currentAreaSection()) == 0x0d // Pre-Boss Room
-            && currentAreaSection() == 0x0e // Boss Room
+            && currentAreaSection()       == 0x0e // Boss Room
         )
 
         cancelConditions =
-               never( gameplayState()     != GAMEPLAY_STARTED  )
-            && never( currentArea()       != 8                 )
+               never( gameplayState() != GAMEPLAY_STARTED  )
+            && never( currentArea()   != 8                 )
 
         enemyEscapeOnRight =
             never(any_of(range(0, 13), index =>
-                objectType(index) == 0x03
-                && prev(objectXPosition(index)) < 0xfe
-                && objectXPosition(index) >= 0xfe
+                   objectType(index)            == 0x03 // Running Soldier
+                && objectState(index)           == 0x02 // Walking
+                && prev(objectXPosition(index)) <  0xfe // Despawn Point Right Side of Screen
+                && objectXPosition(index)       >= 0xfe
             ))
 
         enemyEscapeOnLeft = 
             never(any_of(range(0, 13), index =>
-                objectType(index) == 0x03
-                && prev(objectXPosition(index)) > 0x06
-                && objectXPosition(index) <= 0x06
+                   objectType(index)            == 0x03 // Running Soldier
+                && objectState(index)           == 0x02 // Walking
+                && prev(objectXPosition(index)) >  0x06 // Despawn Point of Left Side of Screen
+                && objectXPosition(index)       <= 0x06
             ))
 
         return startConditions && trigger_when(targetConditions) && cancelConditions && enemyEscapeOnLeft && enemyEscapeOnRight
