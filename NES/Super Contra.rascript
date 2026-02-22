@@ -106,14 +106,14 @@
 
         greenSoldierKilledCondition =
             any_of(range(0, 13), index =>
-                objectType(index) == 0x03 &&
-                objectState(index) == 0x05
+                objectType(index) == 0x03 // 0x03 ~ Running Soldier
+                && objectState(index) == 0x05 // 0x05 ~ Death Animation Start
             )
 
         turretDestroyedCondition =
             any_of(range(0, 13), index =>
-                objectType(index) == 0x20 &&
-                objectState(index) == 0x06
+                objectType(index) == 0x20 // 0x20 ~ Area 1 Turret
+                && objectState(index) == 0x06 // 0x06 ~ Death Animation Start
             )
         
         primingCondition =
