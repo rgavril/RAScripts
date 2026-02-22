@@ -5,17 +5,23 @@
     TRUE = 0x01
     FALSE = 0x00
 
-    function gameplayState() => byte(0x0018)
-    GAMEPLAY_DEMO = 0x01
-    GAMEPLAY_STARTED = 0x04
+    function gameState() => byte(0x0018)
+    GAMESTATE_DEMOPLAY = 0x01
+    GAMESTATE_STAGE_SELECT = 0x02
+    GAMESTATE_ACTIVEPLAY_BOOT = 0x03
+    GAMESTATE_ACTIVEPLAY = 0x04
 
-    function gameState() => byte(0x0038)
-    GAMESTATE_MAIN_MENU = 0x00
-    GAMESTATE_AREA_INTRO = 0x01
-    GAMESTATE_IN_GAME = 0x03
-    GAMESTATE_AREA_COMPLETE = 0x04
-    GAMESTATE_GAME_OVER = 0x05
-    GAMESTATE_GAME_OVER_SCREEN = 0x06
+    function gameScreen() => byte(0x0038)
+    SCREEN_MAIN_MENU = 0x00
+    SCREEN_AREA_INTRO = 0x01
+    SCREEN_GAMEPLAY_BOOT = 0x02
+    SCREEN_GAMEPLAY = 0x03
+    SCREEN_AREA_COMPLETE = 0x04
+    SCREEN_GAME_OVER_BOOT = 0x05
+    SCREEN_GAME_OVER = 0x06
+    SCREEN_CONTINUE = 0x07
+    SCREEN_GAME_ENDING = 0x08
+
 
     function currentArea() => byte(0x0050) + 1
     function currentAreaSection() => byte(0x0016)
@@ -48,24 +54,37 @@
     }
 
     function frameAreaCompleted() {
-        return 
-            prev(gameState()) != GAMESTATE_IN_GAME
-            && gameState() == GAMESTATE_AREA_COMPLETE
+        return
+            gameState() == GAMESTATE_ACTIVEPLAY
+            && prev(gameScreen()) != SCREEN_GAMEPLAY
+            && gameScreen() == SCREEN_AREA_COMPLETE
     }
 // #endregion Frames
 
 // #region Triggers
     function triggerAreaClear(area) {
-        return
-            gameplayState() == GAMEPLAY_STARTED
-            && currentArea() == area
-            && frameAreaCompleted()
+        cancelConditions = 
+            never( gameState() != GAMESTATE_ACTIVEPLAY )
+        
+        requiredConditions = 
+            all_of(range(1, area), areaNumber => 
+                once( currentArea() == areaNumber && frameAreaCompleted() )
+            )
+
+        return cancelConditions && requiredConditions
     }
 
+    function triggerAreaClearDeathless(area) {
+        startConditions = 
+        once(
+            
+        )
+    }
+ 
     function triggerArea1GreenSoldiersChallange() {
         cancelConditions =
-               never( gameplayState()     != GAMEPLAY_STARTED  )
-            && never( currentArea()       != 1                 )
+               never( gameState() != GAMESTATE_ACTIVEPLAY )
+            && never( currentArea() != 1 )
 
         greenSoldierKilledCondition =
             any_of(range(0, 13), index =>
@@ -98,9 +117,9 @@
 
     function triggerArea2BossChallenge() {
         cancelConditions =
-               never( gameplayState()     != GAMEPLAY_STARTED  )
-            && never( currentArea()       != 2                 )
-            && never( cheatExtraLives()   == TRUE              )
+               never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( currentArea() != 2 )
+            && never( cheatExtraLives() == TRUE )
 
         bossDiedCondition =
             any_of(range(0, 13), index =>
@@ -136,8 +155,8 @@
 
     function triggerArea4RightSideAscend() {
         cancelConditions =
-               never( gameplayState()     != GAMEPLAY_STARTED  )
-            && never( currentArea()       != 4                 )
+               never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( currentArea() != 4 )
 
         startConditions =
             once(
@@ -162,41 +181,41 @@
         startConditions = 
             once(
                 currentArea() == 7
-                && currentAreaSection() == 0x00 // Stage Start
+                && currentAreaSection() == 0x00 // 0x00 ~ Stage Start
             )
             &&
             once(
                 currentArea() == 7
-                && currentAreaSection() == 0x08 // Vertical Shaft End & Eggs Room Start
+                && currentAreaSection() == 0x08 // 0x08 ~ Vertical Shaft End & Eggs Room Start
             )
 
         cancelConditions =
-            never(gameplayState()      != GAMEPLAY_STARTED  )
-            && never(currentArea()     != 7                 )
-            && never(numberOfPlayers() == 2                 )
+            never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( currentArea() != 7 )
+            && never( numberOfPlayers() == 2 )
 
         deathCrawlerCondition = 
-            any_of(range(0, 13), index =>
+            any_of( range(0, 13), index =>
                 objectType(index) == 0x3e // Facehugger
                 && objectState(index) == 0x04 // Dead
             )
 
         triggerCondition = 
             currentArea() == 7
-            && prev(currentAreaSection()) == 0x0b // Eggs Room End
-            && currentAreaSection() == 0x0c       // Boss Room
+            && prev(currentAreaSection()) == 0x0b // 0x0b ~ Eggs Room End
+            && currentAreaSection() == 0x0c // 0x0c ~ Boss Room
 
         return cancelConditions && startConditions && trigger_when(triggerCondition) && never(deathCrawlerCondition)
     }
 
     function triggerArea7BossChallenge() {
         cancelConditions =
-               never( gameplayState()     != GAMEPLAY_STARTED  )
-            && never( currentArea()       != 7                 )
-            && never( numberOfPlayers()   != 1                 )
-            && never( player1Weapon()     != WEAPON_STANDARD   )
-            && never( player1JumpButton() == 1                 )
-            && never( framePlayer1Died()                       )
+               never( gameState() != GAMESTATE_ACTIVEPLAY )
+            && never( currentArea() != 7 )
+            && never( numberOfPlayers() != 1 )
+            && never( player1Weapon() != WEAPON_STANDARD )
+            && never( player1JumpButton() == 1 )
+            && never( framePlayer1Died() )
 
         enemyConditions =
             any_of(range(0, 13), index =>
@@ -220,34 +239,34 @@
 
     function triggerArea8RunningEnemies() {
         startConditions = once(
-            currentArea()           == 8
-            && currentAreaSection() == 0x00 // Stage Start
+            currentArea() == 8
+            && currentAreaSection() == 0x00 // 0x00 ~ Stage Start
         )
 
         targetConditions = once(
-            currentArea()                 == 8
-            && prev(currentAreaSection()) == 0x0d // Pre-Boss Room
-            && currentAreaSection()       == 0x0e // Boss Room
+            currentArea() == 8
+            && prev(currentAreaSection()) == 0x0d // 0x0d ~ Pre-Boss Room
+            && currentAreaSection() == 0x0e // 0x0e ~ Boss Room
         )
 
         cancelConditions =
-               never( gameplayState() != GAMEPLAY_STARTED  )
-            && never( currentArea()   != 8                 )
+               never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( currentArea() != 8 )
 
         enemyEscapeOnRight =
             never(any_of(range(0, 13), index =>
-                   objectType(index)            == 0x03 // Running Soldier
-                && objectState(index)           == 0x02 // Walking
-                && prev(objectXPosition(index)) <  0xfe // Despawn Point Right Side of Screen
-                && objectXPosition(index)       >= 0xfe
+                   objectType(index)  == 0x03 // 0x03 ~ Running Soldier
+                && objectState(index) == 0x02 // 0x02 ~ Walking
+                && prev(objectXPosition(index)) <  0xfe // 0xfe ~ Despawn Point Right Side of Screen
+                && objectXPosition(index) >= 0xfe // 0xfe ~ Despawn Point Right Side of Screen
             ))
 
         enemyEscapeOnLeft = 
             never(any_of(range(0, 13), index =>
-                   objectType(index)            == 0x03 // Running Soldier
-                && objectState(index)           == 0x02 // Walking
-                && prev(objectXPosition(index)) >  0x06 // Despawn Point of Left Side of Screen
-                && objectXPosition(index)       <= 0x06
+                   objectType(index)  == 0x03 // 0x03 ~ Running Soldier
+                && objectState(index) == 0x02 // 0x02 ~ Walking
+                && prev(objectXPosition(index)) >  0x06 // 0x06 ~ Despawn Point of Left Side of Screen
+                && objectXPosition(index) <= 0x06 // 0x06 ~ Despawn Point of Left Side of Screen
             ))
 
         return startConditions && trigger_when(targetConditions) && cancelConditions && enemyEscapeOnLeft && enemyEscapeOnRight
@@ -258,7 +277,7 @@
     // #region Area Clear Achievements
         achievement(
             title = "Lightning and Grenades",
-            description = "Clear Area 1",
+            description = "Complete Area 1",
             points = 5,
             trigger = triggerAreaClear(1),
             type = "progression"
@@ -266,7 +285,7 @@
 
         achievement(
             title = "Military Fortress",
-            description = "Clear Area 2",
+            description = "Complete Area 2, without using stage select",
             points = 5,
             trigger = triggerAreaClear(2),
             type = "progression"
@@ -274,7 +293,7 @@
 
         achievement(
             title = "Return to the Jungle",
-            description = "Clear Area 3",
+            description = "Complete Area 3, without using stage select",
             points = 5,
             trigger = triggerAreaClear(3),
             type = "progression"
@@ -282,7 +301,7 @@
 
         achievement(
             title = "Mechanical Factory",
-            description = "Clear Area 4",
+            description = "Complete Area 4, without using stage select",
             points = 10,
             trigger = triggerAreaClear(4),
             type = "progression"
@@ -290,7 +309,7 @@
 
         achievement(
             title = "Perilous Cliff",
-            description = "Clear Area 5",
+            description = "Complete Area 5, without using stage select",
             points = 10,
             trigger = triggerAreaClear(5),
             type = "progression"
@@ -298,7 +317,7 @@
 
         achievement(
             title = "Terror Under your Feet",
-            description = "Clear Area 6",
+            description = "Complete Area 6, without using stage select",
             points = 10,
             trigger = triggerAreaClear(6),
             type = "progression"
@@ -306,7 +325,7 @@
 
         achievement(
             title = "Belly of the Beast",
-            description = "Clear Area 7",
+            description = "Complete Area 7, without using stage select",
             points = 10,
             trigger = triggerAreaClear(7),
             type = "progression"
@@ -314,7 +333,7 @@
 
         achievement(
             title = "Crushing Catastrophe",
-            description = "Clear Area 8 and beat the game",
+            description = "Complete Area 8 and beat the game, without using stage select",
             points = 10,
             trigger = triggerAreaClear(8),
             type = "win_condition"
