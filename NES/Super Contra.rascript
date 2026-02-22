@@ -141,6 +141,30 @@
             && trigger_when(targetConditions)
     }
 
+    function triggerArea1BossChallange() {
+        cancelConditions =
+            never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( currentArea() != 1 )
+            && never( cheatExtraLives() == TRUE )
+            && never( numberOfPlayers() == 2 )
+            && never( player1JumpButton() == TRUE )
+
+        startCondition =
+            once(
+                prev(currentAreaSection()) != 0x0c // 0x0c ~ Area 1 Boss Fight
+                && currentAreaSection() == 0x0c // 0x0c ~ Area 1 Boss Fight
+            )
+
+        triggerCondition =
+            any_of(range(0,13), index=>
+                objectType(index) == 0x21 // 0x21 ~ Helicopter Main Target
+                && prev(objectState(index)) != 0x07 // 0x07 ~ Death Animation Started
+                && objectState(index) == 0x07 // 0x07 ~ Death Animation Started
+            )
+
+        return cancelConditions && startCondition && trigger_when(triggerCondition)
+    }
+
     function triggerArea2BossChallenge() {
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY  )
@@ -447,6 +471,14 @@
             description = "Reach the fourth upward slope in Area 1 without killing green soldiers or destroying turrets",
             points = 10,
             trigger = triggerArea1GreenSoldiersChallange()
+        )
+
+        achievement(
+            id = 51067,
+            title = "Anti-Aerial Attack",
+            description = "[1P Only] Defeat the Area 1 boss without jumping and without using the extra lives code",
+            points = 5,
+            trigger = triggerArea1BossChallange()
         )
     // #endregion Area 1 Challanges
 
