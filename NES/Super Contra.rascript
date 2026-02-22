@@ -65,6 +65,12 @@
             && prev(gameScreen()) != SCREEN_GAMEPLAY
             && gameScreen() == SCREEN_AREA_COMPLETE
     }
+
+    function frameAreaStarted() {
+        return
+            prev(gameScreen()) == SCREEN_AREA_INTRO
+            && gameScreen() == SCREEN_GAMEPLAY_BOOT
+    }
 // #endregion Frames
 
 // #region Triggers
@@ -84,24 +90,30 @@
         startConditions = 
             once(
                 currentArea() == area
-                && gameScreen() == SCREEN_AREA_INTRO
+                && frameAreaStarted()
             )
 
-        endCondition =
+        targetConditions =
             currentArea() == area
             && frameAreaCompleted()
 
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY )
-            && never ( numberOfPlayers() != 1)
-            && never ( framePlayer1Died() )
+            && never( numberOfPlayers() != 1)
+            && never( framePlayer1Died() )
 
-        return cancelConditions && startConditions && endCondition
+        return startConditions && cancelConditions && targetConditions
     }
  
     function triggerArea1GreenSoldiersChallange() {
+        primingCondition =
+            once(
+                currentArea() == 1
+                && currentAreaHorizontalPosition() == 0x0104 // 0x0104 ~ Start of Area 1 (Helicopter)
+            )
+
         cancelConditions =
-               never( gameState() != GAMESTATE_ACTIVEPLAY )
+            never( gameState() != GAMESTATE_ACTIVEPLAY )
             && never( currentArea() != 1 )
 
         greenSoldierKilledCondition =
@@ -115,27 +127,23 @@
                 objectType(index) == 0x20 // 0x20 ~ Area 1 Turret
                 && objectState(index) == 0x06 // 0x06 ~ Death Animation Start
             )
-        
-        primingCondition =
-            once(
-                currentArea() == 1
-                && currentAreaHorizontalPosition() == 0x0104 // Start of Area 1 (Helicopter)
-            )
 
         targetConditions =
             currentArea() == 1
-            && prev(currentAreaHorizontalPosition()) < 0x0b00 // Fourth Upward Slope Start
-            && currentAreaHorizontalPosition() >= 0x0b00 // Fourth Upward Slope Start
+            && prev(currentAreaHorizontalPosition()) < 0x0b00 // 0x0b00 ~ Fourth Upward Slope Start
+            && currentAreaHorizontalPosition() >= 0x0b00 // 0x0b00 ~ Fourth Upward Slope Start
 
         return 
-            primingCondition && trigger_when(targetConditions)
+            primingCondition
             && cancelConditions
-            && never(greenSoldierKilledCondition) && never(turretDestroyedCondition)
+            && never(greenSoldierKilledCondition)
+            && never(turretDestroyedCondition)
+            && trigger_when(targetConditions)
     }
 
     function triggerArea2BossChallenge() {
         cancelConditions =
-               never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            never( gameState() != GAMESTATE_ACTIVEPLAY  )
             && never( currentArea() != 2 )
             && never( cheatExtraLives() == TRUE )
 
@@ -436,8 +444,8 @@
         achievement(
             id = 50936,
             title = "Gun Hurdling Champion",
-            description = "Reach the fourth upward slope in Area 1 without killing any green soldiers or destroying any turrets",
-            points = 25,
+            description = "Reach the fourth upward slope in Area 1 without killing green soldiers or destroying turrets",
+            points = 10,
             trigger = triggerArea1GreenSoldiersChallange()
         )
     // #endregion Area 1 Challanges
