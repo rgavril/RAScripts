@@ -40,6 +40,10 @@
     function player1PositionX() => word(0x054c)
     function player1InvincibilityFrames() => byte(0x00c4)
     function player1State() => byte(0x00a0)
+    PLAYERSTATE_NORMAL = 0x02
+    PLAYERSTATE_DEATH_ANIMATION_START = 0x03
+    PLAYERSTATE_DEATH_ANIMATION_END = 0x04
+    PLAYERSTATE_DEAD = 0x05
 
     function cheatExtraLives() => byte(0x07ec)
 
@@ -50,7 +54,9 @@
 
 // #region Frames
     function framePlayer1Died() {
-        return prev(player1Lives()) > player1Lives()
+        return
+            prev(player1State()) == PLAYERSTATE_NORMAL
+            && player1State() == PLAYERSTATE_DEATH_ANIMATION_START
     }
 
     function frameAreaCompleted() {
@@ -76,9 +82,21 @@
 
     function triggerAreaClearDeathless(area) {
         startConditions = 
-        once(
-            
-        )
+            once(
+                currentArea() == area
+                && gameScreen() == SCREEN_AREA_INTRO
+            )
+
+        endCondition =
+            currentArea() == area
+            && frameAreaCompleted()
+
+        cancelConditions =
+            never( gameState() != GAMESTATE_ACTIVEPLAY )
+            && never ( numberOfPlayers() != 1)
+            && never ( framePlayer1Died() )
+
+        return cancelConditions && startConditions && endCondition
     }
  
     function triggerArea1GreenSoldiersChallange() {
@@ -339,6 +357,15 @@
             type = "win_condition"
         )
     // #endregion Area Clear Achievements
+
+    // #region Deathless Area Clear Achievements
+        achievement(
+            title = "Thunder Landing",
+            description = "Complete Area 1 without dying",
+            points = 10,
+            trigger = triggerAreaClearDeathless(1)
+        )
+    // #endregion Deathless Area Clear Achievements
 
     // #region Area 1 Challanges
         achievement(
