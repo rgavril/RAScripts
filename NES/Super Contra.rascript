@@ -294,64 +294,72 @@
 // #region Achievements
     // #region Area Clear Achievements
         achievement(
+            id = 11331,
             title = "Lightning and Grenades",
-            description = "Complete Area 1",
+            description = "Clear Area 1",
             points = 5,
             trigger = triggerAreaClear(1),
             type = "progression"
         )
 
         achievement(
+            id = 11332,
             title = "Military Fortress",
-            description = "Complete Area 2, without using stage select",
+            description = "Clear Area 2, without using stage select",
             points = 5,
             trigger = triggerAreaClear(2),
             type = "progression"
         )
 
         achievement(
+            id = 11333,
             title = "Return to the Jungle",
-            description = "Complete Area 3, without using stage select",
+            description = "Clear Area 3, without using stage select",
             points = 5,
             trigger = triggerAreaClear(3),
             type = "progression"
         )
 
         achievement(
+            id = 11334,
             title = "Mechanical Factory",
-            description = "Complete Area 4, without using stage select",
-            points = 10,
+            description = "Clear Area 4, without using stage select",
+            points = 5,
             trigger = triggerAreaClear(4),
             type = "progression"
         )
 
         achievement(
+            id = 11335,
             title = "Perilous Cliff",
-            description = "Complete Area 5, without using stage select",
-            points = 10,
+            description = "Clear Area 5, without using stage select",
+            points = 5,
             trigger = triggerAreaClear(5),
             type = "progression"
         )
 
         achievement(
+            id = 11336,
             title = "Terror Under your Feet",
-            description = "Complete Area 6, without using stage select",
-            points = 10,
+            description = "Clear Area 6, without using stage select",
+            points = 5,
             trigger = triggerAreaClear(6),
             type = "progression"
         )
 
         achievement(
+            id = 11337,
             title = "Belly of the Beast",
-            description = "Complete Area 7, without using stage select",
+            description = "Clear Area 7, without using stage select",
             points = 10,
             trigger = triggerAreaClear(7),
             type = "progression"
         )
 
         achievement(
+            id = 11338,
             title = "Crushing Catastrophe",
-            description = "Complete Area 8 and beat the game, without using stage select",
+            description = "Clear Area 8 and beat the game, without using stage select",
             points = 10,
             trigger = triggerAreaClear(8),
             type = "win_condition"
@@ -360,10 +368,67 @@
 
     // #region Deathless Area Clear Achievements
         achievement(
+            id = 11342,
             title = "Thunder Landing",
-            description = "Complete Area 1 without dying",
+            description = "Clear Area 1 without dying in single player mode",
             points = 10,
             trigger = triggerAreaClearDeathless(1)
+        )
+
+        achievement(
+            id = 11343,
+            title = "In a Tight Squeeze",
+            description = "Clear Area 2 without dying in single player mode",
+            points = 10,
+            trigger = triggerAreaClearDeathless(2)
+        )
+
+        achievement(
+            id = 11344,
+            title = "Jungle Juncture",
+            description = "Clear Area 3 without dying in single player mode",
+            points = 10,
+            trigger = triggerAreaClearDeathless(3)
+        )
+
+        achievement(
+            id = 11345,
+            title = "No Escape",
+            description = "Clear Area 4 without dying in single player mode",
+            points = 10,
+            trigger = triggerAreaClearDeathless(4)
+        )
+
+        achievement(
+            id = 11346,
+            title = "Massacre Mountains",
+            description = "Clear Area 5 without dying in single player mode",
+            points = 10,
+            trigger = triggerAreaClearDeathless(5)
+        )
+
+        achievement(
+            id = 11347,
+            title = "Hotter than Hell",
+            description = "Clear Area 6 without dying in single player mode",
+            points = 10,
+            trigger = triggerAreaClearDeathless(6)
+        )
+
+        achievement(
+            id = 11348,
+            title = "Creature from Outer Space",
+            description = "Clear Area 7 without dying in single player mode",
+            points = 25,
+            trigger = triggerAreaClearDeathless(7)
+        )
+
+        achievement(
+            id = 11349,
+            title = "Deathbed",
+            description = "Clear Area 8 without dying in single player mode",
+            points = 25,
+            trigger = triggerAreaClearDeathless(8)
         )
     // #endregion Deathless Area Clear Achievements
 
