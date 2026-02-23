@@ -459,7 +459,7 @@
     // #region Area Clear Achievements
         achievement(
             id = 11331,
-            title = "Lightning and Grenades",
+            title = "Gates of Fort Firestorm",
             description = "Clear Area 1",
             points = 5,
             trigger = triggerAreaClear(1),
@@ -468,7 +468,7 @@
 
         achievement(
             id = 11332,
-            title = "Military Fortress",
+            title = "Warped Mind Command Center",
             description = "Clear Area 2, without using stage select",
             points = 5,
             trigger = triggerAreaClear(2),
@@ -477,7 +477,7 @@
 
         achievement(
             id = 11333,
-            title = "Return to the Jungle",
+            title = "Tropics of Torture",
             description = "Clear Area 3, without using stage select",
             points = 5,
             trigger = triggerAreaClear(3),
@@ -486,7 +486,7 @@
 
         achievement(
             id = 11334,
-            title = "Mechanical Factory",
+            title = "Lair of the Jungle Aliens",
             description = "Clear Area 4, without using stage select",
             points = 5,
             trigger = triggerAreaClear(4),
@@ -495,7 +495,7 @@
 
         achievement(
             id = 11335,
-            title = "Perilous Cliff",
+            title = "Massacre Mountains",
             description = "Clear Area 5, without using stage select",
             points = 5,
             trigger = triggerAreaClear(5),
@@ -504,7 +504,7 @@
 
         achievement(
             id = 11336,
-            title = "Terror Under your Feet",
+            title = "Jagger Froid's Defense Line",
             description = "Clear Area 6, without using stage select",
             points = 5,
             trigger = triggerAreaClear(6),
@@ -513,7 +513,7 @@
 
         achievement(
             id = 11337,
-            title = "Belly of the Beast",
+            title = "Radioactive Lava Fields",
             description = "Clear Area 7, without using stage select",
             points = 10,
             trigger = triggerAreaClear(7),
@@ -522,7 +522,7 @@
 
         achievement(
             id = 11338,
-            title = "Crushing Catastrophe",
+            title = "Red Falcon's Poison Palace",
             description = "Clear Area 8 and beat the game, without using stage select",
             points = 10,
             trigger = triggerAreaClear(8),
@@ -533,7 +533,7 @@
     // #region Deathless Area Clear Achievements
         achievement(
             id = 11342,
-            title = "Thunder Landing",
+            title = "Perfect Infiltration",
             description = "Clear Area 1 without dying in single player mode",
             points = 10,
             trigger = triggerAreaClearDeathless(1)
@@ -541,7 +541,7 @@
 
         achievement(
             id = 11343,
-            title = "In a Tight Squeeze",
+            title = "Command Center Immunity Protocol",
             description = "Clear Area 2 without dying in single player mode",
             points = 10,
             trigger = triggerAreaClearDeathless(2)
@@ -549,7 +549,7 @@
 
         achievement(
             id = 11344,
-            title = "Jungle Juncture",
+            title = "Jungle Torture Survivor",
             description = "Clear Area 3 without dying in single player mode",
             points = 10,
             trigger = triggerAreaClearDeathless(3)
@@ -557,7 +557,7 @@
 
         achievement(
             id = 11345,
-            title = "No Escape",
+            title = "Lair Purge Specialist",
             description = "Clear Area 4 without dying in single player mode",
             points = 10,
             trigger = triggerAreaClearDeathless(4)
@@ -565,7 +565,7 @@
 
         achievement(
             id = 11346,
-            title = "Massacre Mountains",
+            title = "Expert Mountaineer",
             description = "Clear Area 5 without dying in single player mode",
             points = 10,
             trigger = triggerAreaClearDeathless(5)
@@ -573,7 +573,7 @@
 
         achievement(
             id = 11347,
-            title = "Hotter than Hell",
+            title = "Unscratched Shock Trooper",
             description = "Clear Area 6 without dying in single player mode",
             points = 10,
             trigger = triggerAreaClearDeathless(6)
@@ -581,7 +581,7 @@
 
         achievement(
             id = 11348,
-            title = "Creature from Outer Space",
+            title = "Certified Hazmat Operative",
             description = "Clear Area 7 without dying in single player mode",
             points = 25,
             trigger = triggerAreaClearDeathless(7)
@@ -589,7 +589,7 @@
 
         achievement(
             id = 11349,
-            title = "Deathbed",
+            title = "Pure Lethal Antidote",
             description = "Clear Area 8 without dying in single player mode",
             points = 25,
             trigger = triggerAreaClearDeathless(8)
