@@ -22,6 +22,8 @@
     SCREEN_CONTINUE = 0x07
     SCREEN_GAME_ENDING = 0x08
 
+    function gamePaused() => byte(0x0039)
+
 
     function currentArea() => byte(0x0050) + 1
     function currentAreaSection() => byte(0x0016)
@@ -36,6 +38,8 @@
     WEAPON_LASER = 0x03
     WEAPON_FIREBALL = 0x04
     function player1JumpButton() => bit7(0x00f7)
+    function player1BackButton() => bit2(0x00f7)
+    function player2BackButton() => bit2(0x00f8)
     function player1Lives() => byte(0x0053)
     function player1PositionX() => word(0x054c)
     function player1InvincibilityFrames() => byte(0x00c4)
@@ -62,7 +66,7 @@
     function frameAreaCompleted() {
         return
             gameState() == GAMESTATE_ACTIVEPLAY
-            && prev(gameScreen()) != SCREEN_GAMEPLAY
+            && prev(gameScreen()) == SCREEN_GAMEPLAY
             && gameScreen() == SCREEN_AREA_COMPLETE
     }
 
@@ -106,11 +110,11 @@
     }
  
     function triggerArea1GreenSoldiersChallange() {
-        primingCondition =
-            once(
-                currentArea() == 1
-                && currentAreaHorizontalPosition() == 0x0104 // 0x0104 ~ Start of Area 1 (Helicopter)
-            )
+            primingCondition =
+                once(
+                    currentArea() == 1
+                    && currentAreaHorizontalPosition() == 0x0104 // 0x0104 ~ Start of Area 1 (Helicopter)
+                )
 
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY )
@@ -163,6 +167,28 @@
             )
 
         return cancelConditions && startCondition && trigger_when(triggerCondition)
+    }
+
+    function triggerArea2NoBackButton() {
+        startConditions = 
+            once(
+                currentArea() == 2
+                && frameAreaStarted()
+            )
+
+        cancelConditions =
+            never( gameState() != GAMESTATE_ACTIVEPLAY )
+            && never( currentArea() != 2 )
+            && never( player1BackButton() == TRUE )
+            && never( player2BackButton() == TRUE )
+
+        targetConditions =
+            frameAreaCompleted()
+
+        pauseConditions =
+            unless( gamePaused() == TRUE )
+
+        return startConditions && cancelConditions && trigger_when(targetConditions) && pauseConditions
     }
 
     function triggerArea2BossChallenge() {
@@ -476,13 +502,20 @@
         achievement(
             id = 51067,
             title = "Anti-Aerial Attack",
-            description = "[1P Only] Defeat the Area 1 boss without jumping and without using the extra lives code",
+            description = "Defeat the Area 1 boss in single player mode without jumping or using the extra lives code",
             points = 5,
             trigger = triggerArea1BossChallange()
         )
     // #endregion Area 1 Challanges
 
     // #region Area 2 Challanges
+        achievement(
+            id = 50937,
+            title = "Tough Guys Don't Look Back",
+            description = "Clear Area 2 without going backwards",
+            points = 10,
+            trigger = triggerArea2NoBackButton()
+        )
         achievement(
             id = 50860,
             title = "Treadnought",
