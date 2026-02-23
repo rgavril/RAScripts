@@ -39,6 +39,7 @@
     WEAPON_FIREBALL = 0x04
     function player1ShootButton() => bit6(0x00f7)
     function player1JumpButton() => bit7(0x00f7)
+    function player1RightButton() => bit0(0x00f7)
     function player1BackButton() => bit2(0x00f7)
     function player2BackButton() => bit2(0x00f8)
     function player1Lives() => byte(0x0053)
@@ -302,6 +303,36 @@
         return
             cancelConditions
             && ( walkingFromLeftConditions || walkingFromRighConditions )
+    }
+
+    function triggerArea3EarthquakeDrill() {
+        primingConditions =
+            once(
+                prev(currentAreaHorizontalPosition()) < 0x0f18 // 0x0f18 ~ Earthquake Start
+                && currentAreaHorizontalPosition() >= 0x0f18 // 0x0f18 ~ Earthquake Start
+            )
+        
+        cancelConditions =
+            never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( currentArea() != 3 )
+            && never( numberOfPlayers() == 2 )
+            && never( 
+                currentAreaHorizontalPosition() >= 0x1000 // 0x1000 ~ Earthquake Zone Start
+                && player1RightButton() != TRUE
+            )
+
+        targetConditions =
+            prev(currentAreaHorizontalPosition()) < 0x1318   // 0x1318  ~ Earthquake Zone End
+            && currentAreaHorizontalPosition() >= 0x1318  // 0x1318  ~ Earthquake Zone End
+
+        pauseConditions =
+            unless( gamePaused() == TRUE )
+
+        return
+            primingConditions
+            && cancelConditions
+            && trigger_when(primingConditions && targetConditions)
+            && pauseConditions
     }
 
     function triggerArea4RightSideAscend() {
@@ -616,6 +647,14 @@
             description = "Ride from one side of the screen to the other on top of the Area 3 miniboss in single player mode",
             points = 3,
             trigger = triggerArea3SpiderWalk()
+        )
+
+        achievement(
+            id = 50859,
+            title = "Earthquake Drill",
+            description = "Cross the Area 3 earthquake section in single player mode while holding right the entire time",
+            points = 5,
+            trigger = triggerArea3EarthquakeDrill()
         )
     // #endregion Area 3 Challenges
 
