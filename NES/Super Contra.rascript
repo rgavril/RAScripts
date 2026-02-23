@@ -133,7 +133,7 @@
             )
 
         targetConditions =
-            && prev(currentAreaHorizontalPosition()) < 0x0b00 // 0x0b00 ~ Fourth Upward Slope Start
+            prev(currentAreaHorizontalPosition()) < 0x0b00 // 0x0b00 ~ Fourth Upward Slope Start
             && currentAreaHorizontalPosition() >= 0x0b00 // 0x0b00 ~ Fourth Upward Slope Start
 
         return 
@@ -206,8 +206,20 @@
             never( gameState() != GAMESTATE_ACTIVEPLAY  )
             && never( currentArea() != 2 )
             && never( cheatExtraLives() == TRUE )
+            && never(
+                // Red Gunner Died:
+                any_of(range(0, 13), index =>
+                    // NOTE: Use previous frame state for red gunner death check.
+                    // This avoids false challenge failure caused by the shared 
+                    // death effect between red and green gunners.
+                    prev(objectType(index)) == 0x6a // 0x6a ~ Red Gunner
+                    && prev(objectState(index)) == 0x04 // 0x04 ~ Died
+                )
+            )
 
-        bossDiedCondition =
+        primingAndTargetCondition = 
+            // NOTE: Grouped priming and target conditions to prevent
+            // unnecessary Alt Groups.
             any_of(range(0, 13), index =>
                 // Priming Condition: Green Gunner is Spawned
                 once(
@@ -225,18 +237,9 @@
                 )
             )
 
-        redSoldierKilledCondition =
-            // Cancel Condition: Any of the two red gunners are killed
-            never(any_of(range(0, 13), index =>
-                prev(objectType(index)) == 0x6a // Red Gunner
-                && prev(objectState(index)) == 0x04 // Died
-
-                // NOTE: We check for the death condition in the previous frame to avoid
-                // cancelling the challange when the green gunner dies, as the red gunners
-                // die in the same frame as the green gunner due to a shared death effect.
-            ))
-
-        return cancelConditions && bossDiedCondition && redSoldierKilledCondition
+        return
+            cancelConditions
+            && primingAndTargetCondition
     }
 
     function triggerArea4RightSideAscend() {
@@ -526,11 +529,11 @@
             points = 10,
             trigger = triggerArea2NoBackButton()
         )
-    
+
         achievement(
             id = 50860,
             title = "Treadnought",
-            description = "Defeat the Area 2 boss without killing either of the red soldiers and without using the extra lives code",
+            description = "Defeat the Area 2 boss without killing either red soldier or using the extra lives code",
             points = 10,
             trigger = triggerArea2BossChallenge()
         )
