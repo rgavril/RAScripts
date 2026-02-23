@@ -194,7 +194,11 @@
         pauseConditions =
             unless( gamePaused() == TRUE )
 
-        return startConditions && cancelConditions && trigger_when(targetConditions) && pauseConditions
+        return
+            startConditions
+            && cancelConditions
+            && trigger_when(targetConditions)
+            && pauseConditions
     }
 
     function triggerArea2BossChallenge() {
@@ -518,10 +522,11 @@
         achievement(
             id = 50937,
             title = "Tough Guys Don't Look Back",
-            description = "Clear Area 2 without going backwards",
+            description = "Clear Area 2 without going backwards or using the extra lives code",
             points = 10,
             trigger = triggerArea2NoBackButton()
         )
+    
         achievement(
             id = 50860,
             title = "Treadnought",
