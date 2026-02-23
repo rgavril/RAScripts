@@ -110,11 +110,11 @@
     }
  
     function triggerArea1GreenSoldiersChallange() {
-            primingCondition =
-                once(
-                    currentArea() == 1
-                    && currentAreaHorizontalPosition() == 0x0104 // 0x0104 ~ Start of Area 1 (Helicopter)
-                )
+        primingCondition =
+            once(
+                currentArea() == 1
+                && frameAreaStarted()
+            )
 
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY )
@@ -133,7 +133,6 @@
             )
 
         targetConditions =
-            currentArea() == 1
             && prev(currentAreaHorizontalPosition()) < 0x0b00 // 0x0b00 ~ Fourth Upward Slope Start
             && currentAreaHorizontalPosition() >= 0x0b00 // 0x0b00 ~ Fourth Upward Slope Start
 
@@ -166,7 +165,14 @@
                 && objectState(index) == 0x07 // 0x07 ~ Death Animation Started
             )
 
-        return cancelConditions && startCondition && trigger_when(triggerCondition)
+        pauseConditions =
+            unless( gamePaused() == TRUE )
+
+        return 
+            cancelConditions 
+            && startCondition
+            && trigger_when(triggerCondition)
+            && pauseConditions
     }
 
     function triggerArea2NoBackButton() {
