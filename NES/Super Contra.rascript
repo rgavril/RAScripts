@@ -42,7 +42,8 @@
     function player1BackButton() => bit2(0x00f7)
     function player2BackButton() => bit2(0x00f8)
     function player1Lives() => byte(0x0053)
-    function player1PositionX() => word(0x054c)
+    function player1PositionX() => byte(0x054c)
+    function player1PositionY() => byte(0x0532)
     function player1InvincibilityFrames() => byte(0x00c4)
     function player1State() => byte(0x00a0)
     PLAYERSTATE_NORMAL = 0x02
@@ -269,6 +270,38 @@
             && cancelConditions
             && trigger_when(triggerConditions)
             && pauseConditions
+    }
+
+    function triggerArea3SpiderWalk() {
+        cancelConditions =
+            never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( currentArea() != 3 )
+            && never( numberOfPlayers() == 2 )
+            && never( currentAreaSection() != 0x0e ) // 0x0e ~ Spider Room
+            && never( player1PositionY() > 0x74 ) // 0x74 ~ When on Spider
+        
+        walkingFromLeftConditions =
+            once(
+                player1PositionX() <= 0x20 // 0x20 ~ Left Side of Screen
+            )
+            && 
+            trigger_when (
+                prev(player1PositionX()) < 0xe0 // 0xe0 ~ Right Side of Screen
+                && player1PositionX() >= 0xe0 // 0xe0 ~ Right Side of Screen
+            )
+
+        walkingFromRighConditions =
+            once(
+                player1PositionX() >= 0xe0 // 0xe0 ~ Right Side of Screen
+            )
+            && 
+            trigger_when (
+                prev(player1PositionX()) > 0x20 // 0x20 ~ Left Side of Screen
+                && player1PositionX() <= 0x20 // 0x20 ~ Left Side of Screen
+            )
+        return
+            cancelConditions
+            && ( walkingFromLeftConditions || walkingFromRighConditions )
     }
 
     function triggerArea4RightSideAscend() {
@@ -575,6 +608,14 @@
             description = "Cross the swamp section in Area 3 in single player mode without shooting or dying",
             points = 5,
             trigger = triggerArea3WaterChallenge()
+        )
+
+        achievement(
+            id = 50858,
+            title = "Spider Wrangler",
+            description = "Ride from one side of the screen to the other on top of the Area 3 miniboss in single player mode",
+            points = 3,
+            trigger = triggerArea3SpiderWalk()
         )
     // #endregion Area 3 Challenges
 
