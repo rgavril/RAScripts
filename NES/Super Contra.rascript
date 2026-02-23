@@ -37,6 +37,7 @@
     WEAPON_SPREADGUN = 0x02
     WEAPON_LASER = 0x03
     WEAPON_FIREBALL = 0x04
+    function player1ShootButton() => bit6(0x00f7)
     function player1JumpButton() => bit7(0x00f7)
     function player1BackButton() => bit2(0x00f7)
     function player2BackButton() => bit2(0x00f8)
@@ -240,6 +241,34 @@
         return
             cancelConditions
             && primingAndTargetCondition
+    }
+
+    function triggerArea3WaterChallenge() {
+        startConditions =
+            once(
+                prev(currentAreaHorizontalPosition()) < 0x080c - 0x04 // 0x080c ~ First Puddle Start
+                && currentAreaHorizontalPosition() >= 0x080c - 0x04 // 0x080c ~ First Puddle Start
+            )
+
+        cancelConditions = 
+            never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( currentArea() != 3 )
+            && never( numberOfPlayers() == 2 )
+            && never( player1ShootButton() == TRUE )
+            && never( framePlayer1Died() )
+
+        triggerConditions =
+            prev(currentAreaHorizontalPosition()) <= 0x0c00 + 0x04 // 0x0c00 ~ Last Puddle End
+            && currentAreaHorizontalPosition() > 0x0c00  + 0x04 // 0x0c00 ~ Last Puddle End
+
+        pauseConditions = 
+            unless( gamePaused() == TRUE )
+
+        return
+            startConditions
+            && cancelConditions
+            && trigger_when(triggerConditions)
+            && pauseConditions
     }
 
     function triggerArea4RightSideAscend() {
@@ -521,7 +550,7 @@
         )
     // #endregion Area 1 Challanges
 
-    // #region Area 2 Challanges
+    // #region Area 2 Challenges
         achievement(
             id = 50937,
             title = "Tough Guys Don't Look Back",
@@ -537,18 +566,28 @@
             points = 10,
             trigger = triggerArea2BossChallenge()
         )
-    // #endregion Area 2 Challanges
+    // #endregion Area 2 Challenges
 
-    // #region Area 4 Challanges
+    // #region Area 3 Challenges
+        achievement(
+            id = 50857,
+            title = "Adventures of Bayou Billy?",
+            description = "Cross the swamp section in Area 3 in single player mode without shooting or dying",
+            points = 5,
+            trigger = triggerArea3WaterChallenge()
+        )
+    // #endregion Area 3 Challenges
+
+    // #region Area 4 Challenges
         achievement(
             title = "The Right Way Up",
             description = "Ascend Area 4 while staying on the right half of the screen. Left half allowed only for knockback, respawning and the elevator 2 access platform. Extra lives code not allowed",
             points = 10,
             trigger = triggerArea4RightSideAscend()
         )
-    // #endregion Area 4 Challanges
+    // #endregion Area 4 Challenges
 
-    // #region Area 7 Challanges
+    // #region Area 7 Challenges
         achievement(
             id = 51121,
             title = "Save the Face-Huggers!",
@@ -564,14 +603,14 @@
             points = 25,
             trigger = triggerArea7BossChallenge()   
         )
-    // #endregion Area 7 Challanges
+    // #endregion Area 7 Challenges
 
-    // #region Area 8 Challanges
+    // #region Area 8 Challenges
         achievement(
             title = "None Shall Pass",
             description = "Don't let any of the running enemies for Area 8 get from one side of the screen to the other.",
             points = 10,
             trigger = triggerArea8RunningEnemies()
         )
-    // #endregion Area 8 Challanges
+    // #endregion Area 8 Challenges
 // #endregion Achievements
