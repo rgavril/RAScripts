@@ -763,8 +763,8 @@
 
         achievement(
             id = 50866,
-            title = "Armed to the Teeth",
-            description = "Destroy all but the 2 outermost turrets while fighting the Area 4 boss without using the extra lives code",
+            title = "Armed to the Teeth", // Central Void Execution
+            description = "Eliminate all but the two outermost laser cannons on the Area 4 boss without using the extra lives code",
             points = 10,
             trigger = triggerArea4BossChallenge()
         )
