@@ -405,6 +405,56 @@
             && trigger_when(triggerConditions)
     }
 
+    function triggerArea5UphillChallenge() {
+        primingCondition =
+            once(
+                currentArea() == 5
+                && frameAreaStarted()
+            )
+
+        cancelConditions =
+            never( gameState() != GAMESTATE_ACTIVEPLAY )
+            && never( currentArea() != 5 )
+
+        runningSoldierKilled =
+            any_of(range(0, 13), index =>
+                (
+                    objectType(index) == 0x03 // 0x03 ~ Running Soldier
+                    && objectState(index) == 0x05 // 0x05 ~ Death Animation Start
+                )
+            )
+
+        grassTurretDestroyed =
+            any_of(range(0, 13), index =>
+                objectType(index) == 0x0b // 0x0b ~ Area 5 Turret on Grass 
+                && objectState(index) == 0x07 // 0x07 ~ Death Animation Start
+            )
+
+        rockTurretDestroyed =
+            any_of(range(0, 13), index =>
+                objectType(index) == 0x0a // 0x0b ~ Area 5 Turret on Rock 
+                && objectState(index) == 0x07 // 0x07 ~ Death Animation Start
+            )
+        
+        targetConditions =
+            once(
+                prev(currentAreaVerticalPosition()) > 0x0006 // 0x0006 ~ Top of the Hill
+                && currentAreaVerticalPosition() <= 0x0006 // 0x0006 ~ Top of the Hill
+            ) 
+            && once(
+                prev(currentAreaHorizontalPosition()) < 0x0118 // 0x0118 ~ Start of Green Containers
+                && currentAreaHorizontalPosition() >= 0x0118 // 0x0118 ~ Start of Green Containers
+            )
+
+        return 
+            primingCondition
+            && cancelConditions
+            && never(runningSoldierKilled)
+            && never(grassTurretDestroyed)
+            && never(rockTurretDestroyed)
+            && trigger_when(targetConditions)
+    }
+
     function triggerArea4BossChallenge() {
         primingCondition = 
             // A total of 9 (out of 9) Boss Cannons spawned
@@ -787,6 +837,14 @@
         */
     // #endregion Area 4 Challenges
 
+    // #region Area 5 Challenges
+        achievement(
+            title = "Peak Restrain",
+            description = "Reach the top of the cliff section in Area 5 without shooting any turrets or running soldiers and without using the extra lives code",
+            points = 10,
+            trigger = triggerArea5UphillChallenge()
+        )
+    // #endregion Area 5 Chellenges
     // #region Area 7 Challenges
         achievement(
             id = 51121,
