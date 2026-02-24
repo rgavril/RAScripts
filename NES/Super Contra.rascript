@@ -56,6 +56,7 @@
 
     function objectType(index) => byte(0x06d8 + index)
     function objectState(index) => byte(0x0668 + index)
+    function objectHealth(index) => byte(0x0676 + index)
     function objectXPosition(index) => byte(0x053c + index)
 // #endregion Memory Addresses
 
@@ -335,6 +336,37 @@
             && pauseConditions
     }
 
+    function triggerArea3BossChallenge() {
+        primingConditions =
+            tally_of(range(0, 13), 4, index =>
+                prev(objectType(index)) != 0x50 // 0x50 ~ Boss Turret
+                && objectType(index) == 0x50 // 0x50 ~ Boss Turret
+            )
+
+        cancelConditions =
+            never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( currentArea() != 3 )
+            && never( cheatExtraLives() == TRUE )
+            && never(
+                // Main Boss Target Health Decreased
+                any_of(range(0, 13), index => 
+                    objectType(index) == 0x4b // 0x4b ~ Boss Main Target
+                    && prev(objectHealth(index)) == 0x28 // 0x28 ~ Full Health
+                    && objectHealth(index) < 0x28 // 0x28 ~ Full Health
+                )
+            )
+
+        targetConditions =
+            none_of(range(0, 13), index => 
+                objectType(index) == 0x50 // 0x50 ~ Boss Turret
+            )
+
+        return
+            primingConditions
+            && cancelConditions
+            && trigger_when(targetConditions)
+    }
+
     function triggerArea4RightSideAscend() {
         cancelConditions =
                never( gameState() != GAMESTATE_ACTIVEPLAY  )
@@ -599,7 +631,7 @@
     // #region Area 1 Challanges
         achievement(
             id = 50936,
-            title = "Gun Hurdling Champion",
+            title = "Gun Hurdling Champion", // Alternative : Target Discrimination Directive / Selective Fire Protocol
             description = "Reach the fourth upward slope in Area 1 without killing green soldiers or destroying turrets",
             points = 10,
             trigger = triggerArea1GreenSoldiersChallange()
@@ -607,7 +639,7 @@
 
         achievement(
             id = 51067,
-            title = "Anti-Aerial Attack",
+            title = "Grounded AA Specialist",
             description = "Defeat the Area 1 boss in single player mode without jumping or using the extra lives code",
             points = 5,
             trigger = triggerArea1BossChallange()
@@ -617,7 +649,7 @@
     // #region Area 2 Challenges
         achievement(
             id = 50937,
-            title = "Tough Guys Don't Look Back",
+            title = "Tough Guys Don't Look Back", // No Retreat Protocol, Relentless Advance
             description = "Clear Area 2 without going backwards or using the extra lives code",
             points = 10,
             trigger = triggerArea2NoBackButton()
@@ -625,7 +657,7 @@
 
         achievement(
             id = 50860,
-            title = "Treadnought",
+            title = "Chain of Command Execution",
             description = "Defeat the Area 2 boss without killing either red soldier or using the extra lives code",
             points = 10,
             trigger = triggerArea2BossChallenge()
@@ -635,7 +667,7 @@
     // #region Area 3 Challenges
         achievement(
             id = 50857,
-            title = "Adventures of Bayou Billy?",
+            title = "Marshland Ghost",
             description = "Cross the swamp section in Area 3 in single player mode without shooting or dying",
             points = 5,
             trigger = triggerArea3WaterChallenge()
@@ -651,17 +683,25 @@
 
         achievement(
             id = 50859,
-            title = "Earthquake Drill",
+            title = "Earthquake Drill", // Fault Line Runner
             description = "Cross the Area 3 earthquake section in single player mode while holding right the entire time",
             points = 5,
             trigger = triggerArea3EarthquakeDrill()
+        )
+
+        achievement(
+            id = 50864,
+            title = "Sensor Core Isolation",
+            description = "Destroy all 4 turrets of the Area 3 boss without damaging its core and without using the extra lives code",
+            points = 10,
+            trigger = triggerArea3BossChallenge()
         )
     // #endregion Area 3 Challenges
 
     // #region Area 4 Challenges
         achievement(
             title = "The Right Way Up",
-            description = "Ascend Area 4 while staying on the right half of the screen. Left half allowed only for knockback, respawning and the elevator 2 access platform. Extra lives code not allowed",
+            description = "Ascend Area 4 on the right half of the screen with exceptions allowed for the second elevator access platform or during knockback and invulnerability. Extra lives code not allowed",
             points = 10,
             trigger = triggerArea4RightSideAscend()
         )
