@@ -38,6 +38,7 @@
     WEAPON_LASER = 0x03
     WEAPON_FIREBALL = 0x04
     function player1ShootButton() => bit6(0x00f7)
+    function player2ShootButton() => bit6(0x00f8)
     function player1JumpButton() => bit7(0x00f7)
     function player1RightButton() => bit0(0x00f7)
     function player1BackButton() => bit2(0x00f7)
@@ -68,6 +69,12 @@
         return
             prev(player1State()) == PLAYERSTATE_NORMAL
             && player1State() == PLAYERSTATE_DEATH_ANIMATION_START
+    }
+
+    function framePlayer2Died() {
+        return
+            prev(player2State()) == PLAYERSTATE_NORMAL
+            && player2State() == PLAYERSTATE_DEATH_ANIMATION_START
     }
 
     function frameAreaCompleted() {
@@ -455,6 +462,46 @@
             && trigger_when(targetConditions)
     }
 
+    function triggerArea5DownhillChallenge() {
+        primingConditions = 
+            once(
+                prev(currentAreaVerticalPosition()) > 0x0006 // 0x0006 ~ Top of the Hill
+                && currentAreaVerticalPosition() <= 0x0006 // 0x0006 ~ Top of the Hill
+            ) 
+            && once(
+                prev(currentAreaHorizontalPosition()) < 0x0118 // 0x0118 ~ Start of Green Containers
+                && currentAreaHorizontalPosition() >= 0x0118 // 0x0118 ~ Start of Green Containers
+            )
+        
+        cancelConditions =
+            never( gameState() != GAMESTATE_ACTIVEPLAY )
+            && never( currentArea() != 5 )
+            && never( player1ShootButton() == TRUE )
+            && never( player2ShootButton() == TRUE )
+            && never( framePlayer1Died() )
+            && never( framePlayer2Died() )
+
+
+        targetConditions =
+            once(
+                prev(currentAreaVerticalPosition()) < 0x0118 // 0x0118 ~ Boss Room
+                && currentAreaVerticalPosition() >= 0x0118 // 0x0118 ~ Boss Room
+            )
+            && once(
+                prev(currentAreaHorizontalPosition()) < 0x0700// 0x0700 ~ Boss Room
+                && currentAreaHorizontalPosition() >= 0x0700 // 0x0700 ~ Boss Room
+            )
+
+        pauseConditions = 
+            unless( gamePaused() == TRUE )
+
+        return
+            primingConditions
+            && cancelConditions
+            && trigger_when(targetConditions)
+            && pauseConditions
+    }
+
     function triggerArea4BossChallenge() {
         primingCondition = 
             // A total of 9 (out of 9) Boss Cannons spawned
@@ -839,12 +886,21 @@
 
     // #region Area 5 Challenges
         achievement(
-            title = "Peak Restrain",
-            description = "Reach the top of the cliff section in Area 5 without shooting any turrets or running soldiers and without using the extra lives code",
+            title = "Peak Trigger Discipline",
+            description = "Reach the top of the Area 5 cliff without eliminating any turrets or running soldiers and without using the extra lives code",
             points = 10,
             trigger = triggerArea5UphillChallenge()
         )
+
+        achievement(
+            id = 51077,
+            title = "Come On Down, Everybody!",
+            description = "From the top of the Area 5 cliff, reach the boss without firing or dying",
+            points = 5,
+            trigger = triggerArea5DownhillChallenge()
+        )
     // #endregion Area 5 Chellenges
+ 
     // #region Area 7 Challenges
         achievement(
             id = 51121,
