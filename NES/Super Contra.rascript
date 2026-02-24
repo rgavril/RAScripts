@@ -124,7 +124,7 @@
     }
  
     function triggerArea1GreenSoldiersChallange() {
-        primingCondition =
+        primingConditions =
             once(
                 currentArea() == 1
                 && frameAreaStarted()
@@ -151,7 +151,7 @@
             && currentAreaHorizontalPosition() >= 0x0b00 // 0x0b00 ~ Fourth Upward Slope Start
 
         return 
-            primingCondition
+            primingConditions
             && cancelConditions
             && never(greenSoldierKilledCondition)
             && never(turretDestroyedCondition)
@@ -412,6 +412,61 @@
             && trigger_when(triggerConditions)
     }
 
+    function triggerArea4BossChallenge() {
+        primingCondition = 
+            // A total of 9 (out of 9) Boss Cannons spawned
+            tally_of(range(0, 13), 9, index =>
+                prev(objectType(index)) != 0x43 // 0x43 ~ Boss Cannon
+                && objectType(index) == 0x43 // 0x43 ~ Boss Cannon
+            )
+
+        cancelConditions =
+            never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( currentArea() != 4 )
+            && never( cheatExtraLives() == TRUE )
+
+        targetConditions =
+            // A total of 7 (out of 9) Boss Cannons died
+            tally_of(range(0, 13), 7, index =>
+                objectType(index) == 0x43 // 0x43 ~ Boss Cannon
+                && prev(objectState(index)) != 0x07 // 0x07 ~ Death Animation Start
+                && objectState(index) == 0x07 // 0x07 ~ Death Animation Start
+            )
+
+        leftTurretDeath = 
+            any_of(range(0, 13), index => 
+                // If a Boss Cannon died
+                objectType(index) == 0x43 // 0x43 ~ Boss Cannon
+                && prev(objectState(index)) != 0x07 // 0x07 ~ Death Animation Start
+                && objectState(index) == 0x07 // 0x07 ~ Death Animation Start
+                
+                // And is the left most object on the screen
+                && all_of(range(0, 13), index2 => 
+                    objectXPosition(index) <= objectXPosition(index2)
+                )
+            )
+
+        rightTurretDeath = 
+            any_of(range(0, 13), index =>
+                // If a Boss Cannon died
+                objectType(index) == 0x43 // 0x43 ~ Boss Cannon
+                && prev(objectState(index)) != 0x07 // 0x07 ~ Death Animation Start
+                && objectState(index) == 0x07 // 0x07 ~ Death Animation Start
+
+                // And is the right most object on the screen
+                && all_of(range(0, 13), index2 => 
+                    objectXPosition(index) >= objectXPosition(index2)
+                )
+            )
+
+        return
+            primingCondition
+            && cancelConditions
+            && trigger_when(targetConditions)
+            && never(leftTurretDeath)
+            && never(rightTurretDeath)
+    }
+
     function triggerArea5UphillChallenge() {
         primingCondition =
             once(
@@ -502,59 +557,45 @@
             && pauseConditions
     }
 
-    function triggerArea4BossChallenge() {
-        primingCondition = 
-            // A total of 9 (out of 9) Boss Cannons spawned
-            tally_of(range(0, 13), 9, index =>
-                prev(objectType(index)) != 0x43 // 0x43 ~ Boss Cannon
-                && objectType(index) == 0x43 // 0x43 ~ Boss Cannon
+    function triggerArea5BossChallenge() {
+        primingConditions = 
+            once(
+                prev(currentAreaVerticalPosition()) < 0x0118 // 0x0118 ~ Boss Room
+                && currentAreaVerticalPosition() >= 0x0118 // 0x0118 ~ Boss Room
+            )
+            && once(
+                prev(currentAreaHorizontalPosition()) < 0x0700// 0x0700 ~ Boss Room
+                && currentAreaHorizontalPosition() >= 0x0700 // 0x0700 ~ Boss Room
             )
 
         cancelConditions =
-            never( gameState() != GAMESTATE_ACTIVEPLAY  )
-            && never( currentArea() != 4 )
-            && never( cheatExtraLives() == TRUE )
+            never( gameState() != GAMESTATE_ACTIVEPLAY )
+            && never( currentArea() != 5 )
 
-        targetConditions =
-            // A total of 7 (out of 9) Boss Cannons died
-            tally_of(range(0, 13), 7, index =>
-                objectType(index) == 0x43 // 0x43 ~ Boss Cannon
-                && prev(objectState(index)) != 0x07 // 0x07 ~ Death Animation Start
-                && objectState(index) == 0x07 // 0x07 ~ Death Animation Start
-            )
-
-        leftTurretDeath = 
-            any_of(range(0, 13), index => 
-                // If a Boss Cannon died
-                objectType(index) == 0x43 // 0x43 ~ Boss Cannon
-                && prev(objectState(index)) != 0x07 // 0x07 ~ Death Animation Start
-                && objectState(index) == 0x07 // 0x07 ~ Death Animation Start
-                
-                // And is the left most object on the screen
-                && all_of(range(0, 13), index2 => 
-                    objectXPosition(index) <= objectXPosition(index2)
+        skullDied = 
+            any_of(range(0, 13), index =>
+                (
+                    // NOTE: Use previous frame state for red skull death check.
+                    // This avoids false challenge failure caused by the shared 
+                    // death effect between skull and main boss.
+                    prev(objectType(index)) == 0x5a // 0x5a ~ Skull
+                    && prev(objectState(index)) == 0x05 // 0x05 ~ Death Animation Start
                 )
             )
 
-        rightTurretDeath = 
+        bossDied = 
             any_of(range(0, 13), index =>
-                // If a Boss Cannon died
-                objectType(index) == 0x43 // 0x43 ~ Boss Cannon
-                && prev(objectState(index)) != 0x07 // 0x07 ~ Death Animation Start
-                && objectState(index) == 0x07 // 0x07 ~ Death Animation Start
-
-                // And is the right most object on the screen
-                && all_of(range(0, 13), index2 => 
-                    objectXPosition(index) >= objectXPosition(index2)
+                (
+                    objectType(index) == 0x59 // 0x59 ~ Boss
+                    && objectState(index) == 0x07 // 0x07 ~ Death Animation Start
                 )
             )
 
         return
-            primingCondition
+            primingConditions
             && cancelConditions
-            && trigger_when(targetConditions)
-            && never(leftTurretDeath)
-            && never(rightTurretDeath)
+            && never(skullDied)
+            && trigger_when(bossDied)
     }
 
     function trigerArea7CrawlersChallange() {
@@ -898,6 +939,13 @@
             description = "From the top of the Area 5 cliff, reach the boss without firing or dying",
             points = 5,
             trigger = triggerArea5DownhillChallenge()
+        )
+
+        achievement(
+            title = "To Hit or Not to Hit",
+            description = "Beat the Area 5 boss without damaging any of the skulls and without using the extra lives code",
+            points = 10,
+            trigger = triggerArea5BossChallenge()
         )
     // #endregion Area 5 Chellenges
  
