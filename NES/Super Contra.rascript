@@ -44,9 +44,12 @@
     function player2BackButton() => bit2(0x00f8)
     function player1Lives() => byte(0x0053)
     function player1PositionX() => byte(0x054c)
+    function player2PositionX() => byte(0x054d)
     function player1PositionY() => byte(0x0532)
     function player1InvincibilityFrames() => byte(0x00c4)
+    function player2InvincibilityFrames() => byte(0x00c5)
     function player1State() => byte(0x00a0)
+    function player2State() => byte(0x00a1)
     PLAYERSTATE_NORMAL = 0x02
     PLAYERSTATE_DEATH_ANIMATION_START = 0x03
     PLAYERSTATE_DEATH_ANIMATION_END = 0x04
@@ -368,27 +371,38 @@
     }
 
     function triggerArea4RightSideAscend() {
-        cancelConditions =
-               never( gameState() != GAMESTATE_ACTIVEPLAY  )
-            && never( currentArea() != 4 )
-
         startConditions =
             once(
                 prev(currentAreaVerticalPosition()) == 0x0c00
                 && currentAreaVerticalPosition() < 0x0c00
             )
 
+        cancelConditions =
+               never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( currentArea() != 4 )
+
         triggerConditions =
             prev(currentAreaVerticalPosition()) != 0x001a
             && currentAreaVerticalPosition() == 0x001a
 
-        P1OnTheLeft =
+        Player1OnTheLeft =
             player1InvincibilityFrames() == 0
             && player1State() == 0x02
             && (currentAreaVerticalPosition() < 0x0500 || currentAreaVerticalPosition() > 0x050e)
             && player1PositionX() < (0xff / 2)
 
-        return startConditions && trigger_when(triggerConditions) && cancelConditions && never(P1OnTheLeft)
+        Player2OnTheLeft =
+            player2InvincibilityFrames() == 0
+            && player2State() == 0x02
+            && (currentAreaVerticalPosition() < 0x0500 || currentAreaVerticalPosition() > 0x050e)
+            && player2PositionX() < (0xff / 2)
+
+        return 
+            startConditions
+            && cancelConditions
+            && never(Player1OnTheLeft)
+            && never(Player2OnTheLeft)
+            && trigger_when(triggerConditions)
     }
 
     function triggerArea4BossChallenge() {
@@ -761,6 +775,8 @@
             trigger = triggerArea4RightSideAscend()
         )
 
+        // DISABLED TO SPEED UP RATOOLS, ENABLE ON CHANGES !
+        /*
         achievement(
             id = 50866,
             title = "Armed to the Teeth", // Central Void Execution
@@ -768,6 +784,7 @@
             points = 10,
             trigger = triggerArea4BossChallenge()
         )
+        */
     // #endregion Area 4 Challenges
 
     // #region Area 7 Challenges
