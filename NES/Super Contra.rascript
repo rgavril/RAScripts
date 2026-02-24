@@ -391,6 +391,61 @@
         return startConditions && trigger_when(triggerConditions) && cancelConditions && never(P1OnTheLeft)
     }
 
+    function triggerArea4BossChallenge() {
+        primingCondition = 
+            // A total of 9 (out of 9) Boss Cannons spawned
+            tally_of(range(0, 13), 9, index =>
+                prev(objectType(index)) != 0x43 // 0x43 ~ Boss Cannon
+                && objectType(index) == 0x43 // 0x43 ~ Boss Cannon
+            )
+
+        cancelConditions =
+            never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( currentArea() != 4 )
+            && never( cheatExtraLives() == TRUE )
+
+        targetConditions =
+            // A total of 7 (out of 9) Boss Cannons died
+            tally_of(range(0, 13), 7, index =>
+                objectType(index) == 0x43 // 0x43 ~ Boss Cannon
+                && prev(objectState(index)) != 0x07 // 0x07 ~ Death Animation Start
+                && objectState(index) == 0x07 // 0x07 ~ Death Animation Start
+            )
+
+        leftTurretDeath = 
+            any_of(range(0, 13), index => 
+                // If a Boss Cannon died
+                objectType(index) == 0x43 // 0x43 ~ Boss Cannon
+                && prev(objectState(index)) != 0x07 // 0x07 ~ Death Animation Start
+                && objectState(index) == 0x07 // 0x07 ~ Death Animation Start
+                
+                // And is the left most object on the screen
+                && all_of(range(0, 13), index2 => 
+                    objectXPosition(index) <= objectXPosition(index2)
+                )
+            )
+
+        rightTurretDeath = 
+            any_of(range(0, 13), index =>
+                // If a Boss Cannon died
+                objectType(index) == 0x43 // 0x43 ~ Boss Cannon
+                && prev(objectState(index)) != 0x07 // 0x07 ~ Death Animation Start
+                && objectState(index) == 0x07 // 0x07 ~ Death Animation Start
+
+                // And is the right most object on the screen
+                && all_of(range(0, 13), index2 => 
+                    objectXPosition(index) >= objectXPosition(index2)
+                )
+            )
+
+        return
+            primingCondition
+            && cancelConditions
+            && trigger_when(targetConditions)
+            && never(leftTurretDeath)
+            && never(rightTurretDeath)
+    }
+
     function trigerArea7CrawlersChallange() {
         startConditions = 
             once(
@@ -704,6 +759,14 @@
             description = "Ascend Area 4 on the right half of the screen with exceptions allowed for the second elevator access platform or during knockback and invulnerability. Extra lives code not allowed",
             points = 10,
             trigger = triggerArea4RightSideAscend()
+        )
+
+        achievement(
+            id = 50866,
+            title = "Armed to the Teeth",
+            description = "Destroy all but the 2 outermost turrets while fighting the Area 4 boss without using the extra lives code",
+            points = 10,
+            trigger = triggerArea4BossChallenge()
         )
     // #endregion Area 4 Challenges
 
