@@ -718,11 +718,11 @@
                never( gameState() != GAMESTATE_ACTIVEPLAY )
             && never( currentArea() != 7 )
             && never( numberOfPlayers() != 1 )
-            && never( player1Weapon() != WEAPON_STANDARD )
-            && never( player1JumpButton() == 1 )
+            && never( player1ShootButton() == TRUE && player1Weapon() != WEAPON_STANDARD )
+            && never( player1JumpButton() == TRUE )
             && never( framePlayer1Died() )
 
-        enemyConditions =
+        bossSpawnedAndDied =
             any_of(range(0, 13), index =>
                 // Priming Condition
                 once(
@@ -739,7 +739,10 @@
                 )
             )
 
-        return cancelConditions && enemyConditions
+        pauseConditions = 
+            unless ( gamePaused() == TRUE )
+
+        return cancelConditions && bossSpawnedAndDied && pauseConditions
     }
 
     function triggerArea8RunningEnemies() {
@@ -1060,8 +1063,8 @@
 
         achievement(
             id = 51123,
-            title = "Bare Bones, Naked Gun",
-            description = "[1P Only] Defeat the Area 7 boss without jumping, dying, or using any power-ups",
+            title = "Rooted Rifleman",
+            description = "Defeat the Area 7 boss using only the default gun without jumping, dying, or using the extra lives code in single player mode",
             points = 25,
             trigger = triggerArea7BossChallenge()   
         )
