@@ -598,6 +598,58 @@
             && trigger_when(bossDied)
     }
 
+    function triggerArea6PacifistChallenge() {
+        startConditions =
+            once(
+                currentArea() == 6
+                && frameAreaStarted()
+            )
+
+        cancelConditions =
+               never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( currentArea() != 6 )
+            && never( numberOfPlayers() != 1 )
+
+        enemiesKilled = 
+            // Blue Spider Killed
+            any_of(range(0, 13), index =>
+                objectType(index) == 0x24 // 0x0b ~ BlueSpider
+                && objectState(index) == 0x05 // 0x05 ~ Death Animation Start
+            )
+            
+            // Ground Mouth Killed
+            || any_of(range(0, 13), index =>
+                objectType(index) == 0x5d // 0x5d ~ Mouth
+                && objectState(index) == 0x05 // 0x05 ~ Death Animation Start
+            )
+            
+            // Red Rotating Bug
+            || any_of(range(0, 13), index =>
+                objectType(index) == 0x5f // 0x5f ~ Red Rotating Bug
+                && objectState(index) == 0x06 // 0x06 ~ Death Animation Start
+            )
+
+            // Spiky Red Bug
+            || any_of(range(0, 13), index =>
+                objectType(index) == 0x60 // 0x60 ~ Spiky Red Bug
+                && objectState(index) == 0x06 // 0x06 ~ Death Animation Start
+            )   
+
+        pauseConditions =
+            unless ( gamePaused() == TRUE )
+
+        triggerConditions = 
+            prev(currentAreaVerticalPosition()) > 0x0100 // 0x0100 ~ Boss Room
+            && currentAreaVerticalPosition() <= 0x0100 // 0x0100 ~ Boss Room
+
+        return
+            startConditions
+            && cancelConditions
+            && never(enemiesKilled)
+            && trigger_when(triggerConditions)
+            && pauseConditions
+    }
+
     function trigerArea7CrawlersChallange() {
         startConditions = 
             once(
@@ -947,8 +999,17 @@
             points = 10,
             trigger = triggerArea5BossChallenge()
         )
-    // #endregion Area 5 Chellenges
+    // #endregion Area 5 Challenges
  
+    // #region Area 6 Challenges
+        achievement(
+            title = "The Shield of Compassion",
+            description = "Reach the Area 6 boss without eliminating any enemies or dying in single player mode",
+            points = 10,
+            trigger = triggerArea6PacifistChallenge()
+        )
+    // #endregion Area 6 Challenges
+
     // #region Area 7 Challenges
         achievement(
             id = 51121,
