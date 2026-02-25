@@ -32,6 +32,7 @@
     function numberOfPlayers() => byte(0x0022) + 1
 
     function player1Weapon() => low4(0x00b8)
+    function player2Weapon() => low4(0x00b9)
     WEAPON_STANDARD = 0x00
     WEAPON_MACHINEGUN = 0x01
     WEAPON_SPREADGUN = 0x02
@@ -650,16 +651,44 @@
             && pauseConditions
     }
 
+    function triggerArea6BossChallenge() {
+        primingConditions =
+            tally_of(range(0, 13), 1, index =>
+                objectType(index) == 0x65 // 0x65 ~ Boss Head 2nd Form
+                && objectState(index) == 0x05 // 0x05 ~ Entering the Screen
+            )
+
+        cancelConditions =
+            never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( currentArea() != 6 )
+            && never( cheatExtraLives() == TRUE )
+            && never( player1ShootButton() == TRUE && player1Weapon() != WEAPON_STANDARD )
+            && never( player2ShootButton() == TRUE && player2Weapon() != WEAPON_STANDARD )
+        
+        bossWasDamaged =
+            any_of(range(0, 13), index =>
+                objectType(index) == 0x65 // 0x65 ~ Boss Head 2nd Form
+                && objectHealth(index) < 0x40 // 0x40 ~ Max Health of Boss
+            )
+
+        targetConditions =
+            any_of(range(0, 13), index =>
+                objectType(index) == 0x66 // 0x66 ~ Snake
+                && objectState(index) == 0x04 // 0x05 ~ Death Sequence Started
+            )
+
+        return
+            primingConditions
+            && cancelConditions
+            && never(bossWasDamaged)
+            && trigger_when(targetConditions)
+    }
+
     function trigerArea7CrawlersChallange() {
         startConditions = 
             once(
-                currentArea() == 7
-                && currentAreaSection() == 0x00 // 0x00 ~ Stage Start
-            )
-            &&
-            once(
-                currentArea() == 7
-                && currentAreaSection() == 0x08 // 0x08 ~ Vertical Shaft End & Eggs Room Start
+                prev(currentAreaVerticalPosition()) < 0x0810 // 0x0810 ~ Top of Egg Room
+                && currentAreaVerticalPosition() >= 0x0810 // 0x0810 ~ Top of Egg Room
             )
 
         cancelConditions =
@@ -669,16 +698,19 @@
 
         deathCrawlerCondition = 
             any_of( range(0, 13), index =>
-                objectType(index) == 0x3e // Facehugger
-                && objectState(index) == 0x04 // Dead
+                objectType(index) == 0x3e // 0x3e ~ Facehugger
+                && objectState(index) == 0x04 // 0x04 ~ Death Sequence Start
             )
 
-        triggerCondition = 
-            currentArea() == 7
-            && prev(currentAreaSection()) == 0x0b // 0x0b ~ Eggs Room End
-            && currentAreaSection() == 0x0c // 0x0c ~ Boss Room
+        triggerCondition =
+            prev(currentAreaVerticalPosition()) < 0x0c02 // 0x0c02 ~ Top of Boss Room
+            && currentAreaVerticalPosition() >= 0x0c02 // 0x0c02 ~ Top of Boss Room
 
-        return cancelConditions && startConditions && trigger_when(triggerCondition) && never(deathCrawlerCondition)
+        return
+            startConditions
+            && cancelConditions
+            && never(deathCrawlerCondition)
+            && trigger_when(triggerCondition) 
     }
 
     function triggerArea7BossChallenge() {
@@ -1008,14 +1040,21 @@
             points = 10,
             trigger = triggerArea6PacifistChallenge()
         )
+
+        achievement(
+            title = "Save the Beast for Last",
+            description = "Using the default gun, destroy the snake on the second form of the Area 6 boss without hitting the boss itself or using the extra lives code",
+            points = 10,
+            trigger = triggerArea6BossChallenge()
+        )
     // #endregion Area 6 Challenges
 
     // #region Area 7 Challenges
         achievement(
             id = 51121,
             title = "Save the Face-Huggers!",
-            description = "[1P Only] Reach the boss in Area 7 without killing any crawlers",
-            points = 25,
+            description = "Reach the Area 7 boss without killing any hatchlings or using the extra lives code",
+            points = 5,
             trigger = trigerArea7CrawlersChallange()
         )
 
