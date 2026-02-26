@@ -684,6 +684,36 @@
             && trigger_when(targetConditions)
     }
 
+    function triggerArea7RunnersChalleange() {
+        startConditions = 
+            once(
+                currentArea() == 7
+                && frameAreaStarted()
+            )
+
+        cancelConditions =
+            never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( currentArea() != 7 )
+            && never( cheatExtraLives() == TRUE )
+
+        runningSkeletonKilled = any_of(range(0, 13), index =>
+            objectType(index) == 0x03 // 0x03 ~ Running Soldier
+            && objectState(index) == 0x05 // 0x05 ~ Death Sequence Started
+        )
+
+        triggerConditions =
+            prev(currentAreaVerticalPosition()) < 0x0810 // 0x0810 ~ Top of Egg Room
+            && currentAreaVerticalPosition() >= 0x0810 // 0x0810 ~ Top of Egg Room
+            // prev(currentAreaVerticalPosition()) < 0x0610 // 0x0610 ~ No Soldiers Beyond this Point
+            // && currentAreaVerticalPosition() >= 0x0610 // 0x0610 ~ No Soldiers Beyond this Point
+
+        return
+            startConditions
+            && cancelConditions
+            && never(runningSkeletonKilled)
+            && trigger_when(triggerConditions)
+    }
+
     function trigerArea7CrawlersChallange() {
         startConditions = 
             once(
@@ -1053,6 +1083,13 @@
     // #endregion Area 6 Challenges
 
     // #region Area 7 Challenges
+        achievement(
+            title = "Egg Room Escort",
+            description = "Reach the egg room in Area 7 without killing any running soldiers or using the extra lives code",
+            points = 5,
+            trigger = triggerArea7RunnersChalleange()
+        )
+
         achievement(
             id = 51121,
             title = "Save the Face-Huggers!",
