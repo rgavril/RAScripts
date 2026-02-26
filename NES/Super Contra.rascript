@@ -781,33 +781,37 @@
             && currentAreaSection() == 0x00 // 0x00 ~ Stage Start
         )
 
-        targetConditions = once(
-            currentArea() == 8
-            && prev(currentAreaSection()) == 0x0d // 0x0d ~ Pre-Boss Room
-            && currentAreaSection() == 0x0e // 0x0e ~ Boss Room
-        )
-
         cancelConditions =
                never( gameState() != GAMESTATE_ACTIVEPLAY  )
             && never( currentArea() != 8 )
+            && never( cheatExtraLives() == TRUE )
 
         enemyEscapeOnRight =
-            never(any_of(range(0, 13), index =>
+            any_of(range(0, 13), index =>
                    objectType(index)  == 0x03 // 0x03 ~ Running Soldier
                 && objectState(index) == 0x02 // 0x02 ~ Walking
                 && prev(objectXPosition(index)) <  0xfe // 0xfe ~ Despawn Point Right Side of Screen
                 && objectXPosition(index) >= 0xfe // 0xfe ~ Despawn Point Right Side of Screen
-            ))
+            )
 
         enemyEscapeOnLeft = 
-            never(any_of(range(0, 13), index =>
+            any_of(range(0, 13), index =>
                    objectType(index)  == 0x03 // 0x03 ~ Running Soldier
                 && objectState(index) == 0x02 // 0x02 ~ Walking
                 && prev(objectXPosition(index)) >  0x06 // 0x06 ~ Despawn Point of Left Side of Screen
                 && objectXPosition(index) <= 0x06 // 0x06 ~ Despawn Point of Left Side of Screen
-            ))
+            )
 
-        return startConditions && trigger_when(targetConditions) && cancelConditions && enemyEscapeOnLeft && enemyEscapeOnRight
+        targetConditions = 
+            prev(currentAreaSection()) == 0x0d // 0x0d ~ Pre-Boss Room
+            && currentAreaSection() == 0x0e // 0x0e ~ Boss Room
+
+        return
+            startConditions 
+            && cancelConditions 
+            && never(enemyEscapeOnLeft)
+            && never(enemyEscapeOnRight)
+            && trigger_when(targetConditions)
     }
 // #endregion Triggers
 
@@ -1109,8 +1113,8 @@
 
     // #region Area 8 Challenges
         achievement(
-            title = "None Shall Pass",
-            description = "Don't let any of the running enemies for Area 8 get from one side of the screen to the other.",
+            title = "You Shall Not Pass",
+            description = "Reach the boss in Area 8 without letting any running soldiers cross from one side of the screen to the other or using the extra lives code",
             points = 10,
             trigger = triggerArea8RunningEnemies()
         )
