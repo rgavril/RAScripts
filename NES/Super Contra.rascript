@@ -813,6 +813,31 @@
             && never(enemyEscapeOnRight)
             && trigger_when(targetConditions)
     }
+
+    function triggerArea8BossChallange() {
+        cancelConditions =
+            never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( currentArea() != 8 )
+            && never( framePlayer1Died() )
+
+        explodingProjectilesCondition =
+            tally_of(range(0, 13), 30, index =>
+                player1PositionY() <= 0x35 // 0x35 ~ Top of Boss
+                && objectType(index) == 0x37 // 0x37 ~ Exploding Bullet
+                && prev(objectState(index)) != 0x05 // 0x05 ~ Killed
+                && objectState(index) == 0x05 // 0x05 ~ Killed
+            )
+
+        bossDied = any_of(range(0, 13), index => 
+            objectType(index) == 0x6d // 0x6d ~ Boss Main Target
+            && objectState(index) == 0x09 // 0x09 ~ Death Sequence Start 
+        )
+
+        return
+            cancelConditions
+            && measured(explodingProjectilesCondition)
+            && trigger_when(bossDied)
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -1117,6 +1142,13 @@
             description = "Reach the boss in Area 8 without letting any running soldiers cross from one side of the screen to the other or using the extra lives code",
             points = 10,
             trigger = triggerArea8RunningEnemies()
+        )
+
+        achievement(
+            title = "Grand Finale Fireworks",
+            description = "Defeat the Area 8 boss in a single-player game after firing 30 projectiles in a single life while standing on its head",
+            points = 5,
+            trigger = triggerArea8BossChallange()
         )
     // #endregion Area 8 Challenges
 // #endregion Achievements
