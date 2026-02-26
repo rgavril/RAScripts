@@ -847,6 +847,24 @@
 
         return requiredConditions
     }
+
+    function triggerSpreadChallange() {
+        requiredConditions =
+            gameState() == GAMESTATE_ACTIVEPLAY
+            && currentArea() == 1
+
+        player1GotSpread =
+            prev(player1Weapon()) != WEAPON_SPREADGUN 
+            && player1Weapon() == WEAPON_SPREADGUN
+
+        player2GotSpread = 
+            prev(player2Weapon()) != WEAPON_SPREADGUN
+            && player2Weapon() == WEAPON_SPREADGUN
+
+        return 
+            requiredConditions
+            && ( player1GotSpread || player2GotSpread )
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -1168,6 +1186,13 @@
             description = "Defeat any boss using the Laser in one player mode",
             points = 10,
             trigger = triggerLaserChallange()
+        )
+
+        achievement(
+            title = "It's a Secret to Everyone",
+            description = "Acquire the Spread Gun in Area 1 without using the extra lives code",
+            points = 3,
+            trigger = triggerSpreadChallange()
         )
     // #endregion Generic Challenges
 // #endregion Achievements
