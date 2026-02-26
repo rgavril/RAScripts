@@ -23,6 +23,7 @@
     SCREEN_GAME_ENDING = 0x08
 
     function gamePaused() => byte(0x0039)
+    function gameBeatenOnce() => byte(0x0051)
 
 
     function currentArea() => byte(0x0050) + 1
@@ -865,6 +866,84 @@
             requiredConditions
             && ( player1GotSpread || player2GotSpread )
     }
+
+    function triggerLoopOneNoCheat() {
+        cancelConditions =
+               never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( cheatExtraLives() == TRUE )
+        
+        firstLoopCheckpoints =
+               once( currentArea() == 1 && frameAreaCompleted() && gameBeatenOnce() == FALSE )
+            && once( currentArea() == 2 && frameAreaCompleted() && gameBeatenOnce() == FALSE )
+            && once( currentArea() == 3 && frameAreaCompleted() && gameBeatenOnce() == FALSE )
+            && once( currentArea() == 4 && frameAreaCompleted() && gameBeatenOnce() == FALSE )
+            && once( currentArea() == 5 && frameAreaCompleted() && gameBeatenOnce() == FALSE )
+            && once( currentArea() == 6 && frameAreaCompleted() && gameBeatenOnce() == FALSE )
+            && once( currentArea() == 7 && frameAreaCompleted() && gameBeatenOnce() == FALSE )
+            && once( currentArea() == 8 && frameAreaCompleted() && gameBeatenOnce() == FALSE )
+
+        return cancelConditions && firstLoopCheckpoints
+    }
+
+    function triggerLoopTwoNoCheat() {
+        cancelConditions =
+               never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( cheatExtraLives() == TRUE )
+        
+        firstLoopCheckpoints =
+               once( currentArea() == 1 && frameAreaCompleted() && gameBeatenOnce() == FALSE )
+            && once( currentArea() == 2 && frameAreaCompleted() && gameBeatenOnce() == FALSE )
+            && once( currentArea() == 3 && frameAreaCompleted() && gameBeatenOnce() == FALSE )
+            && once( currentArea() == 4 && frameAreaCompleted() && gameBeatenOnce() == FALSE )
+            && once( currentArea() == 5 && frameAreaCompleted() && gameBeatenOnce() == FALSE )
+            && once( currentArea() == 6 && frameAreaCompleted() && gameBeatenOnce() == FALSE )
+            && once( currentArea() == 7 && frameAreaCompleted() && gameBeatenOnce() == FALSE )
+            && once( currentArea() == 8 && frameAreaCompleted() && gameBeatenOnce() == FALSE )
+
+        secondLoopCheckpoints = 
+               once( currentArea() == 1 && frameAreaCompleted() && gameBeatenOnce() == TRUE )
+            && once( currentArea() == 2 && frameAreaCompleted() && gameBeatenOnce() == TRUE )
+            && once( currentArea() == 3 && frameAreaCompleted() && gameBeatenOnce() == TRUE )
+            && once( currentArea() == 4 && frameAreaCompleted() && gameBeatenOnce() == TRUE )
+            && once( currentArea() == 5 && frameAreaCompleted() && gameBeatenOnce() == TRUE )
+            && once( currentArea() == 6 && frameAreaCompleted() && gameBeatenOnce() == TRUE )
+            && once( currentArea() == 7 && frameAreaCompleted() && gameBeatenOnce() == TRUE )
+            && once( currentArea() == 8 && frameAreaCompleted() && gameBeatenOnce() == TRUE )
+
+        return cancelConditions && firstLoopCheckpoints && secondLoopCheckpoints
+    }
+
+    function triggerGunlessAnyLoop() {
+        startConditions =
+            once( currentArea() == 1 && frameAreaStarted() )
+
+        cancelConditions =
+               never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( cheatExtraLives() == TRUE )
+            && never( numberOfPlayers() != 1 )
+        
+        areasCompleted =
+               once( currentArea() == 1 && frameAreaCompleted() )
+            && once( currentArea() == 2 && frameAreaCompleted() )
+            && once( currentArea() == 3 && frameAreaCompleted() )
+            && once( currentArea() == 4 && frameAreaCompleted() )
+            && once( currentArea() == 5 && frameAreaCompleted() )
+            && once( currentArea() == 6 && frameAreaCompleted() )
+            && once( currentArea() == 7 && frameAreaCompleted() )
+            && once( currentArea() == 8 && frameAreaCompleted() )
+
+        upgradedWeaponUsed = 
+            player1Weapon() != WEAPON_STANDARD
+            && player1ShootButton() == TRUE
+            && gamePaused() == FALSE
+
+        return
+            startConditions
+            && cancelConditions
+            && never( upgradedWeaponUsed )
+            && trigger_when( areasCompleted )
+    }
+
 // #endregion Triggers
 
 // #region Achievements
@@ -1193,6 +1272,30 @@
             description = "Acquire the Spread Gun in Area 1 without using the extra lives code",
             points = 3,
             trigger = triggerSpreadChallange()
+        )
+
+        achievement(
+            id = 50933,
+            title = "Super Ace Soldier",
+            description = "Beat the game without using the extra lives code",
+            points = 25,
+            trigger = triggerLoopOneNoCheat()
+        )
+
+        achievement(
+            id = 50932,
+            title = "Can't Get Enough",
+            description = "Beat the game's second loop without using the extra lives code",
+            points = 25,
+            trigger = triggerLoopTwoNoCheat()
+        )
+
+        achievement(
+            id = 50934,
+            title = "Super Gunless",
+            description = "Beat the game in single player mode using only the default weapon and no extra lives code",
+            points = 25,
+            trigger = triggerGunlessAnyLoop()
         )
     // #endregion Generic Challenges
 // #endregion Achievements
