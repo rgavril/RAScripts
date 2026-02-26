@@ -838,6 +838,15 @@
             && measured(explodingProjectilesCondition)
             && trigger_when(bossDied)
     }
+
+    function triggerLaserChallange() {
+        requiredConditions =
+            gameState() == GAMESTATE_ACTIVEPLAY
+            && player1Weapon() == WEAPON_LASER
+            && frameAreaCompleted()
+
+        return requiredConditions
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -1151,4 +1160,14 @@
             trigger = triggerArea8BossChallange()
         )
     // #endregion Area 8 Challenges
+
+    // #region Generic Challenges
+        achievement(
+            id = 50832,
+            title = "Spread's Got Competition",
+            description = "Defeat any boss using the Laser in one player mode",
+            points = 10,
+            trigger = triggerLaserChallange()
+        )
+    // #endregion Generic Challenges
 // #endregion Achievements
