@@ -816,7 +816,7 @@
 
     function triggerArea8BossChallange() {
         cancelConditions =
-            never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            never( gameState() != GAMESTATE_ACTIVEPLAY )
             && never( currentArea() != 8 )
             && never( framePlayer1Died() )
 
