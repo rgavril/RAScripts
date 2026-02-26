@@ -10,6 +10,7 @@
     GAMESTATE_STAGE_SELECT = 0x02
     GAMESTATE_ACTIVEPLAY_BOOT = 0x03
     GAMESTATE_ACTIVEPLAY = 0x04
+    GAMESTATE_SOUND_MODE = 0x05
 
     function gameScreen() => byte(0x0038)
     SCREEN_MAIN_MENU = 0x00
@@ -944,6 +945,18 @@
             && trigger_when( areasCompleted )
     }
 
+    function triggerExtraLivesCode() {
+        return
+            prev(cheatExtraLives()) == FALSE
+            && cheatExtraLives() == TRUE
+    }
+
+    function triggerSoundMenuCode() {
+        return
+            prev(gameState()) != GAMESTATE_SOUND_MODE
+            && gameState() == GAMESTATE_SOUND_MODE
+    }
+
 // #endregion Triggers
 
 // #region Achievements
@@ -1285,7 +1298,7 @@
         achievement(
             id = 50932,
             title = "Can't Get Enough",
-            description = "Beat the game's second loop without using the extra lives code",
+            description = "Beat the second loop without using the extra lives code",
             points = 25,
             trigger = triggerLoopTwoNoCheat()
         )
@@ -1293,9 +1306,26 @@
         achievement(
             id = 50934,
             title = "Super Gunless",
-            description = "Beat the game in single player mode using only the default weapon and no extra lives code",
+            description = "Beat the game in one player mode using only the default weapon and no extra lives code",
             points = 25,
             trigger = triggerGunlessAnyLoop()
         )
+
+        achievement(
+            id = 11329,
+            title = "Strength of a Legion",
+            description = "Enter the extra lives code on the title screen",
+            points = 1,
+            trigger = triggerExtraLivesCode()
+        )
+
+        achievement(
+            id = 11328,
+            title = "Wartime Songs",
+            description = "Access the Sound Mode",
+            points = 1,
+            trigger = triggerSoundMenuCode()
+        )
+
     // #endregion Generic Challenges
 // #endregion Achievements
