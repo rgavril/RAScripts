@@ -32,7 +32,13 @@
     function currentAreaHorizontalPosition() => word(0x0064)
     function currentAreaVerticalPosition() => word(0x0073)
     function numberOfPlayers() => byte(0x0022) + 1
+    function activePlayers() => byte(0x0096)
+    ACTIVE_PLAYER1 = 0x00
+    ACTIVE_PLAYER2 = 0x01
+    ACTIVE_BOTH = 0x02
 
+    function player1Score() => byte(0x1)
+    function player2Score() => byte(0x1)
     function player1Weapon() => low4(0x00b8)
     function player2Weapon() => low4(0x00b9)
     WEAPON_STANDARD = 0x00
@@ -46,7 +52,8 @@
     function player1RightButton() => bit0(0x00f7)
     function player1BackButton() => bit2(0x00f7)
     function player2BackButton() => bit2(0x00f8)
-    function player1Lives() => byte(0x0053)
+    function player1Lives() => byte(0x0053) + 1
+    function player2Lives() => byte(0x0054) + 1
     function player1PositionX() => byte(0x054c)
     function player2PositionX() => byte(0x054d)
     function player1PositionY() => byte(0x0532)
@@ -1326,6 +1333,67 @@
             points = 1,
             trigger = triggerSoundMenuCode()
         )
-
     // #endregion Generic Challenges
 // #endregion Achievements
+
+// #region Rich Presence
+    weaponNameLookup = {
+        WEAPON_STANDARD: "Default Gun",
+        WEAPON_MACHINEGUN: "Machine Gun",
+        WEAPON_FIREBALL: "Flame Thrower",
+        WEAPON_SPREADGUN: "Spread Gun",
+        WEAPON_LASER: "Laser"
+
+    }
+
+    loopLookup = {
+        0x00: "",
+        0x01: "²"
+    }
+
+    rich_presence_conditional_display(
+        gameState() == GAMESTATE_ACTIVEPLAY && numberOfPlayers() == 1,
+        "Area {0}{1} ● Single Player ● {2} and {3} Lives",
+        rich_presence_value("Area", currentArea()),
+        rich_presence_lookup("Loop", gameBeatenOnce(), loopLookup),
+        rich_presence_lookup("Weapon", player1Weapon(), weaponNameLookup),
+        rich_presence_value("Lives", player1Lives())
+    )
+
+    rich_presence_conditional_display(
+        gameState() ==  GAMESTATE_ACTIVEPLAY && numberOfPlayers() == 2 && activePlayers() == ACTIVE_BOTH,
+        "Area {0}{1} ● Co-Op Game ● {2} and {3} Lives ● {4} and {5} Lives",
+        rich_presence_value("Area", currentArea()),
+        rich_presence_lookup("Loop", gameBeatenOnce(), loopLookup),
+        rich_presence_lookup("Weapon", player1Weapon(), weaponNameLookup),
+        rich_presence_value("Lives", player1Lives()),
+        rich_presence_lookup("P2Weapon", player2Weapon(), weaponNameLookup),
+        rich_presence_value("P2Lives", player2Lives())
+    )
+
+    rich_presence_conditional_display(
+        gameState() ==  GAMESTATE_ACTIVEPLAY && numberOfPlayers() == 2 && activePlayers() == ACTIVE_PLAYER1,
+        "Area {0}{1} ● Co-Op Game ● {2} and {3} Lives ● Scorpion Died",
+        rich_presence_lookup("Loop", gameBeatenOnce(), loopLookup),
+        rich_presence_value("Area", currentArea()),
+        rich_presence_lookup("Weapon", player1Weapon(), weaponNameLookup),
+        rich_presence_value("Lives", player1Lives()),
+        rich_presence_lookup("P2Weapon", player2Weapon(), weaponNameLookup),
+        rich_presence_value("P2Lives", player2Lives())
+    )
+
+    rich_presence_conditional_display(
+        gameState() ==  GAMESTATE_ACTIVEPLAY && numberOfPlayers() == 2 && activePlayers() == ACTIVE_PLAYER2,
+        "Area {0}{1} ● Co-Op Game ● Mad Dog Died ● {4} and {5} Lives",
+        rich_presence_value("Area", currentArea()),
+        rich_presence_lookup("Loop", gameBeatenOnce(), loopLookup),
+        rich_presence_lookup("Weapon", player1Weapon(), weaponNameLookup),
+        rich_presence_value("Lives", player1Lives()),
+        rich_presence_lookup("P2Weapon", player2Weapon(), weaponNameLookup),
+        rich_presence_value("P2Lives", player2Lives())
+    )
+
+    rich_presence_display(
+        "Preparing to fight Red Falcon"
+    )
+// #endregion Rich Presence
