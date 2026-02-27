@@ -966,13 +966,15 @@
 
     function triggerExtraLivesCode() {
         return
-            prev(cheatExtraLives()) == FALSE
+            gameScreen() == SCREEN_MAIN_MENU
+            && prev(cheatExtraLives()) == FALSE
             && cheatExtraLives() == TRUE
     }
 
     function triggerSoundMenuCode() {
         return
-            prev(gameState()) != GAMESTATE_SOUND_MODE
+            gameScreen() == SCREEN_MAIN_MENU
+            && prev(gameState()) != GAMESTATE_SOUND_MODE
             && gameState() == GAMESTATE_SOUND_MODE
     }
 
