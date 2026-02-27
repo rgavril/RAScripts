@@ -72,6 +72,7 @@
     function objectState(index) => byte(0x0668 + index)
     function objectHealth(index) => byte(0x0676 + index)
     function objectXPosition(index) => byte(0x053c + index)
+    function objectFlag0(index) => bit0(0x071e + index)
 // #endregion Memory Addresses
 
 // #region Frames
@@ -808,6 +809,7 @@
             any_of(range(0, 13), index =>
                    objectType(index)  == 0x03 // 0x03 ~ Running Soldier
                 && objectState(index) == 0x02 // 0x02 ~ Walking
+                && objectFlag0(index) == 1 // 1 ~ Walking from Left to Right
                 && prev(objectXPosition(index)) <  0xfe // 0xfe ~ Despawn Point Right Side of Screen
                 && objectXPosition(index) >= 0xfe // 0xfe ~ Despawn Point Right Side of Screen
             )
@@ -816,6 +818,7 @@
             any_of(range(0, 13), index =>
                    objectType(index)  == 0x03 // 0x03 ~ Running Soldier
                 && objectState(index) == 0x02 // 0x02 ~ Walking
+                && objectFlag0(index) == 0 // 0 ~ Walking from Right to Left
                 && prev(objectXPosition(index)) >  0x06 // 0x06 ~ Despawn Point of Left Side of Screen
                 && objectXPosition(index) <= 0x06 // 0x06 ~ Despawn Point of Left Side of Screen
             )
