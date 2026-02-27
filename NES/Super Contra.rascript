@@ -424,10 +424,9 @@
 
     function triggerArea4BossChallenge() {
         primingCondition = 
-            // A total of 9 (out of 9) Boss Cannons spawned
-            tally_of(range(0, 13), 9, index =>
-                prev(objectType(index)) != 0x43 // 0x43 ~ Boss Cannon
-                && objectType(index) == 0x43 // 0x43 ~ Boss Cannon
+            once(
+                prev(currentAreaVerticalPosition()) > 0x001a
+                && currentAreaVerticalPosition() == 0x0001a
             )
 
         cancelConditions =
@@ -443,38 +442,48 @@
                 && objectState(index) == 0x07 // 0x07 ~ Death Animation Start
             )
 
-        leftTurretDeath = 
-            any_of(range(0, 13), index => 
-                // If a Boss Cannon died
+        outermostTurretDied =
+            // Turret Died & First Object in the List (index 0)
+            (
+                objectType(0) == 0x43 // 0x43 ~ Boss Cannon
+                && prev(objectState(0)) != 0x07 // 0x07 ~ Death Animation Start
+                && objectState(0) == 0x07 // 0x07 ~ Death Animation Start
+
+            // Turret Died & First Turret in the List
+            ) || any_of(range(1, 13), index =>
                 objectType(index) == 0x43 // 0x43 ~ Boss Cannon
                 && prev(objectState(index)) != 0x07 // 0x07 ~ Death Animation Start
                 && objectState(index) == 0x07 // 0x07 ~ Death Animation Start
-                
-                // And is the left most object on the screen
-                && all_of(range(0, 13), index2 => 
-                    objectXPosition(index) <= objectXPosition(index2)
+
+                // It's First Turret
+                && none_of(range(0, index-1), index2 =>
+                    objectType(index2) == 0x43
                 )
+            
+            // Turret Died & Last Object in the List (index 13)
+            || (
+                objectType(13) == 0x43 // 0x43 ~ Boss Cannon
+                && prev(objectState(13)) != 0x07 // 0x07 ~ Death Animation Start
+                && objectState(13) == 0x07 // 0x07 ~ Death Animation Start
             )
 
-        rightTurretDeath = 
-            any_of(range(0, 13), index =>
-                // If a Boss Cannon died
+            // Turret Died & Last Turret in the List
+            ) || any_of(range(1, 12), index =>
                 objectType(index) == 0x43 // 0x43 ~ Boss Cannon
                 && prev(objectState(index)) != 0x07 // 0x07 ~ Death Animation Start
                 && objectState(index) == 0x07 // 0x07 ~ Death Animation Start
 
-                // And is the right most object on the screen
-                && all_of(range(0, 13), index2 => 
-                    objectXPosition(index) >= objectXPosition(index2)
+                // It Last Turret
+                && none_of(range(index+1, 13), index2 =>
+                    objectType(index2) == 0x43
                 )
             )
 
         return
             primingCondition
             && cancelConditions
+            && never(outermostTurretDied)
             && trigger_when(targetConditions)
-            && never(leftTurretDeath)
-            && never(rightTurretDeath)
     }
 
     function triggerArea5UphillChallenge() {
@@ -1185,8 +1194,6 @@
             trigger = triggerArea4RightSideAscend()
         )
 
-        // DISABLED TO SPEED UP RATOOLS, ENABLE ON CHANGES !
-        /*
         achievement(
             id = 50866,
             title = "Armed to the Teeth", // Central Void Execution
@@ -1194,7 +1201,7 @@
             points = 10,
             trigger = triggerArea4BossChallenge()
         )
-        */
+        
     // #endregion Area 4 Challenges
 
     // #region Area 5 Challenges
