@@ -1379,8 +1379,8 @@
         rich_presence_lookup("Loop", gameBeatenOnce(), loopLookup),
         rich_presence_lookup("Weapon", player1Weapon(), weaponNameLookup),
         rich_presence_value("Lives", player1Lives()),
-        rich_presence_lookup("P2Weapon", player2Weapon(), weaponNameLookup),
-        rich_presence_value("P2Lives", player2Lives())
+        rich_presence_lookup("Weapon", player2Weapon(), weaponNameLookup),
+        rich_presence_value("Lives", player2Lives())
     )
 
     rich_presence_conditional_display(
@@ -1390,8 +1390,8 @@
         rich_presence_value("Area", currentArea()),
         rich_presence_lookup("Weapon", player1Weapon(), weaponNameLookup),
         rich_presence_value("Lives", player1Lives()),
-        rich_presence_lookup("P2Weapon", player2Weapon(), weaponNameLookup),
-        rich_presence_value("P2Lives", player2Lives())
+        rich_presence_lookup("Weapon", player2Weapon(), weaponNameLookup),
+        rich_presence_value("Lives", player2Lives())
     )
 
     rich_presence_conditional_display(
@@ -1401,8 +1401,8 @@
         rich_presence_lookup("Loop", gameBeatenOnce(), loopLookup),
         rich_presence_lookup("Weapon", player1Weapon(), weaponNameLookup),
         rich_presence_value("Lives", player1Lives()),
-        rich_presence_lookup("P2Weapon", player2Weapon(), weaponNameLookup),
-        rich_presence_value("P2Lives", player2Lives())
+        rich_presence_lookup("Weapon", player2Weapon(), weaponNameLookup),
+        rich_presence_value("Lives", player2Lives())
     )
 
     rich_presence_display(
