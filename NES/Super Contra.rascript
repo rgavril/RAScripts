@@ -144,6 +144,7 @@
 
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY )
+            && never( cheatExtraLives() == TRUE )
             && never( currentArea() != 1 )
 
         greenSoldierKilledCondition =
@@ -1378,19 +1379,12 @@
         format = "SCORE",
         start =
             gameState() == GAMESTATE_ACTIVEPLAY
-            && once(
-                ( prev(gameScreen()) == SCREEN_MAIN_MENU || prev(gameScreen()) == SCREEN_CONTINUE )
-                && gameScreen() == SCREEN_AREA_INTRO
-            )
-            && never(
-                player1State() == PLAYERSTATE_DEATH_ANIMATION_END
-            )
-            && gameScreen() == SCREEN_GAMEPLAY
-            && player1State() == PLAYERSTATE_DEATH_ANIMATION_START,
+            && (prev(gameScreen()) == SCREEN_MAIN_MENU || prev(gameScreen()) == SCREEN_CONTINUE)
+            && gameScreen() == SCREEN_AREA_INTRO,
         cancel =
             always_false(),
         submit = 
-            always_true(),
+            framePlayer1Died(),
         value =
             player1Score()
     )
@@ -1400,7 +1394,8 @@
         leaderboard(
             title = "Speedrun Area " + areaNumber,
             description = "Fastest time to clear Area " + areaNumber,
-            format = "MILLISECS",
+            format = "TIME",
+            lower_is_better = true,
             start = 
                 currentArea() == areaNumber
                 && gameState() == GAMESTATE_ACTIVEPLAY
@@ -1420,15 +1415,16 @@
     // Leaderboard : Speedrun Full Game
     leaderboard(
         title = "Speedrun Full Game",
-        description = "Fastest time to finish the game without using continues",
-        format = "MILLISECS",
+        description = "Fastest time to finish the game on one credit",
+        format = "TIME",
+        lower_is_better = true,
         start =
             currentArea() == 1
             && gameState() == GAMESTATE_ACTIVEPLAY
             && prev(gameScreen()) != SCREEN_AREA_INTRO
             && gameScreen() == SCREEN_AREA_INTRO,
         cancel =
-            gameState() == SCREEN_GAME_OVER
+            gameScreen() == SCREEN_GAME_OVER
             || gameState() != GAMESTATE_ACTIVEPLAY
             ,
         submit =
