@@ -65,6 +65,7 @@
     PLAYERSTATE_DEATH_ANIMATION_START = 0x03
     PLAYERSTATE_DEATH_ANIMATION_END = 0x04
     PLAYERSTATE_DEAD = 0x05
+    function player1Score() => bcd(byte(0x07e3)) * 10 + bcd(byte(0x07e4)) * 1000 + bcd(byte(0x07e5)) * 100000
 
     function cheatExtraLives() => byte(0x07ec)
 
@@ -1347,6 +1348,97 @@
         )
     // #endregion Generic Challenges
 // #endregion Achievements
+
+// #region Leaderboards
+    // Leaderboard : High Score
+    leaderboard(
+        id = 2249,
+        title = "High Score One Credit",
+        description = "Highest score until game over using 3 lives",
+        format = "SCORE",
+        start =
+            gameState() == GAMESTATE_ACTIVEPLAY
+            && cheatExtraLives() == FALSE
+            && (prev(gameScreen()) == SCREEN_MAIN_MENU || prev(gameScreen()) == SCREEN_CONTINUE)
+            && gameScreen() == SCREEN_AREA_INTRO,
+        cancel =
+            always_false(),
+        submit = 
+            prev(gameScreen()) == SCREEN_GAMEPLAY
+            && gameScreen() == SCREEN_GAME_OVER_BOOT,
+        value =
+            player1Score()
+    )
+
+    // Leaderboard : High Score
+    leaderboard(
+        id = 2250,
+        title = "High Score First Life",
+        description = "Highest score achieved before first death",
+        format = "SCORE",
+        start =
+            gameState() == GAMESTATE_ACTIVEPLAY
+            && once(
+                ( prev(gameScreen()) == SCREEN_MAIN_MENU || prev(gameScreen()) == SCREEN_CONTINUE )
+                && gameScreen() == SCREEN_AREA_INTRO
+            )
+            && never(
+                player1State() == PLAYERSTATE_DEATH_ANIMATION_END
+            )
+            && gameScreen() == SCREEN_GAMEPLAY
+            && player1State() == PLAYERSTATE_DEATH_ANIMATION_START,
+        cancel =
+            always_false(),
+        submit = 
+            always_true(),
+        value =
+            player1Score()
+    )
+
+    // Leaderboard : Speedrun Area 1 to 8
+    for areaNumber in range(1,8) {
+        leaderboard(
+            title = "Speedrun Area " + areaNumber,
+            description = "Fastest time to clear Area " + areaNumber,
+            format = "MILLISECS",
+            start = 
+                currentArea() == areaNumber
+                && gameState() == GAMESTATE_ACTIVEPLAY
+                && prev(gameScreen()) != SCREEN_AREA_INTRO
+                && gameScreen() == SCREEN_AREA_INTRO,
+            cancel = 
+                gameScreen() == SCREEN_GAME_OVER,
+            submit =
+                prev(currentArea()) == areaNumber
+                && prev(gameScreen()) == SCREEN_AREA_COMPLETE
+                && currentArea() != areaNumber,
+            value =
+                measured(always_true())
+        )
+    }
+
+    // Leaderboard : Speedrun Full Game
+    leaderboard(
+        title = "Speedrun Full Game",
+        description = "Fastest time to finish the game without using continues",
+        format = "MILLISECS",
+        start =
+            currentArea() == 1
+            && gameState() == GAMESTATE_ACTIVEPLAY
+            && prev(gameScreen()) != SCREEN_AREA_INTRO
+            && gameScreen() == SCREEN_AREA_INTRO,
+        cancel =
+            gameState() == SCREEN_GAME_OVER
+            || gameState() != GAMESTATE_ACTIVEPLAY
+            ,
+        submit =
+            prev(currentArea()) == 8
+            && prev(gameScreen()) == SCREEN_AREA_COMPLETE
+            && currentArea() != 8,
+        value =
+            measured( always_true() )
+    )
+// #endregion Leaderboards
 
 // #region Rich Presence
     weaponNameLookup = {
