@@ -144,6 +144,7 @@
 
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( cheatExtraLives() == TRUE )
             && never( currentArea() != 1 )
 
@@ -174,6 +175,7 @@
     function triggerArea1BossChallange() {
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 1 )
             && never( cheatExtraLives() == TRUE )
             && never( numberOfPlayers() == 2 )
@@ -211,6 +213,7 @@
 
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 2 )
             && never( player1BackButton() == TRUE )
             && never( player2BackButton() == TRUE )
@@ -231,6 +234,7 @@
     function triggerArea2BossChallenge() {
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 2 )
             && never( cheatExtraLives() == TRUE )
             && never(
@@ -278,6 +282,7 @@
 
         cancelConditions = 
             never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 3 )
             && never( numberOfPlayers() == 2 )
             && never( player1ShootButton() == TRUE )
@@ -300,6 +305,7 @@
     function triggerArea3SpiderWalk() {
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 3 )
             && never( numberOfPlayers() == 2 )
             && never( currentAreaSection() != 0x0e ) // 0x0e ~ Spider Room
@@ -338,6 +344,7 @@
         
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 3 )
             && never( numberOfPlayers() == 2 )
             && never( 
@@ -368,6 +375,7 @@
 
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 3 )
             && never( cheatExtraLives() == TRUE )
             && never(
@@ -399,6 +407,7 @@
 
         cancelConditions =
                never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 4 )
 
         triggerConditions =
@@ -434,6 +443,7 @@
 
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 4 )
             && never( cheatExtraLives() == TRUE )
 
@@ -498,6 +508,7 @@
 
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 5 )
 
         runningSoldierKilled =
@@ -552,6 +563,7 @@
         
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 5 )
             && never( player1ShootButton() == TRUE )
             && never( player2ShootButton() == TRUE )
@@ -592,6 +604,7 @@
 
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 5 )
 
         skullDied = 
@@ -629,8 +642,10 @@
 
         cancelConditions =
                never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 6 )
             && never( numberOfPlayers() != 1 )
+            && never( framePlayer1Died() )
 
         enemiesKilled = 
             // Blue Spider Killed
@@ -681,6 +696,7 @@
 
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 6 )
             && never( cheatExtraLives() == TRUE )
             && never( player1ShootButton() == TRUE && player1Weapon() != WEAPON_STANDARD )
@@ -695,7 +711,8 @@
         targetConditions =
             any_of(range(0, 13), index =>
                 objectType(index) == 0x66 // 0x66 ~ Snake
-                && objectState(index) == 0x04 // 0x05 ~ Death Sequence Started
+                && prev(objectState(index)) != 0x04 // 0x04 ~ Death Sequence Started
+                && objectState(index) == 0x04 // 0x04 ~ Death Sequence Started
             )
 
         return
@@ -714,6 +731,7 @@
 
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 7 )
             && never( cheatExtraLives() == TRUE )
 
@@ -744,6 +762,7 @@
 
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 7 )
             && never( numberOfPlayers() == 2 )
 
@@ -767,6 +786,7 @@
     function triggerArea7BossChallenge() {
         cancelConditions =
                never( gameState() != GAMESTATE_ACTIVEPLAY )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 7 )
             && never( numberOfPlayers() != 1 )
             && never( player1ShootButton() == TRUE && player1Weapon() != WEAPON_STANDARD )
@@ -804,6 +824,7 @@
 
         cancelConditions =
                never( gameState() != GAMESTATE_ACTIVEPLAY  )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 8 )
             && never( cheatExtraLives() == TRUE )
 
@@ -840,6 +861,7 @@
     function triggerArea8BossChallange() {
         cancelConditions =
             never( gameState() != GAMESTATE_ACTIVEPLAY )
+            && never( gameScreen() == SCREEN_GAME_OVER )
             && never( currentArea() != 8 )
             && never( framePlayer1Died() )
 
