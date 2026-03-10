@@ -13,6 +13,15 @@
     function currentLevel() => byte(0x0059) + 1
     function secondChances() => byte(0x0064)
     function arrestedMade() => byte(0x0057) * 10 + byte(0x0056)
+    function score() => 
+          byte(0x005a)
+        + byte(0x005b) * 10
+        + byte(0x005c) * 100
+        + byte(0x005d) * 1000
+        + byte(0x005e) * 10000
+        + byte(0x005f) * 100000
+        + byte(0x0060) * 1000000
+        + byte(0x0061) * 10000000
 
     function gameplayAction() => byte(0x05d1)
     GAMEACTION_LEVEL_FINISHED = 0xff
@@ -88,6 +97,16 @@
             repeated(arrestsRequired, frameArrestMade() )
 
         return cancelConditions && measured(targetConditions)
+    }
+
+    function triggerScore(scoreRequired) {
+        return
+            demoGameplay() == FALSE
+            && livesRemaining() > 0
+            && prev(activePlayer()) == ACTIVE_PLAYER_1
+            && activePlayer() == ACTIVE_PLAYER_1
+            && prev(score()) < scoreRequired
+            && score() >= scoreRequired
     }
 // #endregion Triggers
 
@@ -287,7 +306,7 @@
             trigger = triggerLevelArrests(12, 5)
         )
 
-         achievement(
+        achievement(
             id = 44654,
             title = "Rooftop Savior", // Civic Centrum : The roof of the Centrum Building
             description = "Rescue all hostages in Level 13: Civic Centrum Roof",
@@ -295,4 +314,22 @@
             trigger = triggerLevelArrests(13, 6)
         )
     // #endregion Arrests
+
+    // #region Score Achievements
+        achievement(
+            id = 44628,
+            title = "I'd buy that for a dollar!",
+            description = "Earn a million points!",
+            points = 10,
+            trigger = triggerScore(1000000)
+        )
+
+        achievement(
+            id = 44629,
+            title = "I'd buy that for another dollar!",
+            description = "Earn two point five million points!",
+            points = 25,
+            trigger = triggerScore(2500000)
+        )
+    // #endregion Score Achievements
 // #endregion Achievements
