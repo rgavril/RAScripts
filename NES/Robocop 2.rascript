@@ -27,6 +27,11 @@
     GAMEACTION_LEVEL_FINISHED = 0xff
 
     function demoGameplay() => byte(0x059c)
+
+    function finalFightHealth() => byte(0x009f) * 10 + byte(0x00a0)
+    function finalFightRoundState() => byte(0x00a5)
+    FINALFIGHTROUND_ONGOING = 0x00
+    FINALFIGHTROUND_WON = 0x01
 // #endregion Memory Addresses
 
 // #region Frames
@@ -55,6 +60,12 @@
         return
             livesRemaining() == 0
             && prev(livesRemaining()) > 0
+    }
+
+    function frameFinalFightRoundWon() {
+        return
+            prev(finalFightRoundState()) == FINALFIGHTROUND_ONGOING
+            && finalFightRoundState() == FINALFIGHTROUND_WON
     }
 // #endregion Frames
 
@@ -107,6 +118,20 @@
             && activePlayer() == ACTIVE_PLAYER_1
             && prev(score()) < scoreRequired
             && score() >= scoreRequired
+    }
+
+    function triggerFinalFight() {
+        cancelConditions =
+            never( demoGameplay() == TRUE )
+            && never( activePlayer() != ACTIVE_PLAYER_1 )
+            && never( livesRemaining() == 0 )
+            && never( currentLevel() != 14 )
+            && never( finalFightHealth() == 0 )
+
+        targetConditions =
+            repeated(3, frameFinalFightRoundWon())
+
+        return cancelConditions && targetConditions
     }
 // #endregion Triggers
 
@@ -332,4 +357,22 @@
             trigger = triggerScore(2500000)
         )
     // #endregion Score Achievements
+
+    // #region Final Fight
+        achievement(
+            id = 44626,
+            title = "Robocop 2",
+            description = "Defeat Robocop 2 in the last battle",
+            points = 25,
+            trigger = triggerFinalFight()
+        )
+
+        achievement(
+            id = 44627,
+            title = "Robocop 2 Mastered",
+            description = "Defeat Robocop 2 in the final battle with more than 50 Health",
+            points = 25,
+            trigger = triggerFinalFight() && finalFightHealth() > 50
+        )
+    // #endregion Final Fight
 // #endregion Achievements
