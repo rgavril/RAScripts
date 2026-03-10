@@ -139,6 +139,7 @@
     // #region Stage Clears
         achievement(
             id = 44630,
+            type = "progression",
             title = "Towards the Nuke Lab",
             description = "Clear Level 1: River Rouge Complex Exterior",
             points = 5,
@@ -147,6 +148,7 @@
 
         achievement(
             id = 44632,
+            type = "progression",
             title = "Infiltrating the Nuke Lab",
             description = "Clear Level 2: River Rouge Interior, Part I",
             points = 5,
@@ -155,6 +157,7 @@
 
         achievement(
             id = 44634,
+            type = "progression",
             title = "Deep Inside the Nuke Lab",
             description = "Clear Level 3: River Rouge Interior, Part II",
             points = 5,
@@ -163,6 +166,7 @@
 
         achievement(
             id = 44636,
+            type = "progression",
             title = "Sludge Plant Approach",
             description = "Clear Level 4: The Sludge Plant",
             points = 5,
@@ -171,6 +175,7 @@
 
         achievement(
             id = 44638,
+            type = "progression",
             title = "The Sludge Deep",
             description = "Clear Level 5: Sludge Plant Interior",
             points = 5,
@@ -179,6 +184,7 @@
 
         achievement(
             id = 44640,
+            type = "progression",
             title = "Storming the HQ",
             description = "Clear Level 6: Nuke HQ Exterior",
             points = 5,
@@ -187,6 +193,7 @@
 
         achievement(
             id = 44642,
+            type = "progression",
             title = "Restricted Access Breach",
             description = "Clear Level 7: Nuke HQ Interior",
             points = 5,
@@ -195,6 +202,7 @@
 
         achievement(
             id = 44644,
+            type = "progression",
             title = "Goodbye Cain",
             description = "Defeat Cain and clear Level 8",
             points = 5,
@@ -203,6 +211,7 @@
 
         achievement(
             id = 44645,
+            type = "progression",
             title = "Ground Floor Flush",
             description = "Clear Level 9: Civic Centrum 1st Floor",
             points = 5,
@@ -211,6 +220,7 @@
 
         achievement(
             id = 44647,
+            type = "progression",
             title = "Middle Floor Sweep",
             description = "Clear Level 10: Civic Centrum 2nd Floor",
             points = 5,
@@ -219,6 +229,7 @@
 
         achievement(
             id = 44649,
+            type = "progression",
             title = "Upper Floor Assault",
             description = "Clear Level 11: Civic Centrum 3rd Floor",
             points = 5,
@@ -227,6 +238,7 @@
 
         achievement(
             id = 44651,
+            type = "progression",
             title = "Executive Floor Purge",
             description = "Clear Level 12: Civic Centrum 4th Floor",
             points = 5,
@@ -235,6 +247,7 @@
 
         achievement(
             id = 44653,
+            type = "progression",
             title = "Detroit Rooftop Showdown",
             description = "Clear Level 13: Civic Centrum Roof",
             points = 5,
@@ -364,7 +377,8 @@
             title = "Robocop 2",
             description = "Defeat Robocop 2 in the last battle",
             points = 25,
-            trigger = triggerFinalFight()
+            trigger = triggerFinalFight(),
+            type = "win_condition"
         )
 
         achievement(
@@ -376,3 +390,21 @@
         )
     // #endregion Final Fight
 // #endregion Achievements
+
+// #region Leaderboards
+    // Leaderboard : High Score
+    leaderboard(
+        title = "Highest Score",
+        description = "Aim for the highest score possible measured in units of 100 points",
+        format = "SCORE",
+        start = 
+            prev(demoGameplay()) == FALSE 
+            && prev(activePlayer()) == ACTIVE_PLAYER_1
+            && demoGameplay() == FALSE 
+            && activePlayer() == ACTIVE_PLAYER_1
+            && frameGameOver(),
+        cancel = always_false(),
+        submit = always_true(),
+        value = score() / 100
+    )
+// #endregion Leaderboards
