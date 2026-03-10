@@ -9,9 +9,10 @@
     ACTIVE_PLAYER_1 = 0x00
     ACTIVE_PLAYER_2 = 0x14
 
-    function livesRemaining() => byte(0x0058)
+    function livesRemaining() => byte(0x0058) + byte(0x008d)
     function currentLevel() => byte(0x0059) + 1
     function secondChances() => byte(0x0064)
+    function arrestedMade() => byte(0x0057) * 10 + byte(0x0056)
 
     function gameplayAction() => byte(0x05d1)
     GAMEACTION_LEVEL_FINISHED = 0xff
@@ -29,6 +30,22 @@
     function frameSecondChanceUsed() {
         return
             secondChances() != prev(secondChances())
+    }
+
+    function frameArrestMade() {
+        return
+            arrestedMade() != prev(arrestedMade())
+    }
+
+    function framePlayerDied() {
+        return
+            livesRemaining() < prev(livesRemaining())
+    }
+
+    function frameGameOver() {
+        return
+            livesRemaining() == 0
+            && prev(livesRemaining()) > 0
     }
 // #endregion Frames
 
@@ -54,9 +71,23 @@
         return
             demoGameplay() == FALSE
             && activePlayer() == ACTIVE_PLAYER_1
-            && livesRemaining() > 0
             && currentLevel() == level
+            && livesRemaining() > 0
             && frameLevelCleared()
+    }
+
+    function triggerLevelArrests(level, arrestsRequired) {
+        cancelConditions =
+            never( demoGameplay() == TRUE )
+            && never( activePlayer() != ACTIVE_PLAYER_1 )
+            && never( currentLevel() != level )
+            && never( frameGameOver() )
+            && never( framePlayerDied() )
+
+        targetConditions =
+            repeated(arrestsRequired, frameArrestMade() )
+
+        return cancelConditions && measured(targetConditions)
     }
 // #endregion Triggers
 
@@ -64,7 +95,7 @@
     // #region Stage Clears
         achievement(
             id = 44630,
-            title = "River Rouge",
+            title = "Towards the Nuke Lab",
             description = "Clear Level 1: River Rouge Complex Exterior",
             points = 5,
             trigger = triggerLevelClear(1)
@@ -72,7 +103,7 @@
 
         achievement(
             id = 44632,
-            title = "Nuke Lab",
+            title = "Infiltrating the Nuke Lab",
             description = "Clear Level 2: River Rouge Interior, Part I",
             points = 5,
             trigger = triggerLevelClear(2)
@@ -80,7 +111,7 @@
 
         achievement(
             id = 44634,
-            title = "Nuke Store",
+            title = "Deep Inside the Nuke Lab",
             description = "Clear Level 3: River Rouge Interior, Part II",
             points = 5,
             trigger = triggerLevelClear(3)
@@ -88,7 +119,7 @@
 
         achievement(
             id = 44636,
-            title = "Sludge Plant",
+            title = "Sludge Plant Approach",
             description = "Clear Level 4: The Sludge Plant",
             points = 5,
             trigger = triggerLevelClear(4)
@@ -96,7 +127,7 @@
 
         achievement(
             id = 44638,
-            title = "Inside Sludge Plant",
+            title = "The Sludge Deep",
             description = "Clear Level 5: Sludge Plant Interior",
             points = 5,
             trigger = triggerLevelClear(5)
@@ -104,7 +135,7 @@
 
         achievement(
             id = 44640,
-            title = "Factory Unit",
+            title = "Storming the HQ",
             description = "Clear Level 6: Nuke HQ Exterior",
             points = 5,
             trigger = triggerLevelClear(6)
@@ -112,23 +143,23 @@
 
         achievement(
             id = 44642,
-            title = "Restricted Zone",
-            description = "Clear Level 7: Nuke Interior",
+            title = "Restricted Access Breach",
+            description = "Clear Level 7: Nuke HQ Interior",
             points = 5,
             trigger = triggerLevelClear(7)
         )
 
         achievement(
             id = 44644,
-            title = "Nuke HQ",
-            description = "Clear Level 8: Cain",
+            title = "Goodbye Cain",
+            description = "Defeat Cain and clear Level 8",
             points = 5,
             trigger = triggerLevelClear(8)
         )
 
         achievement(
             id = 44645,
-            title = "Civic Centrum 1",
+            title = "Ground Floor Flush",
             description = "Clear Level 9: Civic Centrum 1st Floor",
             points = 5,
             trigger = triggerLevelClear(9)
@@ -136,7 +167,7 @@
 
         achievement(
             id = 44647,
-            title = "Civic Centrum 2",
+            title = "Middle Floor Sweep",
             description = "Clear Level 10: Civic Centrum 2nd Floor",
             points = 5,
             trigger = triggerLevelClear(10)
@@ -144,7 +175,7 @@
 
         achievement(
             id = 44649,
-            title = "Civic Centrum 3",
+            title = "Upper Floor Assault",
             description = "Clear Level 11: Civic Centrum 3rd Floor",
             points = 5,
             trigger = triggerLevelClear(11)
@@ -152,7 +183,7 @@
 
         achievement(
             id = 44651,
-            title = "Civic Centrum 4",
+            title = "Executive Floor Purge",
             description = "Clear Level 12: Civic Centrum 4th Floor",
             points = 5,
             trigger = triggerLevelClear(12)
@@ -160,10 +191,108 @@
 
         achievement(
             id = 44653,
-            title = "Centrum Roof",
+            title = "Detroit Rooftop Showdown",
             description = "Clear Level 13: Civic Centrum Roof",
             points = 5,
             trigger = triggerLevelClear(13)
         )
     // #endregion Stage Clears
+
+    // #region Arrests
+        achievement(
+            id = 44631,
+            title = "The River Rouge Bust", // River Rouge
+            description = "Arrest all target villains in Level 1: River Rouge Complex Exterior",
+            points = 10,
+            trigger = triggerLevelArrests(1, 5)
+        )
+
+        achievement(
+            id = 44633,
+            title = "River Rouge Rescue Operation I", // River Rouge
+            description = "Rescue all hostages in Level 2: River Rouge Interior, Part I",
+            points = 10,
+            trigger = triggerLevelArrests(2, 5)
+        )
+
+        achievement(
+            id = 44635,
+            title = "River Rouge Rescue Operation II", // River Rouge
+            description = "Rescue all hostages in Level 3: River Rouge Interior, Part II",
+            points = 10,
+            trigger = triggerLevelArrests(3, 5)
+        )
+
+        achievement(
+            id = 44637,
+            title = "The Sludge Plant Bust", // Sludge Plant
+            description = "Apprehend all suspects in Level 4: The Sludge Plant",
+            points = 10,
+            trigger = triggerLevelArrests(4, 5)
+        )
+
+        achievement(
+            id = 44639,
+            title = "Sludge Plant Rescue Operation", // Sludge Plant
+            description = "Rescue all hostages in Level 5: Sludge Plant Interior",
+            points = 10,
+            trigger = triggerLevelArrests(5, 5)
+        )
+
+        achievement(
+            id = 44641,
+            title = "The Nuke HQ Bust", // Nuke HQ : Factory unit in the restricted zone
+            description = "Arrest all target villains in Level 6: Nuke HQ Exterior",
+            points = 10,
+            trigger = triggerLevelArrests(6, 5)
+        )
+
+        achievement(
+            id = 44643,
+            title = "Nuke HQ Rescue Operation", // Nuke HQ
+            description = "Rescue all hostages in Level 7: Nuke HQ Interior",
+            points = 10,
+            trigger = triggerLevelArrests(7, 6)
+        )
+
+        achievement(
+            id = 44646,
+            title = "Civic Centrum Rescue Operation I", // Civic Centrum : The new civic centrum building
+            description = "Rescue all hostages in Level 9: Civic Centrum 1st Floor",
+            points = 10,
+            trigger = triggerLevelArrests(9, 5)
+        )
+
+        achievement(
+            id = 44648,
+            title = "Civic Centrum Rescue Operation II", // Civic Centrum
+            description = "Rescue all hostages in Level 10: Civic Centrum 2nd Floor",
+            points = 10,
+            trigger = triggerLevelArrests(10, 5)
+        )
+
+        achievement(
+            id = 44650,
+            title = "Civic Centrum Data Recovery I", // Civic Centrum
+            description = "Reclaim all memory units in Level 11: Civic Centrum 3rd Floor",
+            points = 10,
+            trigger = triggerLevelArrests(11, 5)
+        )
+
+        achievement(
+            id = 44652,
+            title = "Civic Centrum Data Recovery II", // Civic Centrum
+            description = "Reclaim all memory units in Level 12: Civic Centrum 4th Floor",
+            points = 10,
+            trigger = triggerLevelArrests(12, 5)
+        )
+
+         achievement(
+            id = 44654,
+            title = "Rooftop Savior", // Civic Centrum : The roof of the Centrum Building
+            description = "Rescue all hostages in Level 13: Civic Centrum Roof",
+            points = 10,
+            trigger = triggerLevelArrests(13, 6)
+        )
+    // #endregion Arrests
 // #endregion Achievements
