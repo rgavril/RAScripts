@@ -9,10 +9,13 @@
     ACTIVE_PLAYER_1 = 0x00
     ACTIVE_PLAYER_2 = 0x14
 
-    function livesRemaining() => byte(0x0058) + byte(0x008d)
+    function unstableLivesRemaining() => byte(0x0058)
+    function totalLivesRemaining() => byte(0x0058) + byte(0x008d)
     function currentLevel() => byte(0x0059) + 1
     function secondChances() => byte(0x0064)
     function arrestedMade() => byte(0x0057) * 10 + byte(0x0056)
+    function health() => byte(0x0054) + byte(0x0055) * 10
+    function nukesCollected() => byte(0x0052) + byte(0x0053) * 10
     function score() => 
           byte(0x005a)
         + byte(0x005b) * 10
@@ -28,6 +31,7 @@
 
     function demoGameplay() => byte(0x059c)
 
+    function finalFightRound() => byte(0x00a7) + 1
     function finalFightHealth() => byte(0x009f) * 10 + byte(0x00a0)
     function finalFightRoundState() => byte(0x00a5)
     FINALFIGHTROUND_ONGOING = 0x00
@@ -53,13 +57,13 @@
 
     function framePlayerDied() {
         return
-            livesRemaining() < prev(livesRemaining())
+            totalLivesRemaining() < prev(totalLivesRemaining())
     }
 
     function frameGameOver() {
         return
-            livesRemaining() == 0
-            && prev(livesRemaining()) > 0
+            totalLivesRemaining() == 0
+            && prev(totalLivesRemaining()) > 0
     }
 
     function frameFinalFightRoundWon() {
@@ -75,7 +79,7 @@
             once ( currentLevel() == level && frameLevelCleared() )
 
         cancelConditions =
-            never( livesRemaining() == 0 )
+            never( totalLivesRemaining() == 0 )
             && never( demoGameplay() == TRUE )
             && never( activePlayer() != ACTIVE_PLAYER_1 )
             && never( frameSecondChanceUsed() )
@@ -92,7 +96,7 @@
             demoGameplay() == FALSE
             && activePlayer() == ACTIVE_PLAYER_1
             && currentLevel() == level
-            && livesRemaining() > 0
+            && totalLivesRemaining() > 0
             && frameLevelCleared()
     }
 
@@ -113,7 +117,7 @@
     function triggerScore(scoreRequired) {
         return
             demoGameplay() == FALSE
-            && livesRemaining() > 0
+            && totalLivesRemaining() > 0
             && prev(activePlayer()) == ACTIVE_PLAYER_1
             && activePlayer() == ACTIVE_PLAYER_1
             && prev(score()) < scoreRequired
@@ -124,7 +128,7 @@
         cancelConditions =
             never( demoGameplay() == TRUE )
             && never( activePlayer() != ACTIVE_PLAYER_1 )
-            && never( livesRemaining() == 0 )
+            && never( totalLivesRemaining() == 0 )
             && never( currentLevel() != 14 )
             && never( finalFightHealth() == 0 )
 
@@ -408,3 +412,53 @@
         value = score() / 100
     )
 // #endregion Leaderboards
+
+// #region Rich Presence
+    zeroPaddedLookup = {
+        0: "0",
+        1: "0",
+        2: "0",
+        3: "0",
+        4: "0",
+        5: "0",
+        6: "0",
+        7: "0",
+        8: "0",
+        9: "0"
+    }
+
+    rich_presence_conditional_display(
+        demoGameplay() == FALSE && activePlayer() == ACTIVE_PLAYER_1 && unstableLivesRemaining() > 0 && currentLevel() < 14,
+        
+        "Level {0} ● {1} Lives ● 🧪 {2}{3} ● 🙋🏻 0{4} ● ⚡️ {5}{6} ● Score {7}",
+        // Level 1 ● 3 Lives ● 🧪 00 🙋🏻 01 ⚡️ 12 ● Score 1234
+        rich_presence_value("Level", currentLevel()),
+        rich_presence_value("Lives", unstableLivesRemaining()),
+        rich_presence_lookup("ZeroPadding", nukesCollected(), zeroPaddedLookup),
+        rich_presence_value("Nukes", nukesCollected()),
+        rich_presence_value("Arrests", arrestedMade()),
+        rich_presence_lookup("ZeroPadding", health(), zeroPaddedLookup),
+        rich_presence_value("Health", health()),
+        rich_presence_macro("Score", score())
+    )
+
+    rich_presence_conditional_display(
+        demoGameplay() == FALSE && activePlayer() == ACTIVE_PLAYER_1 && unstableLivesRemaining() > 0 && currentLevel() == 14,
+        
+        "Level {0} ● {1} Lives ● Round {2} ● ⚡️{3}{4} vs ⚡️{5}{6} ● Score {7}",
+        // Level 14 ● 3 Lives ● Round 1 ● ⚡️30 vs ⚡️99 ● Score 1234
+        rich_presence_value("Level", currentLevel()),
+        rich_presence_value("Lives", unstableLivesRemaining()),
+        rich_presence_value("Round", finalFightRound()),
+        rich_presence_value("Health_0X", byte(0x9f)), // Health Tens
+        rich_presence_value("Health_X0", byte(0xa0)), // Health Units
+        rich_presence_value("Health_0X_Enemy", byte(0xa1)), // Health Tens Enemy
+        rich_presence_value("Health_X0_Enemy", byte(0xa2)), // Health Units Enemy
+        rich_presence_macro("Score", score())
+    )
+
+    // Rich Presence : Default
+    rich_presence_display(
+        "Preparing to uphold the law"
+    )
+// #endregion Rich Presence
