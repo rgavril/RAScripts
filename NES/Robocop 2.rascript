@@ -13,7 +13,7 @@
     function totalLivesRemaining() => byte(0x0058) + byte(0x008d)
     function currentLevel() => byte(0x0059) + 1
     function secondChances() => byte(0x0064)
-    function arrestedMade() => byte(0x0057) * 10 + byte(0x0056)
+    function arrestsMade() => byte(0x0057) * 10 + byte(0x0056)
     function health() => byte(0x0054) + byte(0x0055) * 10
     function nukesCollected() => byte(0x0052) + byte(0x0053) * 10
     function score() => 
@@ -52,7 +52,7 @@
 
     function frameArrestMade() {
         return
-            arrestedMade() != prev(arrestedMade())
+            arrestsMade() != prev(arrestsMade())
     }
 
     function framePlayerDied() {
@@ -101,17 +101,13 @@
     }
 
     function triggerLevelArrests(level, arrestsRequired) {
-        cancelConditions =
-            never( demoGameplay() == TRUE )
-            && never( activePlayer() != ACTIVE_PLAYER_1 )
-            && never( currentLevel() != level )
-            && never( frameGameOver() )
-            && never( framePlayerDied() )
-
-        targetConditions =
-            repeated(arrestsRequired, frameArrestMade() )
-
-        return cancelConditions && measured(targetConditions)
+        return
+            demoGameplay() == FALSE
+            && activePlayer() == ACTIVE_PLAYER_1
+            && currentLevel() == level
+            && totalLivesRemaining() > 0
+            && prev(arrestsMade()) < arrestsRequired
+            && arrestsMade() == arrestsRequired
     }
 
     function triggerScore(scoreRequired) {
@@ -436,7 +432,7 @@
         rich_presence_value("Lives", unstableLivesRemaining()),
         rich_presence_lookup("ZeroPadding", nukesCollected(), zeroPaddedLookup),
         rich_presence_value("Nukes", nukesCollected()),
-        rich_presence_value("Arrests", arrestedMade()),
+        rich_presence_value("Arrests", arrestsMade()),
         rich_presence_lookup("ZeroPadding", health(), zeroPaddedLookup),
         rich_presence_value("Health", health()),
         rich_presence_macro("Score", score())
