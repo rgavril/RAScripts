@@ -318,16 +318,16 @@
     // #region Score Achievements
         achievement(
             id = 44628,
-            title = "I'd buy that for a dollar!",
-            description = "Earn a million points!",
+            title = "I'd Buy That for a Dollar!",
+            description = "Score more than 1,000,000 points",
             points = 10,
             trigger = triggerScore(1000000)
         )
 
         achievement(
             id = 44629,
-            title = "I'd buy that for another dollar!",
-            description = "Earn two point five million points!",
+            title = "I'd Buy That for Another Dollar!",
+            description = "Score more than 2,500,000 points",
             points = 25,
             trigger = triggerScore(2500000)
         )
