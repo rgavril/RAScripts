@@ -133,6 +133,14 @@
 
         return cancelConditions && targetConditions
     }
+
+    function triggerPuzzleCompleted(puzzleLevel) {
+        return
+            demoGameplay() == FALSE
+            && activePlayer() == ACTIVE_PLAYER_1
+            && currentLevel() == puzzleLevel
+            && unstableLivesRemaining() > prev(unstableLivesRemaining())
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -389,6 +397,39 @@
             trigger = triggerFinalFight() && finalFightHealth() > 50
         )
     // #endregion Final Fight
+
+    // #region Secret Area Achivement
+        // Level 1 Secret Area : Secret Nuke Store (Sewer)
+        achievement(
+            title = "River Rouge Sewers",
+            description = "Find and complete the secret area from Level 1",
+            points = 5,
+            trigger = triggerLevelClear(0x11+1)
+        )
+
+        // Level 3 Secret Area : Hidden Nuke Store (Hover Pad)
+        achievement(
+            title = "Nuke Lab Hidden Store",
+            description = "Find and complete the secret area from Level 3",
+            points = 5,
+            trigger = triggerLevelClear(0x13+1)
+        )
+
+        // Level 4 Secret Area : Secret Nuke Store (Sewer)
+        achievement(
+            title = "Sludge Plant Sewers",
+            description = "Find and complete the secret area from Level 4",
+            points = 5,
+            trigger = triggerLevelClear(0x12+1)
+        )
+
+        achievement(
+            title = "Puzzle Master",
+            description = "Find and complete the secret area from Level 5",
+            points = 5,
+            trigger = triggerPuzzleCompleted(0x14+1)
+        )
+    //
 // #endregion Achievements
 
 // #region Leaderboards
