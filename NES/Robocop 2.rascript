@@ -74,28 +74,27 @@
 // #endregion Frames
 
 // #region Triggers
-    function triggerLevelClearNoCalibration(level) {
-        checkpointConditions = 
-            once ( currentLevel() == level && frameLevelCleared() )
-
-        cancelConditions =
-            never( totalLivesRemaining() == 0 )
-            && never( demoGameplay() == TRUE )
-            && never( activePlayer() != ACTIVE_PLAYER_1 )
-            && never( frameSecondChanceUsed() )
-
-        targetConditions =
-            prev(currentLevel()) == level
-            && currentLevel() == level+1
-
-        return checkpointConditions && cancelConditions && targetConditions
-    }
-
     function triggerLevelClear(level) {
         return
             demoGameplay() == FALSE
             && activePlayer() == ACTIVE_PLAYER_1
             && currentLevel() == level
+            && totalLivesRemaining() > 0
+            && frameLevelCleared()
+            
+            // Level Select Cheat Protection
+            && unless(once(
+                    unstableLivesRemaining() == 0 
+                    && currentLevel() != prev(currentLevel())
+                    && never(currentLevel() == 1)
+            ))
+    }
+
+    function triggerSecretLevelClear(secretLevelID) {
+        return
+            demoGameplay() == FALSE
+            && activePlayer() == ACTIVE_PLAYER_1
+            && currentLevel() == secretLevelID + 1
             && totalLivesRemaining() > 0
             && frameLevelCleared()
     }
@@ -149,7 +148,7 @@
             id = 44630,
             type = "progression",
             title = "Towards the Nuke Lab",
-            description = "Clear Level 1: River Rouge Complex Exterior",
+            description = "Clear Level 1: River Rouge Complex Exterior without using level select",
             points = 5,
             trigger = triggerLevelClear(1)
         )
@@ -158,7 +157,7 @@
             id = 44632,
             type = "progression",
             title = "Infiltrating the Nuke Lab",
-            description = "Clear Level 2: River Rouge Interior, Part I",
+            description = "Clear Level 2: River Rouge Interior, Part I without using level select",
             points = 5,
             trigger = triggerLevelClear(2)
         )
@@ -167,7 +166,7 @@
             id = 44634,
             type = "progression",
             title = "Deep Inside the Nuke Lab",
-            description = "Clear Level 3: River Rouge Interior, Part II",
+            description = "Clear Level 3: River Rouge Interior, Part II without using level select",
             points = 5,
             trigger = triggerLevelClear(3)
         )
@@ -176,7 +175,7 @@
             id = 44636,
             type = "progression",
             title = "Sludge Plant Approach",
-            description = "Clear Level 4: The Sludge Plant",
+            description = "Clear Level 4: The Sludge Plant without using level select",
             points = 5,
             trigger = triggerLevelClear(4)
         )
@@ -185,7 +184,7 @@
             id = 44638,
             type = "progression",
             title = "The Sludge Deep",
-            description = "Clear Level 5: Sludge Plant Interior",
+            description = "Clear Level 5: Sludge Plant Interior without using level select",
             points = 5,
             trigger = triggerLevelClear(5)
         )
@@ -194,7 +193,7 @@
             id = 44640,
             type = "progression",
             title = "Storming the HQ",
-            description = "Clear Level 6: Nuke HQ Exterior",
+            description = "Clear Level 6: Nuke HQ Exterior without using level select",
             points = 5,
             trigger = triggerLevelClear(6)
         )
@@ -203,7 +202,7 @@
             id = 44642,
             type = "progression",
             title = "Restricted Access Breach",
-            description = "Clear Level 7: Nuke HQ Interior",
+            description = "Clear Level 7: Nuke HQ Interior without using level select",
             points = 5,
             trigger = triggerLevelClear(7)
         )
@@ -212,7 +211,7 @@
             id = 44644,
             type = "progression",
             title = "Goodbye Cain",
-            description = "Defeat Cain and clear Level 8",
+            description = "Defeat Cain and clear Level 8 without using level select",
             points = 5,
             trigger = triggerLevelClear(8)
         )
@@ -221,7 +220,7 @@
             id = 44645,
             type = "progression",
             title = "Ground Floor Flush",
-            description = "Clear Level 9: Civic Centrum 1st Floor",
+            description = "Clear Level 9: Civic Centrum 1st Floor without using level select",
             points = 5,
             trigger = triggerLevelClear(9)
         )
@@ -230,7 +229,7 @@
             id = 44647,
             type = "progression",
             title = "Middle Floor Sweep",
-            description = "Clear Level 10: Civic Centrum 2nd Floor",
+            description = "Clear Level 10: Civic Centrum 2nd Floor without using level select",
             points = 5,
             trigger = triggerLevelClear(10)
         )
@@ -239,7 +238,7 @@
             id = 44649,
             type = "progression",
             title = "Upper Floor Assault",
-            description = "Clear Level 11: Civic Centrum 3rd Floor",
+            description = "Clear Level 11: Civic Centrum 3rd Floor without using level select",
             points = 5,
             trigger = triggerLevelClear(11)
         )
@@ -248,7 +247,7 @@
             id = 44651,
             type = "progression",
             title = "Executive Floor Purge",
-            description = "Clear Level 12: Civic Centrum 4th Floor",
+            description = "Clear Level 12: Civic Centrum 4th Floor without using level select",
             points = 5,
             trigger = triggerLevelClear(12)
         )
@@ -257,7 +256,7 @@
             id = 44653,
             type = "progression",
             title = "Detroit Rooftop Showdown",
-            description = "Clear Level 13: Civic Centrum Roof",
+            description = "Clear Level 13: Civic Centrum Roof without using level select",
             points = 5,
             trigger = triggerLevelClear(13)
         )
@@ -404,7 +403,7 @@
             title = "River Rouge Sewers",
             description = "Find and complete the secret area from Level 1",
             points = 5,
-            trigger = triggerLevelClear(0x11+1)
+            trigger = triggerSecretLevelClear(0x11)
         )
 
         // Level 3 Secret Area : Hidden Nuke Store (Hover Pad)
@@ -412,7 +411,7 @@
             title = "Nuke Lab Hidden Store",
             description = "Find and complete the secret area from Level 3",
             points = 5,
-            trigger = triggerLevelClear(0x13+1)
+            trigger = triggerSecretLevelClear(0x13)
         )
 
         // Level 4 Secret Area : Secret Nuke Store (Sewer)
@@ -420,7 +419,7 @@
             title = "Sludge Plant Sewers",
             description = "Find and complete the secret area from Level 4",
             points = 5,
-            trigger = triggerLevelClear(0x12+1)
+            trigger = triggerSecretLevelClear(0x12)
         )
 
         achievement(
