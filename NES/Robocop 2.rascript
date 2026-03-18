@@ -148,6 +148,16 @@
             && currentLevel() == puzzleLevel
             && unstableLivesRemaining() > prev(unstableLivesRemaining())
     }
+
+    function triggerNukeDestruction(level, nukesRequired) {
+        return
+            demoGameplay() == FALSE
+            && activePlayer() == ACTIVE_PLAYER_1
+            && currentLevel() == level
+            && totalLivesRemaining() > 0
+            && prev(nukesCollected()) < nukesRequired
+            && nukesCollected() >= nukesRequired
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -367,6 +377,92 @@
             trigger = triggerLevelArrests(13, 6)
         )
     // #endregion Arrests
+
+    // #region Nuke Destruction Achievements
+        achievement(
+            title = "Rouge Perimeter Purge",
+            description = "Destroy 31 nuke canisters in Level 1",
+            points = 10,
+            trigger = triggerNukeDestruction(1, 31)
+        )
+
+        achievement(
+            title = "Gearing for a Bust",
+            description = "Destroy 8 nuke canisters in Level 2",
+            points = 10,
+            trigger = triggerNukeDestruction(2, 8)
+        )
+
+        achievement(
+            title = "Aerial Search and Destroy",
+            description = "Destroy 16 nuke canisters in Level 3",
+            points = 10,
+            trigger = triggerNukeDestruction(3, 16)
+        )
+
+        achievement(
+            title = "Toxic Environment Cleanup",
+            description = "Destroy 17 nuke canisters in Level 4",
+            points = 10,
+            trigger = triggerNukeDestruction(4, 17)
+        )
+
+        achievement(
+            title = "Lab-Grade Liquidation",
+            description = "Destroy 11 nuke canisters in Level 5",
+            points = 10,
+            trigger = triggerNukeDestruction(5, 11)
+        )
+
+        achievement(
+            title = "Street-Level Shutdown",
+            description = "Destroy 7 nuke canisters in Level 6",
+            points = 10,
+            trigger = triggerNukeDestruction(6, 7)
+        )
+
+        achievement(
+            title = "Headquarters Haul",
+            description = "Destroy 10 nuke canisters in Level 7",
+            points = 10,
+            trigger = triggerNukeDestruction(7, 10)
+        )
+
+        achievement(
+            title = "Drug Free Lobby",
+            description = "Destroy 8 nuke canisters in Level 9",
+            points = 10,
+            trigger = triggerNukeDestruction(9, 8)
+        )
+
+        achievement(
+            title = "Second Floor Sanitation",
+            description = "Destroy 9 nuke canisters in Level 10",
+            points = 10,
+            trigger = triggerNukeDestruction(10, 9)
+        )
+
+        achievement(
+            title = "Third Floor Decontamination",
+            description = "Destroy 11 nuke canisters in Level 11",
+            points = 10,
+            trigger = triggerNukeDestruction(11, 11)
+        )
+
+        achievement(
+            title = "Top Evidence Collection",
+            description = "Destroy 9 nuke canisters in Level 12",
+            points = 10,
+            trigger = triggerNukeDestruction(12, 9)
+        )
+
+        achievement(
+            title = "Rooftop Party Pooper",
+            description = "Destroy 9 nuke canisters in Level 13",
+            points = 10,
+            trigger = triggerNukeDestruction(13, 9)
+        )
+    // #endregion Nuke Destruction Achievements
 
     // #region Score Achievements
         achievement(
