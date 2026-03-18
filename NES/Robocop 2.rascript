@@ -158,6 +158,15 @@
             && prev(nukesCollected()) < nukesRequired
             && nukesCollected() >= nukesRequired
     }
+
+    function triggerHealthChallenge(healthRequired) {
+        return
+            demoGameplay() == FALSE
+            && activePlayer() == ACTIVE_PLAYER_1
+            && totalLivesRemaining() > 0
+            && frameLevelCleared()
+            && health() >= healthRequired
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -566,6 +575,15 @@
             trigger = triggerPuzzleCompleted(LEVEL_11_SECRET)
         )
     // #endregion Secret Area Achivement
+
+    // #region Other Achievements
+        achievement(
+            title = "Renewable Energy",
+            description = "Complete a regular level with more than 50 health remaining",
+            points = 25,
+            trigger = triggerHealthChallenge(50)
+        )
+    // #endregion Other Achievements
 // #endregion Achievements
 
 // #region Leaderboards
