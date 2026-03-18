@@ -12,6 +12,14 @@
     function unstableLivesRemaining() => byte(0x0058)
     function totalLivesRemaining() => byte(0x0058) + byte(0x008d)
     function currentLevel() => byte(0x0059) + 1
+    LEVEL_1_SECRET = 0x11
+    LEVEL_3_SECRET = 0x13
+    LEVEL_4_SECRET = 0x12
+    LEVEL_5_SECRET = 0x14
+    LEVEL_6_SECRET = 0x18
+    LEVEL_9_SECRET = 0x16
+    LEVEL_10_SECRET = 0x15
+    LEVEL_11_SECRET = 0x17
     function secondChances() => byte(0x0064)
     function arrestsMade() => byte(0x0057) * 10 + byte(0x0056)
     function health() => byte(0x0054) + byte(0x0055) * 10
@@ -402,33 +410,66 @@
         achievement(
             title = "River Rouge Sewers",
             description = "Find and complete the secret area from Level 1",
-            points = 5,
-            trigger = triggerSecretLevelClear(0x11)
+            points = 10,
+            trigger = triggerSecretLevelClear(LEVEL_1_SECRET)
         )
 
         // Level 3 Secret Area : Hidden Nuke Store (Hover Pad)
         achievement(
             title = "Nuke Lab Hidden Store",
             description = "Find and complete the secret area from Level 3",
-            points = 5,
-            trigger = triggerSecretLevelClear(0x13)
+            points = 10,
+            trigger = triggerSecretLevelClear(LEVEL_3_SECRET)
         )
 
         // Level 4 Secret Area : Secret Nuke Store (Sewer)
         achievement(
             title = "Sludge Plant Sewers",
             description = "Find and complete the secret area from Level 4",
-            points = 5,
-            trigger = triggerSecretLevelClear(0x12)
+            points = 10,
+            trigger = triggerSecretLevelClear(LEVEL_4_SECRET)
         )
 
+        // Level 5 Secret Area : Puzzle Minigame
         achievement(
-            title = "Puzzle Master",
-            description = "Find and complete the secret area from Level 5",
+            title = "Flashbacks of the Past",
+            description = "Discover the bonus area from Level 5 and solve the puzzle",
             points = 5,
-            trigger = triggerPuzzleCompleted(0x14+1)
+            trigger = triggerPuzzleCompleted(LEVEL_5_SECRET)
         )
-    //
+
+        // Level 6 Secret Area : Aim Test
+        achievement(
+            title = "Sharpshooter",
+            description = "Discover the bonus area from Level 6 and complete the aim test",
+            points = 5,
+            trigger = triggerPuzzleCompleted(LEVEL_6_SECRET)
+        )
+
+        // Level 9 Secret Area : Crack the Code
+        achievement(
+            title = "1st Floor Safecracker",
+            description = "Discover the secret strongroom from Level 9 and crack the code",
+            points = 5,
+            trigger = triggerPuzzleCompleted(LEVEL_9_SECRET)
+        )
+
+        // Level 10 Secret Area : Puzzle Minigame
+        achievement(
+            title = "I am Alex Murphy!",
+            description = "Discover the bonus area from Level 10 and solve the puzzle",
+            points = 5,
+            trigger = triggerPuzzleCompleted(LEVEL_10_SECRET)
+        )
+
+        // Level 11 Secret Area : Crack the Code
+        achievement(
+            title = "3rd Floor Safecracker",
+            description = "Discover the secret strongroom from Level 11 and crack the code",
+            points = 5,
+            trigger = triggerPuzzleCompleted(LEVEL_11_SECRET)
+        )
+    // #endregion Secret Area Achivement
 // #endregion Achievements
 
 // #region Leaderboards
