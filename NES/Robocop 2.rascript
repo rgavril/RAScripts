@@ -44,6 +44,8 @@
     function finalFightRoundState() => byte(0x00a5)
     FINALFIGHTROUND_ONGOING = 0x00
     FINALFIGHTROUND_WON = 0x01
+
+    function shootingRangeKillsRemaining() => byte(0x065a) *10 + byte(0x0659)
 // #endregion Memory Addresses
 
 // #region Frames
@@ -145,8 +147,17 @@
         return
             demoGameplay() == FALSE
             && activePlayer() == ACTIVE_PLAYER_1
-            && currentLevel() == puzzleLevel
+            && byte(0x0059) == puzzleLevel
             && unstableLivesRemaining() > prev(unstableLivesRemaining())
+    }
+
+    function triggerAimTestCompleted() {
+        return
+            demoGameplay() == FALSE
+            && activePlayer() == ACTIVE_PLAYER_1
+            && byte(0x0059) == LEVEL_6_SECRET
+            && prev(shootingRangeKillsRemaining()) == 1
+            && shootingRangeKillsRemaining() == 0
     }
 
     function triggerNukeDestruction(level, nukesRequired) {
@@ -164,8 +175,13 @@
             demoGameplay() == FALSE
             && activePlayer() == ACTIVE_PLAYER_1
             && totalLivesRemaining() > 0
-            && frameLevelCleared()
             && health() >= healthRequired
+            && gameplayAction() == GAMEACTION_LEVEL_FINISHED
+            &&
+            ( prev(gameplayAction()) != GAMEACTION_LEVEL_FINISHED 
+              ||
+              prev(health()) < healthRequired
+            )
     }
 // #endregion Triggers
 
@@ -293,7 +309,7 @@
         achievement(
             id = 44631,
             title = "The River Rouge Bust", // River Rouge
-            description = "Arrest all target villains in Level 1: River Rouge Complex Exterior",
+            description = "Arrest all of the target villains in Level 1",
             points = 10,
             trigger = triggerLevelArrests(1, 5)
         )
@@ -301,7 +317,7 @@
         achievement(
             id = 44633,
             title = "River Rouge Rescue Operation I", // River Rouge
-            description = "Rescue all hostages in Level 2: River Rouge Interior, Part I",
+            description = "Rescue all of the hostages in Level 2",
             points = 10,
             trigger = triggerLevelArrests(2, 5)
         )
@@ -309,7 +325,7 @@
         achievement(
             id = 44635,
             title = "River Rouge Rescue Operation II", // River Rouge
-            description = "Rescue all hostages in Level 3: River Rouge Interior, Part II",
+            description = "Rescue all of the hostages in Level 3",
             points = 10,
             trigger = triggerLevelArrests(3, 5)
         )
@@ -317,7 +333,7 @@
         achievement(
             id = 44637,
             title = "The Sludge Plant Bust", // Sludge Plant
-            description = "Apprehend all suspects in Level 4: The Sludge Plant",
+            description = "Apprehend all of the suspects in Level 4",
             points = 10,
             trigger = triggerLevelArrests(4, 5)
         )
@@ -325,7 +341,7 @@
         achievement(
             id = 44639,
             title = "Sludge Plant Rescue Operation", // Sludge Plant
-            description = "Rescue all hostages in Level 5: Sludge Plant Interior",
+            description = "Rescue all of the hostages in Level 5",
             points = 10,
             trigger = triggerLevelArrests(5, 5)
         )
@@ -333,7 +349,7 @@
         achievement(
             id = 44641,
             title = "The Nuke HQ Bust", // Nuke HQ : Factory unit in the restricted zone
-            description = "Arrest all target villains in Level 6: Nuke HQ Exterior",
+            description = "Arrest all of the target villains in Level 6",
             points = 10,
             trigger = triggerLevelArrests(6, 5)
         )
@@ -341,7 +357,7 @@
         achievement(
             id = 44643,
             title = "Nuke HQ Rescue Operation", // Nuke HQ
-            description = "Rescue all hostages in Level 7: Nuke HQ Interior",
+            description = "Rescue all of the hostages in Level 7",
             points = 10,
             trigger = triggerLevelArrests(7, 6)
         )
@@ -349,7 +365,7 @@
         achievement(
             id = 44646,
             title = "Civic Centrum Rescue Operation I", // Civic Centrum : The new civic centrum building
-            description = "Rescue all hostages in Level 9: Civic Centrum 1st Floor",
+            description = "Rescue all of the hostages in Level 9",
             points = 10,
             trigger = triggerLevelArrests(9, 5)
         )
@@ -357,7 +373,7 @@
         achievement(
             id = 44648,
             title = "Civic Centrum Rescue Operation II", // Civic Centrum
-            description = "Rescue all hostages in Level 10: Civic Centrum 2nd Floor",
+            description = "Rescue all of the hostages in Level 10",
             points = 10,
             trigger = triggerLevelArrests(10, 5)
         )
@@ -365,7 +381,7 @@
         achievement(
             id = 44650,
             title = "Civic Centrum Data Recovery I", // Civic Centrum
-            description = "Reclaim all memory units in Level 11: Civic Centrum 3rd Floor",
+            description = "Reclaim all of the memory units in Level 11",
             points = 10,
             trigger = triggerLevelArrests(11, 5)
         )
@@ -373,7 +389,7 @@
         achievement(
             id = 44652,
             title = "Civic Centrum Data Recovery II", // Civic Centrum
-            description = "Reclaim all memory units in Level 12: Civic Centrum 4th Floor",
+            description = "Reclaim all of the memory units in Level 12",
             points = 10,
             trigger = triggerLevelArrests(12, 5)
         )
@@ -381,7 +397,7 @@
         achievement(
             id = 44654,
             title = "Rooftop Savior", // Civic Centrum : The roof of the Centrum Building
-            description = "Rescue all hostages in Level 13: Civic Centrum Roof",
+            description = "Rescue all of the hostages in Level 13",
             points = 10,
             trigger = triggerLevelArrests(13, 6)
         )
@@ -478,7 +494,7 @@
             id = 44628,
             title = "I'd Buy That for a Dollar!",
             description = "Score more than 1,000,000 points",
-            points = 10,
+            points = 5,
             trigger = triggerScore(1000000)
         )
 
@@ -486,7 +502,7 @@
             id = 44629,
             title = "I'd Buy That for Another Dollar!",
             description = "Score more than 2,500,000 points",
-            points = 25,
+            points = 10,
             trigger = triggerScore(2500000)
         )
     // #endregion Score Achievements
@@ -548,7 +564,7 @@
             title = "Sharpshooter",
             description = "Discover the bonus area from Level 6 and complete the aim test",
             points = 5,
-            trigger = triggerPuzzleCompleted(LEVEL_6_SECRET)
+            trigger = triggerAimTestCompleted()
         )
 
         // Level 9 Secret Area : Crack the Code
