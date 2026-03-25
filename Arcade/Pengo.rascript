@@ -5,7 +5,7 @@
     TRUE = 0x01
     FALSE = 0x00
 
-    function creditsAdded() => byte(0x0019)
+    function creditActiveFlag() => byte(0x0019)
     function credits() => byte(0x0008)
     function twoPlayerMode() => bit7(0x0016)
     function activePlayer() => bit0(0x0016) + 1
@@ -29,31 +29,40 @@
     PENGO_STATE_DEAD = 0xff
 
     function snoBeeSpeed(index) => byte(0x0506 + (index-1)*20)
+    function screenPushStart() => byte(0x16c9)
+    SCREEN_PUSHSTART_ON = 0x40
 // #endregion Memory Addresses
 
-//
+// #region Frames
     function frameRoundOrLifeStarted() {
         return
             prev(word(0x144a)) != 0x5244 // "RD" message is not displayed
             && word(0x144a) == 0x5244    // "RD" message is displayed
     }
 
+    function framePlayer1GameOvered() {
+        return 
+            prev(player1Lives()) > 0
+            && player1Lives() == 0
+    }
+// #endregion Frames
+
 // #region Complex Conditions
     function conditionInActiveGameplay() {
         return
-            creditsAdded() == TRUE
-            && byte(0x16c9) != 0x40
+            creditActiveFlag() == TRUE
+            && screenPushStart() != SCREEN_PUSHSTART_ON
             && player1Lives() > 0
     }
 
     function conditionInAttractMode() {
         return
-            creditsAdded() == FALSE 
-            || byte(0x16c9) == 0x40
+            creditActiveFlag() == FALSE 
+            || screenPushStart() == SCREEN_PUSHSTART_ON
             || player1Lives() == 0
     }
 
-    function checkpointDipSwitchSettings(maxStartLives, minDifficulty) {
+    function checkpointGameStartedOnDifficulty(maxStartLives, minDifficulty) {
         return
             once(
                 player1LivesPlayed() == 0
@@ -69,20 +78,30 @@ achievement(
     description = "Test Achivement",
     points = 0,
     trigger = 
-        checkpointDipSwitchSettings(maxStartLives=4, minDifficulty=2)
+        checkpointGameStartedOnDifficulty(maxStartLives=3, minDifficulty=2)
         && byte(0x00) == 0xff
 )
 
 // #region Leaderboards
-    // leaderboard(
-    //     title = "Hiscore Default Settins"
-    // )
+    leaderboard(
+        title = "Hiscore Arcade",
+        description = "Highest scores on medium or harder difficulty with a maximum of 3 lives",
+        start = 
+            checkpointGameStartedOnDifficulty(maxStartLives=3, minDifficulty=2)
+            && never(screenPushStart() == SCREEN_PUSHSTART_ON)
+            && never(creditActiveFlag() == FALSE)
+            && framePlayer1GameOvered()
+        ,
+        cancel = always_false(),
+        submit = always_true(),
+        value = player1Score() * 10,
+        format = "POINTS"
+    )
 // #endregion Leaderboards
 
 // #region Rich Presence
     rich_presence_conditional_display(
         conditionInAttractMode(),
-
         "In Attract Mode with {0} credits",
         rich_presence_value("Credits", credits())
     )
