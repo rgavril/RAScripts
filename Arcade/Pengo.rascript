@@ -31,6 +31,8 @@
     function snoBeeSpeed(index) => byte(0x0506 + (index-1)*20)
     function screenPushStart() => byte(0x16c9)
     SCREEN_PUSHSTART_ON = 0x40
+    function screenIntermission() => byte(0x1773)
+    SCREEN_INTERMISSION_ON = 0x47
 // #endregion Memory Addresses
 
 // #region Frames
@@ -46,6 +48,19 @@
             && player1Lives() == 0
     }
 // #endregion Frames
+
+// #region Triggers
+    function triggerClearRound(targetRound) {
+        return
+            checkpointGameStartedOnDifficulty(maxStartLives=3, minDifficulty=2)
+            && never(creditActiveFlag() == FALSE)
+            && never(player1Lives() == 0)
+            && activePlayer() == 1
+            && player1Round() == targetRound
+            && prev(screenIntermission()) != SCREEN_INTERMISSION_ON
+            && screenIntermission() == SCREEN_INTERMISSION_ON
+    }
+// #endregion Triggers
 
 // #region Complex Conditions
     function conditionInActiveGameplay() {
@@ -73,14 +88,56 @@
     }
 // #endregion Complex Conditions
 
-achievement(
-    title = "Test",
-    description = "Test Achivement",
-    points = 0,
-    trigger = 
-        checkpointGameStartedOnDifficulty(maxStartLives=3, minDifficulty=2)
-        && byte(0x00) == 0xff
-)
+// #region Achievemets
+    achievement(
+        title = "March of the Pengos",
+        description = "Clear Round 2 on medium or higher difficulty, starting with 3 lives or fewer",
+        type = "progression",
+        points = 5,
+        trigger = triggerClearRound(2)
+    )
+
+    achievement(
+        title = "Glacier Shakers",
+        description = "Clear Round 4 on medium or higher difficulty, starting with 3 lives or fewer",
+        type = "progression",
+        points = 5,
+        trigger = triggerClearRound(4)
+    )
+
+    achievement(
+        title = "The Royal Salute",
+        description = "Clear Round 6 on medium or higher difficulty, starting with 3 lives or fewer",
+        type = "progression",
+        points = 5,
+        trigger = triggerClearRound(6)
+    )
+
+    achievement(
+        title = "Jumping Jack Frost",
+        description = "Clear Round 8 on medium or higher difficulty, starting with 3 lives or fewer",
+        type = "progression",
+        points = 5,
+        trigger = triggerClearRound(8)
+    )
+
+    achievement(
+        title = "Tuxedo Virtuoso",
+        description = "Clear Round 10 on medium or higher difficulty, starting with 3 lives or fewer",
+        type = "progression",
+        points = 5,
+        trigger = triggerClearRound(10)
+    )
+
+    achievement(
+        title = "The Final Note",
+        description = "Clear Round 12 on medium or higher difficulty, starting with 3 lives or fewer",
+        type = "win_condition",
+        points = 5,
+        trigger = triggerClearRound(12)
+    )
+
+// #endregion Achievements
 
 // #region Leaderboards
     leaderboard(
