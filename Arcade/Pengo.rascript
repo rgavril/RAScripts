@@ -13,6 +13,7 @@
     function player1Score() => word(0x000e)
     function player1Round() => byte(0x0012)
     function player1Lives() => byte(0x0014)
+    function player1LivesPlayed() => byte(0x0016) & 0x7F
 
     function player2Score() => byte(0x0010)
     function player2Round() => byte(0x0013)
@@ -26,7 +27,16 @@
     function pengoState() => byte(0x0018)
     PENGO_STATE_ALIVE = 0x00
     PENGO_STATE_DEAD = 0xff
+
+    function snoBeeSpeed(index) => byte(0x0506 + (index-1)*20)
 // #endregion Memory Addresses
+
+//
+    function frameRoundOrLifeStarted() {
+        return
+            prev(word(0x144a)) != 0x5244 // "RD" message is not displayed
+            && word(0x144a) == 0x5244    // "RD" message is displayed
+    }
 
 // #region Complex Conditions
     function conditionInActiveGameplay() {
@@ -42,7 +52,26 @@
             || byte(0x16c9) == 0x40
             || player1Lives() == 0
     }
+
+    function checkpointDipSwitchSettings(maxStartLives, minDifficulty) {
+        return
+            once(
+                player1LivesPlayed() == 0
+                && frameRoundOrLifeStarted()
+                && snoBeeSpeed(1) <= 0x0c - minDifficulty + 1
+                && player1Lives() <= maxStartLives
+            )
+    }
 // #endregion Complex Conditions
+
+achievement(
+    title = "Test",
+    description = "Test Achivement",
+    points = 0,
+    trigger = 
+        checkpointDipSwitchSettings(maxStartLives=4, minDifficulty=2)
+        && byte(0x00) == 0xff
+)
 
 // #region Leaderboards
     // leaderboard(
