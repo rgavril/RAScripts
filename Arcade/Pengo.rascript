@@ -102,6 +102,15 @@
 
         return requiredConditions && measured(targetCondition)
     }
+
+    function triggerSnoBeeCombo(comboSize) {
+        return
+            checkpointGameStartedOnDifficulty(maxStartLives=3, minDifficulty=2)
+            && never(creditActiveFlag() == FALSE)
+            && never(player1Lives() == 0)
+            && activePlayer() == 1
+            && enemiesRemaining() == prev(enemiesRemaining()) - comboSize
+    }
 // #endregion Triggers
 
 // #region Complex Conditions
@@ -198,6 +207,27 @@
         description = "Destroy at lest 20 eggs in a single game on medium difficulty or higher, starting with 3 lives or fewer",
         points = 10,
         trigger = triggerEggsDestroyed(20)
+    )
+
+    achievement(
+        title = "Double Wood",
+        description = "Crush 2 Sno-Bees at once with an ice block on medium difficulty or higher, starting with 3 lives or fewer",
+        points = 5,
+        trigger = triggerSnoBeeCombo(2)
+    )
+
+    achievement(
+        title = "Sno-Bee Spare",
+        description = "Crush 3 Sno-Bees at once with an ice block on medium difficulty or higher, starting with 3 lives or fewer",
+        points = 10,
+        trigger = triggerSnoBeeCombo(3)
+    )
+
+    achievement(
+        title = "Four-Bee Strike",
+        description = "Crush 4 Sno-Bees at once with an ice block on medium difficulty or higher, starting with 3 lives or fewer",
+        points = 25,
+        trigger = triggerSnoBeeCombo(4)
     )
 // #endregion Achievements
 
