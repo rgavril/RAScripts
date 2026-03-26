@@ -22,6 +22,7 @@
     function roundTimeFrames() => byte(0x045b)
     function roundTimeSeconds() => byte(0x045c)
     function roundTimeMinutes() => byte(0x045d)
+    function bonusReceived() => byte(0x05b6)
     function enemiesRemaining() => byte(0x0598)
     function eggsRemaining() => byte(0x05c1)
     function pengoState() => byte(0x0018)
@@ -33,6 +34,9 @@
     SCREEN_PUSHSTART_ON = 0x40
     function screenIntermission() => byte(0x1773)
     SCREEN_INTERMISSION_ON = 0x47
+
+    function tileBottomRighCorner() => byte(0x1412)
+    TILE_STAR = 0x21
 // #endregion Memory Addresses
 
 // #region Frames
@@ -59,6 +63,23 @@
             && player1Round() == targetRound
             && prev(screenIntermission()) != SCREEN_INTERMISSION_ON
             && screenIntermission() == SCREEN_INTERMISSION_ON
+    }
+
+    function triggerDiamonBonus(bonusPoints) {
+        bonusReceivedFlag = 0xff
+        if (bonusPoints == 10000) {
+            bonusReceivedFlag = 0x00
+        }
+
+        return
+            checkpointGameStartedOnDifficulty(maxStartLives=3, minDifficulty=2)
+            && never(creditActiveFlag() == FALSE)
+            && never(player1Lives() == 0)
+            && activePlayer() == 1
+            && bonusReceived() == bonusReceivedFlag
+            && prev(tileBottomRighCorner()) != TILE_STAR
+            && tileBottomRighCorner() == TILE_STAR
+
     }
 // #endregion Triggers
 
@@ -109,7 +130,7 @@
         title = "The Royal Salute",
         description = "Clear Round 6 on medium or higher difficulty, starting with 3 lives or fewer",
         type = "progression",
-        points = 5,
+        points = 10,
         trigger = triggerClearRound(6)
     )
 
@@ -117,7 +138,7 @@
         title = "Jumping Jack Frost",
         description = "Clear Round 8 on medium or higher difficulty, starting with 3 lives or fewer",
         type = "progression",
-        points = 5,
+        points = 10,
         trigger = triggerClearRound(8)
     )
 
@@ -125,7 +146,7 @@
         title = "Tuxedo Virtuoso",
         description = "Clear Round 10 on medium or higher difficulty, starting with 3 lives or fewer",
         type = "progression",
-        points = 5,
+        points = 10,
         trigger = triggerClearRound(10)
     )
 
@@ -133,10 +154,23 @@
         title = "The Final Note",
         description = "Clear Round 12 on medium or higher difficulty, starting with 3 lives or fewer",
         type = "win_condition",
-        points = 5,
+        points = 25,
         trigger = triggerClearRound(12)
     )
 
+    achievement(
+        title = "Rough Cut Diamonds",
+        description = "Align the diamond blocks against any border on medium difficulty or higher, starting with 3 lives or fewer",
+        points = 5,
+        trigger = triggerDiamonBonus(5000)
+    )
+
+    achievement(
+        title = "Brilliant Cut Diamonds",
+        description = "Align the diamond blocks away from the border on medium difficulty or higher, starting with 3 lives or fewer",
+        points = 10,
+        trigger = triggerDiamonBonus(10000)
+    )
 // #endregion Achievements
 
 // #region Leaderboards
