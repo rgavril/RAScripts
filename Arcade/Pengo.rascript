@@ -29,12 +29,15 @@
     PENGO_STATE_ALIVE = 0x00
     PENGO_STATE_DEAD = 0xff
 
-    function snoBeeSpeed(index) => byte(0x0506 + (index-1)*20)
+    function snoBeeSpeed(index) => byte(0x0506 + (index-1)*0x20)
+    function snoBeeState(index) => byte(0x051f + (index-1)*0x20)
+    SNOBEE_STATE_HATCHING = 0x0f
+
+
     function screenPushStart() => byte(0x16c9)
     SCREEN_PUSHSTART_ON = 0x40
     function screenIntermission() => byte(0x1773)
     SCREEN_INTERMISSION_ON = 0x47
-
     function tileBottomRighCorner() => byte(0x1412)
     TILE_STAR = 0x21
 // #endregion Memory Addresses
@@ -80,6 +83,24 @@
             && prev(tileBottomRighCorner()) != TILE_STAR
             && tileBottomRighCorner() == TILE_STAR
 
+    }
+
+    function triggerEggsDestroyed(targetCount) {
+        requiredConditions =
+            checkpointGameStartedOnDifficulty(maxStartLives=3, minDifficulty=2)
+            && never(creditActiveFlag() == FALSE)
+            && never(player1Lives() == 0)
+            && activePlayer() == 1
+
+        targetCondition =
+            repeated(targetCount,
+                eggsRemaining() < prev(eggsRemaining())
+                && none_of(range(1,4), index =>
+                    snoBeeState(index) == SNOBEE_STATE_HATCHING
+                )
+            )
+
+        return requiredConditions && measured(targetCondition)
     }
 // #endregion Triggers
 
@@ -159,17 +180,24 @@
     )
 
     achievement(
-        title = "Rough Cut Diamonds",
+        title = "Rough Cut",
         description = "Align the diamond blocks against any border on medium difficulty or higher, starting with 3 lives or fewer",
         points = 5,
         trigger = triggerDiamonBonus(5000)
     )
 
     achievement(
-        title = "Brilliant Cut Diamonds",
+        title = "Brilliant Cut",
         description = "Align the diamond blocks away from the border on medium difficulty or higher, starting with 3 lives or fewer",
         points = 10,
         trigger = triggerDiamonBonus(10000)
+    )
+
+    achievement(
+        title = "Eggs-Terminator",
+        description = "Destroy at lest 20 eggs in a single game on medium difficulty or higher, starting with 3 lives or fewer",
+        points = 10,
+        trigger = triggerEggsDestroyed(20)
     )
 // #endregion Achievements
 
