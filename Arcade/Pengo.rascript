@@ -33,6 +33,8 @@
     function snoBeeState(index) => byte(0x051f + (index-1)*0x20)
     SNOBEE_STATE_HATCHING = 0x0f
 
+    function roundFinishTimeSeconds() => byte(0x0592)
+    function roundFinishTimeMinutes() => byte(0x0593)
 
     function screenPushStart() => byte(0x16c9)
     SCREEN_PUSHSTART_ON = 0x40
@@ -64,6 +66,7 @@
             && never(player1Lives() == 0)
             && activePlayer() == 1
             && player1Round() == targetRound
+            
             && prev(screenIntermission()) != SCREEN_INTERMISSION_ON
             && screenIntermission() == SCREEN_INTERMISSION_ON
     }
@@ -79,6 +82,7 @@
             && never(creditActiveFlag() == FALSE)
             && never(player1Lives() == 0)
             && activePlayer() == 1
+            
             && bonusReceived() == bonusReceivedFlag
             && prev(tileBottomRighCorner()) != TILE_STAR
             && tileBottomRighCorner() == TILE_STAR
@@ -109,7 +113,22 @@
             && never(creditActiveFlag() == FALSE)
             && never(player1Lives() == 0)
             && activePlayer() == 1
+
             && enemiesRemaining() == prev(enemiesRemaining()) - comboSize
+    }
+
+    function triggerSceneTime(minSeconds, maxSeconds) {
+        return
+            checkpointGameStartedOnDifficulty(maxStartLives=3, minDifficulty=2)
+            && never(creditActiveFlag() == FALSE)
+            && never(player1Lives() == 0)
+            && activePlayer() == 1
+
+            && prev(screenIntermission()) != SCREEN_INTERMISSION_ON
+            && screenIntermission() == SCREEN_INTERMISSION_ON
+            && roundFinishTimeMinutes() == 0
+            && roundFinishTimeSeconds() >= minSeconds
+            && roundFinishTimeSeconds() <= maxSeconds
     }
 // #endregion Triggers
 
@@ -228,6 +247,20 @@
         description = "Crush 4 Sno-Bees at once with an ice block on medium difficulty or higher, starting with 3 lives or fewer",
         points = 25,
         trigger = triggerSnoBeeCombo(4)
+    )
+
+    achievement(
+        title = "Glacial Pace",
+        description = "Finish a round under 29 seconds on medium difficulty or higher, starting with 3 lives or fewer",
+        points = 5,
+        trigger = triggerSceneTime(1, 29)
+    )
+
+    achievement(
+        title = "Arctic Sprint",
+        description = "Finish a round under 19 seconds on medium difficulty or higher, starting with 3 lives or fewer",
+        points = 10,
+        trigger = triggerSceneTime(1, 19)
     )
 // #endregion Achievements
 
