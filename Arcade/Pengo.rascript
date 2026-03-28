@@ -9,6 +9,7 @@
     function credits() => byte(0x0008)
     function twoPlayerMode() => bit7(0x0016)
     function activePlayer() => bit0(0x0016) + 1
+    function gameState() => byte(0x0016)
 
     function player1Score() => word(0x000e)
     function player1Round() => byte(0x0012)
@@ -31,7 +32,9 @@
 
     function snoBeeSpeed(index) => byte(0x0506 + (index-1)*0x20)
     function snoBeeState(index) => byte(0x051f + (index-1)*0x20)
+    SNOBEE_STATE_SQUASHED = 0x0b
     SNOBEE_STATE_HATCHING = 0x0f
+    SNOBEE_STATE_SUNN_COLLECTED = 0x06
 
     function roundFinishTimeSeconds() => byte(0x0592)
     function roundFinishTimeMinutes() => byte(0x0593)
@@ -45,7 +48,7 @@
 // #endregion Memory Addresses
 
 // #region Frames
-    function frameRoundOrLifeStarted() {
+    function frameHUDRedraws() {
         return
             prev(word(0x144a)) != 0x5244 // "RD" message is not displayed
             && word(0x144a) == 0x5244    // "RD" message is displayed
@@ -55,6 +58,11 @@
         return 
             prev(player1Lives()) > 0
             && player1Lives() == 0
+    }
+
+    function framePlayer1Died() {
+        return
+            prev(player1Lives()) > player1Lives()
     }
 // #endregion Frames
 
@@ -130,6 +138,63 @@
             && roundFinishTimeSeconds() >= minSeconds
             && roundFinishTimeSeconds() <= maxSeconds
     }
+
+    function triggerStunCollector(targetCount) {
+        requiredConditions =
+            checkpointGameStartedOnDifficulty(maxStartLives=3, minDifficulty=2)
+            && never(creditActiveFlag() == FALSE)
+            && never(player1Lives() == 0)
+            && activePlayer() == 1
+
+        targetCondition =
+            tally_of(range(1,4), targetCount, index =>
+                prev(snoBeeState(index)) != SNOBEE_STATE_SUNN_COLLECTED
+                && snoBeeState(index) == SNOBEE_STATE_SUNN_COLLECTED
+            )
+
+        return requiredConditions && measured(targetCondition)
+    }
+
+    function triggerPacifist() {
+        requiredConditions =
+            checkpointGameStartedOnDifficulty(maxStartLives=3, minDifficulty=2)
+            && never(creditActiveFlag() == FALSE)
+            && never(player1Lives() == 0)
+            && activePlayer() == 1
+
+        primingConditions = once(
+            // New Round Started
+            frameHUDRedraws()
+            && prev(gameState()) == gameState()
+            
+            // Player Died
+            && never(framePlayer1Died())
+            
+            // Enemy Stunned and Collected
+            && never( any_of(range(1,4), index => 
+                snoBeeState(index) == SNOBEE_STATE_SUNN_COLLECTED
+            ))
+
+            // Enemy Stunned and Collected
+            && never( any_of(range(1,4), index => 
+                snoBeeState(index) == SNOBEE_STATE_SQUASHED
+            ))
+
+            // Egg Destroyed
+            && never ( 
+                prev(eggsRemaining()) > eggsRemaining()
+                && all_of(range(1,4), index => 
+                    snoBeeState(index) != SNOBEE_STATE_HATCHING
+                )
+            )
+        )
+
+        triggerConditions = 
+            prev(screenIntermission() != SCREEN_INTERMISSION_ON)
+            && screenIntermission() == SCREEN_INTERMISSION_ON
+
+        return requiredConditions && primingConditions && trigger_when(triggerConditions)
+    }
 // #endregion Triggers
 
 // #region Complex Conditions
@@ -151,7 +216,7 @@
         return
             once(
                 player1LivesPlayed() == 0
-                && frameRoundOrLifeStarted()
+                && frameHUDRedraws()
                 && snoBeeSpeed(1) <= 0x0c - minDifficulty + 1
                 && player1Lives() <= maxStartLives
             )
@@ -229,6 +294,13 @@
     )
 
     achievement(
+        title = "Stunning Collection",
+        description = "Collect 30 stunned Sno-Bees in a single session on medium difficulty or higher starting with 3 lives or less",
+        points = 10,
+        trigger = triggerStunCollector(30)
+    )
+
+    achievement(
         title = "Double Wood",
         description = "Crush 2 Sno-Bees at once with an ice block on medium difficulty or higher, starting with 3 lives or fewer",
         points = 5,
@@ -261,6 +333,13 @@
         description = "Finish a round under 19 seconds on medium difficulty or higher, starting with 3 lives or fewer",
         points = 10,
         trigger = triggerSceneTime(1, 19)
+    )
+
+    achievement(
+        title = "Absolute Nonviolence",
+        description = "Complete a round without killing any enemies or dying on medium difficulty or higher",
+        points = 25,
+        trigger = triggerPacifist()
     )
 // #endregion Achievements
 
