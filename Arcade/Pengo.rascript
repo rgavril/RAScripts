@@ -30,9 +30,10 @@
     PENGO_STATE_ALIVE = 0x00
     PENGO_STATE_DEAD = 0xff
 
+    function snoBeeComboSize(index) => byte(0x051a + (index-1)*0x20)
     function snoBeeSpeed(index) => byte(0x0506 + (index-1)*0x20)
     function snoBeeState(index) => byte(0x051f + (index-1)*0x20)
-    SNOBEE_STATE_SQUASHED = 0x0b
+    SNOBEE_STATE_SQUASHED = 0x0c
     SNOBEE_STATE_HATCHING = 0x0f
     SNOBEE_STATE_SUNN_COLLECTED = 0x06
 
@@ -63,6 +64,12 @@
     function framePlayer1Died() {
         return
             prev(player1Lives()) > player1Lives()
+    }
+
+    function frameSnoBeeGotSquashed(index) {
+        return
+            prev(snoBeeState(index) != SNOBEE_STATE_SQUASHED)
+            && snoBeeState(index) == SNOBEE_STATE_SQUASHED
     }
 // #endregion Frames
 
@@ -122,7 +129,13 @@
             && never(player1Lives() == 0)
             && activePlayer() == 1
 
-            && enemiesRemaining() == prev(enemiesRemaining()) - comboSize
+            //&& enemiesRemaining() == prev(enemiesRemaining()) - comboSize
+
+            && any_of(range(1,4), index =>
+                snoBeeComboSize(index) == comboSize
+                && prev(snoBeeState(index)) != SNOBEE_STATE_SQUASHED
+                && snoBeeState(index) == SNOBEE_STATE_SQUASHED
+            )
     }
 
     function triggerSceneTime(minSeconds, maxSeconds) {
@@ -164,8 +177,9 @@
 
         primingConditions = once(
             // New Round Started
-            frameHUDRedraws()
-            && prev(gameState()) == gameState()
+            roundTimeFrames() == 0x00
+            && roundTimeMinutes() == 0x00
+            && roundTimeSeconds() == 0x00
             
             // Player Died
             && never(framePlayer1Died())
