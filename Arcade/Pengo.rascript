@@ -81,14 +81,21 @@
 
 // #region Triggers
     function triggerClearRound(targetRound) {
-        return
+        requiredConditions =
             checkpointGameStartedOnDifficulty(maxStartLives=3, minDifficulty=2)
             && never(creditActiveFlag() == FALSE)
             && never(player1Lives() == 0)
             && activePlayer() == 1
-            && player1Round() == targetRound
+            && once(
+                player1Round() == targetRound - 1
+                && frameRoundCompleted()
+            )
 
+        targetCondition =
+            player1Round() == targetRound
             && frameRoundCompleted()
+
+        return requiredConditions && targetCondition
     }
 
     function triggerDiamonBonus(bonusPoints) {
@@ -256,7 +263,7 @@
 // #region Achievemets
     achievement(
         title = "March of the Pengos",
-        description = "Clear Round 2 on medium or higher difficulty, starting with 3 lives or fewer",
+        description = "Clear Rounds 1 and 2 on medium or higher difficulty, starting with 3 lives or fewer",
         type = "progression",
         points = 5,
         trigger = triggerClearRound(2)
@@ -264,7 +271,7 @@
 
     achievement(
         title = "Glacier Shakers",
-        description = "Clear Round 4 on medium or higher difficulty, starting with 3 lives or fewer",
+        description = "Clear Rounds 3 and 4 on medium or higher difficulty, starting with 3 lives or fewer",
         type = "progression",
         points = 5,
         trigger = triggerClearRound(4)
@@ -272,7 +279,7 @@
 
     achievement(
         title = "The Royal Salute",
-        description = "Clear Round 6 on medium or higher difficulty, starting with 3 lives or fewer",
+        description = "Clear Round 5 and 6 on medium or higher difficulty, starting with 3 lives or fewer",
         type = "progression",
         points = 10,
         trigger = triggerClearRound(6)
@@ -280,7 +287,7 @@
 
     achievement(
         title = "Jumping Jack Frost",
-        description = "Clear Round 8 on medium or higher difficulty, starting with 3 lives or fewer",
+        description = "Clear Round 7 and 8 on medium or higher difficulty, starting with 3 lives or fewer",
         type = "progression",
         points = 10,
         trigger = triggerClearRound(8)
@@ -288,7 +295,7 @@
 
     achievement(
         title = "Tuxedo Virtuoso",
-        description = "Clear Round 10 on medium or higher difficulty, starting with 3 lives or fewer",
+        description = "Clear Round 9 and 10 on medium or higher difficulty, starting with 3 lives or fewer",
         type = "progression",
         points = 10,
         trigger = triggerClearRound(10)
@@ -296,7 +303,7 @@
 
     achievement(
         title = "The Final Note",
-        description = "Clear Round 12 on medium or higher difficulty, starting with 3 lives or fewer",
+        description = "Clear Round 11 and 12 on medium or higher difficulty, starting with 3 lives or fewer",
         type = "win_condition",
         points = 25,
         trigger = triggerClearRound(12)
