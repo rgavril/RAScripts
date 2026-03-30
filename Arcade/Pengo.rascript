@@ -20,9 +20,9 @@
     function player2Round() => byte(0x0013)
     function player2Lives() => byte(0x0015)
 
-    function roundTimeFrames() => byte(0x045b)
-    function roundTimeSeconds() => byte(0x045c)
-    function roundTimeMinutes() => byte(0x045d)
+    function lifeClockFrames() => byte(0x045b)
+    function lifeClockSeconds() => byte(0x045c)
+    function lifeClockMinutes() => byte(0x045d)
     function bonusReceived() => byte(0x05b6)
     function enemiesRemaining() => byte(0x0598)
     function eggsRemaining() => byte(0x05c1)
@@ -37,8 +37,8 @@
     SNOBEE_STATE_HATCHING = 0x0f
     SNOBEE_STATE_SUNN_COLLECTED = 0x06
 
-    function roundFinishTimeSeconds() => byte(0x0592)
-    function roundFinishTimeMinutes() => byte(0x0593)
+    function roundClockSeconds() => byte(0x0592)
+    function roundClockMinutes() => byte(0x0593)
 
     function screenPushStart() => byte(0x16c9)
     SCREEN_PUSHSTART_ON = 0x40
@@ -160,9 +160,9 @@
             && enemiesRemaining() == 0 // Prevents Rack Test (Cheat)
             && prev(screenIntermission()) != SCREEN_INTERMISSION_ON
             && screenIntermission() == SCREEN_INTERMISSION_ON
-            && roundFinishTimeMinutes() == 0
-            && roundFinishTimeSeconds() >= minSeconds
-            && roundFinishTimeSeconds() <= maxSeconds
+            && roundClockMinutes() == 0
+            && roundClockSeconds() >= minSeconds
+            && roundClockSeconds() <= maxSeconds
     }
 
     function triggerStunCollector(targetCount) {
@@ -190,9 +190,11 @@
 
         primingConditions = once(
             // New Round Started
-            roundTimeFrames() == 0x00
-            && roundTimeMinutes() == 0x00
-            && roundTimeSeconds() == 0x00
+            lifeClockFrames() == 0x00
+            && lifeClockMinutes() == 0x00
+            && lifeClockSeconds() == 0x00
+            && roundClockMinutes() == 0x00
+            && roundClockSeconds() == 0x00
             
             // Player Died
             && never(framePlayer1Died())
