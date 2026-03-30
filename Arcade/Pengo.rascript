@@ -384,8 +384,15 @@
     achievement(
         title = "Breaking the Ice",
         description = "Score over 20.000 points on medium difficulty or higher, starting with 3 lives or fewer",
-        points = 10,
+        points = 5,
         trigger = triggerScore(20000)
+    )
+
+    achievement(
+        title = "Frost Fracture",
+        description = "Score over 50.000 points on medium difficulty or higher, starting with 3 lives or fewer",
+        points = 10,
+        trigger = triggerScore(50000)
     )
 
     achievement(
