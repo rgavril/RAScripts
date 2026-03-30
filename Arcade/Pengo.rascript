@@ -71,6 +71,12 @@
             prev(snoBeeState(index) != SNOBEE_STATE_SQUASHED)
             && snoBeeState(index) == SNOBEE_STATE_SQUASHED
     }
+
+    function frameRoundCompleted() {
+        return
+            prev(enemiesRemaining()) > 0
+            && enemiesRemaining() == 0
+    }
 // #endregion Frames
 
 // #region Triggers
@@ -81,11 +87,8 @@
             && never(player1Lives() == 0)
             && activePlayer() == 1
             && player1Round() == targetRound
-            
-            //&& prev(screenIntermission()) != SCREEN_INTERMISSION_ON
-            //&& screenIntermission() == SCREEN_INTERMISSION_ON
-            && prev(enemiesRemaining()) > 0
-            && enemiesRemaining() == 0
+
+            && frameRoundCompleted()
     }
 
     function triggerDiamonBonus(bonusPoints) {
@@ -147,6 +150,7 @@
             && never(player1Lives() == 0)
             && activePlayer() == 1
 
+            && enemiesRemaining() == 0 // Prevents Rack Test (Cheat)
             && prev(screenIntermission()) != SCREEN_INTERMISSION_ON
             && screenIntermission() == SCREEN_INTERMISSION_ON
             && roundFinishTimeMinutes() == 0
@@ -206,8 +210,7 @@
         )
 
         triggerConditions = 
-            prev(screenIntermission() != SCREEN_INTERMISSION_ON)
-            && screenIntermission() == SCREEN_INTERMISSION_ON
+            frameRoundCompleted()
 
         return requiredConditions && primingConditions && trigger_when(triggerConditions)
     }
