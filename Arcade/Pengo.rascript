@@ -51,8 +51,8 @@
 // #region Frames
     function frameHUDRedraws() {
         return
-            prev(word(0x144a)) != 0x5244 // "RD" message is not displayed
-            && word(0x144a) == 0x5244    // "RD" message is displayed
+            prev(byte(0x143c)) != 0x40 // "@" char is not displayed
+            && byte(0x143c) == 0x40    // "@" char is displayed
     }
 
     function framePlayer1GameOvered() {
@@ -82,8 +82,10 @@
             && activePlayer() == 1
             && player1Round() == targetRound
             
-            && prev(screenIntermission()) != SCREEN_INTERMISSION_ON
-            && screenIntermission() == SCREEN_INTERMISSION_ON
+            //&& prev(screenIntermission()) != SCREEN_INTERMISSION_ON
+            //&& screenIntermission() == SCREEN_INTERMISSION_ON
+            && prev(enemiesRemaining()) > 0
+            && enemiesRemaining() == 0
     }
 
     function triggerDiamonBonus(bonusPoints) {
@@ -208,6 +210,17 @@
             && screenIntermission() == SCREEN_INTERMISSION_ON
 
         return requiredConditions && primingConditions && trigger_when(triggerConditions)
+    }
+
+    function triggerScore(targetScore) {
+        return
+            checkpointGameStartedOnDifficulty(maxStartLives=3, minDifficulty=2)
+            && never(creditActiveFlag() == FALSE)
+            && never(player1Lives() == 0)
+            && activePlayer() == 1
+
+            && prev(player1Score()) < targetScore/10
+            && player1Score() >= targetScore/10
     }
 // #endregion Triggers
 
@@ -354,6 +367,20 @@
         description = "Complete a round without killing any enemies or dying on medium difficulty or higher",
         points = 25,
         trigger = triggerPacifist()
+    )
+
+    achievement(
+        title = "Breaking the Ice",
+        description = "Score over 20.000 points on medium difficulty or higher, starting with 3 lives or fewer",
+        points = 10,
+        trigger = triggerScore(20000)
+    )
+
+    achievement(
+        title = "Cracking the Glacier",
+        description = "Score over 80.000 points on medium difficulty or higher, starting with 3 lives or fewer",
+        points = 25,
+        trigger = triggerScore(80000)
     )
 // #endregion Achievements
 
