@@ -327,16 +327,16 @@
 
     achievement(
         title = "Eggs-Terminator",
-        description = "Destroy at lest 20 eggs in a single game on medium difficulty or higher, starting with 3 lives or fewer",
+        description = "Destroy at lest 15 eggs in a single game on medium difficulty or higher, starting with 3 lives or fewer",
         points = 10,
-        trigger = triggerEggsDestroyed(20)
+        trigger = triggerEggsDestroyed(15)
     )
 
     achievement(
         title = "Stunning Collection",
-        description = "Collect 30 stunned Sno-Bees in a single session on medium difficulty or higher starting with 3 lives or less",
+        description = "Collect 20 stunned Sno-Bees in a single session on medium difficulty or higher starting with 3 lives or less",
         points = 10,
-        trigger = triggerStunCollector(30)
+        trigger = triggerStunCollector(20)
     )
 
     achievement(
@@ -410,6 +410,25 @@
         submit = always_true(),
         value = player1Score() * 10,
         format = "POINTS"
+    )
+
+    leaderboard(
+        title = "Highest Round Arcade",
+        description = "Highest round reached on medium or harder difficulty with a maximum of 3 lives",
+        start =
+            checkpointGameStartedOnDifficulty(maxStartLives=3, minDifficulty=2)
+            && never(screenPushStart() == SCREEN_PUSHSTART_ON)
+            && never(creditActiveFlag() == FALSE)
+            && never(
+                player1Round() > prev(player1Round())
+                && prev(enemiesRemaining()) != 0
+            )
+            && framePlayer1GameOvered()
+        ,
+        cancel = always_false(),
+        submit = always_true(),
+        value = player1Round(),
+        format = "VALUE"
     )
 // #endregion Leaderboards
 
