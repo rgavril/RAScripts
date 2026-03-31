@@ -234,6 +234,21 @@
             && prev(player1Score()) < targetScore/10
             && player1Score() >= targetScore/10
     }
+
+    function triggerNoDeathRounds(targetCount) {
+        requiredConditions =
+            checkpointGameStartedOnDifficulty(maxStartLives=3, minDifficulty=2)
+            && never(creditActiveFlag() == FALSE)
+            && never(player1Lives() == 0)
+            && activePlayer() == 1
+
+        targetCondition = repeated(targetCount,
+            frameRoundCompleted()
+            && never(framePlayer1Died())
+        )
+
+        return requiredConditions && targetCondition 
+    }
 // #endregion Triggers
 
 // #region Complex Conditions
@@ -326,6 +341,13 @@
     )
 
     achievement(
+        title = "Eggsecutioner",
+        description = "Destroy at lest 7 eggs in a single game on medium difficulty or higher, starting with 3 lives or fewer",
+        points = 5,
+        trigger = triggerEggsDestroyed(7)
+    )
+
+    achievement(
         title = "Eggs-Terminator",
         description = "Destroy at lest 15 eggs in a single game on medium difficulty or higher, starting with 3 lives or fewer",
         points = 10,
@@ -334,6 +356,13 @@
 
     achievement(
         title = "Stunning Collection",
+        description = "Collect 10 stunned Sno-Bees in a single session on medium difficulty or higher starting with 3 lives or less",
+        points = 5,
+        trigger = triggerStunCollector(10)
+    )
+
+    achievement(
+        title = "Stunning Performance",
         description = "Collect 20 stunned Sno-Bees in a single session on medium difficulty or higher starting with 3 lives or less",
         points = 10,
         trigger = triggerStunCollector(20)
@@ -400,6 +429,13 @@
         description = "Score over 80.000 points on medium difficulty or higher, starting with 3 lives or fewer",
         points = 25,
         trigger = triggerScore(80000)
+    )
+
+    achievement(
+        title = "Bi-Frost Bridge",
+        description = "Win two consecutive rounds without dying on medium difficulty or higher",
+        points = 10,
+        trigger = triggerNoDeathRounds(2)
     )
 // #endregion Achievements
 
