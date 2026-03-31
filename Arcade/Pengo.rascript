@@ -288,7 +288,7 @@
 
     achievement(
         title = "Glacier Shakers",
-        description = "Clear Rounds 3 and 4 on medium or higher difficulty, starting with 3 lives or fewer",
+        description = "Clear Rounds 3 and 4 on medium or higher difficulty, starting with 3 lives or fewer. Rack skip allowed",
         type = "progression",
         points = 5,
         trigger = triggerClearRound(4)
@@ -296,15 +296,15 @@
 
     achievement(
         title = "The Royal Salute",
-        description = "Clear Round 5 and 6 on medium or higher difficulty, starting with 3 lives or fewer",
+        description = "Clear Round 5 and 6 on medium or higher difficulty, starting with 3 lives or fewer. Rack skip allowed",
         type = "progression",
-        points = 10,
+        points = 5,
         trigger = triggerClearRound(6)
     )
 
     achievement(
         title = "Jumping Jack Frost",
-        description = "Clear Round 7 and 8 on medium or higher difficulty, starting with 3 lives or fewer",
+        description = "Clear Round 7 and 8 on medium or higher difficulty, starting with 3 lives or fewer. Rack skip allowed",
         type = "progression",
         points = 10,
         trigger = triggerClearRound(8)
@@ -312,7 +312,7 @@
 
     achievement(
         title = "Tuxedo Virtuoso",
-        description = "Clear Round 9 and 10 on medium or higher difficulty, starting with 3 lives or fewer",
+        description = "Clear Round 9 and 10 on medium or higher difficulty, starting with 3 lives or fewer. Rack skip allowed",
         type = "progression",
         points = 10,
         trigger = triggerClearRound(10)
@@ -320,9 +320,9 @@
 
     achievement(
         title = "The Final Note",
-        description = "Clear Round 11 and 12 on medium or higher difficulty, starting with 3 lives or fewer",
+        description = "Clear Round 11 and 12 on medium or higher difficulty, starting with 3 lives or fewer. Rack skip allowed",
         type = "win_condition",
-        points = 25,
+        points = 10,
         trigger = triggerClearRound(12)
     )
 
