@@ -229,6 +229,10 @@
             checkpointGameStartedOnDifficulty(maxStartLives=3, minDifficulty=2)
             && never(creditActiveFlag() == FALSE)
             && never(player1Lives() == 0)
+            && never(
+                player1Round() > prev(player1Round())
+                && prev(enemiesRemaining()) != 0
+            )
             && activePlayer() == 1
 
             && prev(player1Score()) < targetScore/10
@@ -464,6 +468,10 @@
             checkpointGameStartedOnDifficulty(maxStartLives=3, minDifficulty=2)
             && never(screenPushStart() == SCREEN_PUSHSTART_ON)
             && never(creditActiveFlag() == FALSE)
+            && never(
+                player1Round() > prev(player1Round())
+                && prev(enemiesRemaining()) != 0
+            )
             && framePlayer1GameOvered()
         ,
         cancel = always_false(),
@@ -498,6 +506,10 @@
             checkpointGameStartedOnExactDifficulty(maxStartLives=3, targetDifficulty=3)
             && never(screenPushStart() == SCREEN_PUSHSTART_ON)
             && never(creditActiveFlag() == FALSE)
+            && never(
+                player1Round() > prev(player1Round())
+                && prev(enemiesRemaining()) != 0
+            )
             && framePlayer1GameOvered()
         ,
         cancel = always_false(),
@@ -513,6 +525,10 @@
             checkpointGameStartedOnExactDifficulty(maxStartLives=3, targetDifficulty=4)
             && never(screenPushStart() == SCREEN_PUSHSTART_ON)
             && never(creditActiveFlag() == FALSE)
+            && never(
+                player1Round() > prev(player1Round())
+                && prev(enemiesRemaining()) != 0
+            )
             && framePlayer1GameOvered()
         ,
         cancel = always_false(),
