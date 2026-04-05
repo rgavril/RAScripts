@@ -13,7 +13,7 @@
 
     function player1Score() => word(0x000e)
     function player1Round() => byte(0x0012)
-    function player1Lives() => byte(0x0014)
+    function player1Lives() => (byte(0x0014) & 0x7f)
     function player1LivesPlayed() => byte(0x0016) & 0x7F
 
     function player2Score() => byte(0x0010)
@@ -275,6 +275,16 @@
                 && player1Lives() <= maxStartLives
             )
     }
+
+    function checkpointGameStartedOnExactDifficulty(maxStartLives, targetDifficulty) {
+        return
+            once(
+                player1LivesPlayed() == 0
+                && frameHUDRedraws()
+                && snoBeeSpeed(1) == 0x0c - targetDifficulty + 1
+                && player1Lives() <= maxStartLives
+            )
+    }
 // #endregion Complex Conditions
 
 // #region Achievemets
@@ -341,7 +351,7 @@
     )
 
     achievement(
-        title = "Eggsecutioner",
+        title = "Arctic Egg Hunt",
         description = "Destroy at lest 7 eggs in a single game on medium difficulty or higher, starting with 3 lives or fewer",
         points = 5,
         trigger = triggerEggsDestroyed(7)
@@ -434,8 +444,15 @@
     achievement(
         title = "Bi-Frost Bridge",
         description = "Win two consecutive rounds without dying on medium difficulty or higher",
-        points = 10,
+        points = 5,
         trigger = triggerNoDeathRounds(2)
+    )
+
+    achievement(
+        title = "Pingus Trismagistus",
+        description = "Win three consecutive rounds without dying on medium difficulty or higher",
+        points = 10,
+        trigger = triggerNoDeathRounds(3)
     )
 // #endregion Achievements
 
@@ -472,6 +489,36 @@
         submit = always_true(),
         value = player1Round(),
         format = "VALUE"
+    )
+
+    leaderboard(
+        title = "Hiscore Hard",
+        description = "Highest scores on Hard difficulty with a maximum of 3 lives",
+        start = 
+            checkpointGameStartedOnExactDifficulty(maxStartLives=3, targetDifficulty=3)
+            && never(screenPushStart() == SCREEN_PUSHSTART_ON)
+            && never(creditActiveFlag() == FALSE)
+            && framePlayer1GameOvered()
+        ,
+        cancel = always_false(),
+        submit = always_true(),
+        value = player1Score() * 10,
+        format = "POINTS"
+    )
+
+    leaderboard(
+        title = "Hiscore Hardest",
+        description = "Highest scores on Hardest difficulty with a maximum of 3 lives",
+        start = 
+            checkpointGameStartedOnExactDifficulty(maxStartLives=3, targetDifficulty=4)
+            && never(screenPushStart() == SCREEN_PUSHSTART_ON)
+            && never(creditActiveFlag() == FALSE)
+            && framePlayer1GameOvered()
+        ,
+        cancel = always_false(),
+        submit = always_true(),
+        value = player1Score() * 10,
+        format = "POINTS"
     )
 // #endregion Leaderboards
 
