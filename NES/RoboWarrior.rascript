@@ -8,11 +8,13 @@
     function demoMode() => byte(0x009b)
     function cheatEnabled() => byte(0x1ed)
 
+    function deathTimer() => byte(0x007e)
     function playerLevel() => byte(0x0098)
     function playerRange() => byte(0x01c9)
     function itemBombQuantity() => byte(0x004c)
     function score() => byte(0x0049) * 100 + byte(0x0048) * 1000 + byte(0x0047) * 10000 + byte(0x0046) * 100000 + byte(0x0045) * 1000000
 
+    function continuePeriod() => byte(0x0054)
     function currentPeriod() => byte(0x004a)
         PERIOD_1_1 = 0x01
         PERIOD_2_1 = 0x02
@@ -48,7 +50,15 @@
     function energyPods() => bitcount(0x01c7)
 // #endregion Memory Addresses
 
-// #regioin Triggers
+// #region Frame Functions
+    function frameDeathSequenceStarted() {
+        return
+            prev(deathTimer()) == 0x00
+            && deathTimer() > 0x00
+    }
+// #endregion 
+
+// #region Triggers
     function triggerClearPeriod(periodId) {
         return
             demoMode() == FALSE
@@ -127,6 +137,38 @@
         )
     // #endregion Level Clear
 // #endregion Achivements
+
+// #region Leaderboards
+    leaderboard(
+        title = "High Score First Life",
+        description = "Highest score reached on the first life, without using continue",
+        format = "POINTS",
+        start =
+            once( prev(currentPeriod()) == 0x00 && currentPeriod() == 0x01 )
+            && never(continuePeriod() != 0x00)
+            && demoMode() == FALSE
+            && cheatEnabled() == FALSE
+            && frameDeathSequenceStarted()
+        ,
+        cancel = always_false(),
+        submit = always_true(),
+        value = score()
+    )
+
+    leaderboard(
+        title = "High Score Any Life",
+        description = "Highest score reached on any life, continue allowed",
+        format = "POINTS",
+        start =
+            demoMode() == FALSE
+            && cheatEnabled() == FALSE
+            && frameDeathSequenceStarted()
+        ,
+        cancel = always_false(),
+        submit = always_true(),
+        value = score()
+    )
+// #endregion Leaderboards
 
 // #region Rich Presence
     periodLoopkup = {
