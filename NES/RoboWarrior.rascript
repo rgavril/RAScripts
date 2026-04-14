@@ -14,38 +14,119 @@
     function score() => byte(0x0049) * 100 + byte(0x0048) * 1000 + byte(0x0047) * 10000 + byte(0x0046) * 100000 + byte(0x0045) * 1000000
 
     function currentPeriod() => byte(0x004a)
-    PERIOD_1_1 = 0x01
-    PERIOD_2_1 = 0x02
-    PERIOD_2_2 = 0x03
-    PERIOD_3_1 = 0x04
-    PERIOD_3_2 = 0x05
-    PERIOD_3_3 = 0x06
-    PERIOD_4_1 = 0x07
-    PERIOD_4_2 = 0x08
-    PERIOD_4_3 = 0x09
-    PERIOD_5_1 = 0x0a
-    PERIOD_5_2 = 0x0b
-    PERIOD_5_3 = 0x0c
-    PERIOD_6_1 = 0x0d
-    PERIOD_6_2 = 0x0e
-    PERIOD_6_3 = 0x0f
-    PERIOD_6_3 = 0x10
-    PERIOD_7_1 = 0x11
-    PERIOD_7_2 = 0x12
-    PERIOD_7_3 = 0x13
-    PERIOD_7_4 = 0x14
-    PERIOD_7_5 = 0x15
-    PERIOD_8_1 = 0x16
-    PERIOD_8_2 = 0x17
-    PERIOD_8_3 = 0x18
-    PERIOD_8_4 = 0x19
-    PERIOD_8_5 = 0x1a
+        PERIOD_1_1 = 0x01
+        PERIOD_2_1 = 0x02
+        PERIOD_2_2 = 0x03
+        PERIOD_3_1 = 0x04
+        PERIOD_3_2 = 0x05
+        PERIOD_3_3 = 0x06
+        PERIOD_4_1 = 0x07
+        PERIOD_4_2 = 0x08
+        PERIOD_4_3 = 0x09
+        PERIOD_5_1 = 0x0a
+        PERIOD_5_2 = 0x0b
+        PERIOD_5_3 = 0x0c
+        PERIOD_6_1 = 0x0d
+        PERIOD_6_2 = 0x0e
+        PERIOD_6_3 = 0x0f
+        PERIOD_6_3 = 0x10
+        PERIOD_7_1 = 0x11
+        PERIOD_7_2 = 0x12
+        PERIOD_7_3 = 0x13
+        PERIOD_7_4 = 0x14
+        PERIOD_7_5 = 0x15
+        PERIOD_8_1 = 0x16
+        PERIOD_8_2 = 0x17
+        PERIOD_8_3 = 0x18
+        PERIOD_8_4 = 0x19
+        PERIOD_8_5 = 0x1a
 
     function currentMapTile() => byte(0x01c0)
+        MAP_TILE_EXIT = 0x27
 
     function energyMeter() => bitcount(0x01c6)
     function energyPods() => bitcount(0x01c7)
 // #endregion Memory Addresses
+
+// #regioin Triggers
+    function triggerClearPeriod(periodId) {
+        return
+            demoMode() == FALSE
+            && cheatEnabled() == FALSE
+            && energyMeter() + energyPods() > 0
+            && currentPeriod() == periodId
+            && prev(currentMapTile() != MAP_TILE_EXIT)
+            && currentMapTile() == MAP_TILE_EXIT
+    }
+// #endregion Triggers
+
+// #region Achivements
+    // #region Level Clears
+        achievement(
+            title = "The Fringes",
+            description = "Clear the first level",
+            points = 5,
+            trigger = triggerClearPeriod(PERIOD_1_1),
+            type = "progression"
+        )
+
+        achievement(
+            title = "The Outlands",
+            description = "Clear the second level",
+            points = 10,
+            trigger = triggerClearPeriod(PERIOD_2_2),
+            type = "progression"
+        )
+
+        achievement(
+            title = "The Lands of Temples",
+            description = "Clear the third level",
+            points = 10,
+            trigger = triggerClearPeriod(PERIOD_3_3),
+            type = "progression"
+        )
+
+        achievement(
+            title = "The Iron Hills",
+            description = "Clear the forth level",
+            points = 10,
+            trigger = triggerClearPeriod(PERIOD_4_3),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Intellicon",
+            description = "Clear the fifth level",
+            points = 10,
+            trigger = triggerClearPeriod(PERIOD_5_3),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Oceania",
+            description = "Clear the sixth level",
+            points = 10,
+            trigger = triggerClearPeriod(PERIOD_6_3),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Outer City",
+            description = "Clear the seventh level",
+            points = 25,
+            trigger = triggerClearPeriod(PERIOD_7_5),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Regency",
+            description = "Clear the eigth level",
+            points = 25,
+            trigger = triggerClearPeriod(PERIOD_8_5),
+            type = "win_condition"
+        )
+    // #endregion Level Clear
+// #endregion Achivements
 
 // #region Rich Presence
     periodLoopkup = {
