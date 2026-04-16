@@ -45,6 +45,7 @@
 
     function currentMapTile() => byte(0x01c0)
         MAP_TILE_EXIT = 0x27
+        MAP_TILE_WELL = 0x2a
 
     function energyMeter() => bitcount(0x01c6)
     function energyPods() => bitcount(0x01c7)
@@ -56,6 +57,12 @@
             prev(deathTimer()) == 0x00
             && deathTimer() > 0x00
     }
+
+    function frameMovedToTile(tileId) {
+        return
+            prev(currentMapTile() != tileId)
+            && currentMapTile() == tileId
+    }
 // #endregion 
 
 // #region Triggers
@@ -65,8 +72,16 @@
             && cheatEnabled() == FALSE
             && energyMeter() + energyPods() > 0
             && currentPeriod() == periodId
-            && prev(currentMapTile() != MAP_TILE_EXIT)
-            && currentMapTile() == MAP_TILE_EXIT
+            && frameMovedToTile(MAP_TILE_EXIT)
+    }
+
+    function triggerWellOfHope(periodId) {
+        return
+            demoMode() == FALSE
+            && cheatEnabled() == FALSE
+            && energyMeter() + energyPods() > 0
+            && currentPeriod() == periodId
+            && frameMovedToTile(MAP_TILE_WELL)
     }
 // #endregion Triggers
 
@@ -136,6 +151,43 @@
             type = "win_condition"
         )
     // #endregion Level Clear
+
+    // #region Well of Hope
+        achievement(
+            title = "Well of Hope 1-1",
+            description = "Discover and use the Well of Hope from Period 1-1",
+            points = 3,
+            trigger = triggerWellOfHope(PERIOD_1_1)
+        )
+
+        achievement(
+            title = "Well of Hope 4-1",
+            description = "Discover and use the Well of Hope from Period 4-1",
+            points = 3,
+            trigger = triggerWellOfHope(PERIOD_4_1)
+        )
+
+        achievement(
+            title = "Well of Hope 6-3",
+            description = "Discover and use the Well of Hope from Period 6-3",
+            points = 3,
+            trigger = triggerWellOfHope(PERIOD_6_3)
+        )
+
+        achievement(
+            title = "Well of Hope 7-1",
+            description = "Discover and use the Well of Hope from Period 7-1",
+            points = 3,
+            trigger = triggerWellOfHope(PERIOD_7_1)
+        )
+
+        achievement(
+            title = "Well of Hope 8-1",
+            description = "Discover and use the Well of Hope from Period 8-1",
+            points = 3,
+            trigger = triggerWellOfHope(PERIOD_8_1)
+        )
+    // #endregion Well of Hope
 // #endregion Achivements
 
 // #region Leaderboards
