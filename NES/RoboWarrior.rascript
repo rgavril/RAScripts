@@ -7,6 +7,11 @@
 
     function demoMode() => byte(0x009b)
     function cheatEnabled() => byte(0x1ed)
+    
+    function music() => byte(0x00fa) & 0x7f
+        MUSIC_ROOM_OF_IDOLS = 0x0b
+    function sfx() => byte(0x00fb) & 0x7f
+        SFX_ITEM_PICKUP = 0x03
 
     function deathTimer() => byte(0x007e)
     function playerLevel() => byte(0x0098)
@@ -82,6 +87,21 @@
             && energyMeter() + energyPods() > 0
             && currentPeriod() == periodId
             && frameMovedToTile(MAP_TILE_WELL)
+    }
+
+    function triggerRoomOfIdols(periodId, totalTreasures) {
+        cancelConditions =
+            never(demoMode() != FALSE)
+            && never(cheatEnabled() != FALSE)
+            && never(energyMeter() + energyPods() == 0)
+            && never(currentPeriod() != periodId)
+
+        treasureCollected =
+            music() == MUSIC_ROOM_OF_IDOLS
+            && prev(currentMapTile()) > 0x1b
+            && currentMapTile() <= 0x1b
+
+        return cancelConditions && measured(repeated(totalTreasures, treasureCollected))
     }
 // #endregion Triggers
 
@@ -188,6 +208,120 @@
             trigger = triggerWellOfHope(PERIOD_8_1)
         )
     // #endregion Well of Hope
+
+    // #region Room of Idols
+        achievement(
+            title = "Room of Idols 1-1",
+            description = "Discover and collect all treasures from the Room of Idols from Period 1-1",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_1_1, 2)
+        )
+
+        achievement(
+            title = "Room of Idols 2-1",
+            description = "Discover and collect all treasures from the Room of Idols from Period 2-1",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_2_1, 3)
+        )
+
+        achievement(
+            title = "Room of Idols 2-2",
+            description = "Discover and collect all treasures from the Room of Idols from Period 2-2",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_2_2, 4)
+        )
+
+        achievement(
+            title = "Room of Idols 3-1",
+            description = "Discover and collect all treasures from the Room of Idols from Period 3-1",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_3_1, 2)
+        )
+
+        achievement(
+            title = "Room of Idols 3-2",
+            description = "Discover and collect all treasures from the Room of Idols from Period 3-2",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_3_2, 3)
+        )
+
+        achievement(
+            title = "Room of Idols 4-1",
+            description = "Discover and collect all treasures from the Room of Idols from Period 4-1",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_4_1, 8)
+        )
+
+        achievement(
+            title = "Room of Idols 4-2",
+            description = "Discover and collect all treasures from the Room of Idols from Period 4-2",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_4_2, 4)
+        )
+
+        achievement(
+            title = "Room of Idols 4-3",
+            description = "Discover and collect all treasures from the Room of Idols from Period 4-3",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_4_3, 1)
+        )
+
+        achievement(
+            title = "Room of Idols 5-1",
+            description = "Discover and collect all treasures from the Room of Idols from Period 5-1",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_5_1, 3)
+        )
+
+        achievement(
+            title = "Room of Idols 5-2",
+            description = "Discover and collect all treasures from the Room of Idols from Period 5-2",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_5_2, 3)
+        )
+
+        achievement(
+            title = "Room of Idols 6-1",
+            description = "Discover and collect all treasures from the Room of Idols from Period 6-1",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_6_1, 3)
+        )
+
+        achievement(
+            title = "Room of Idols 6-2",
+            description = "Discover and collect all treasures from the Room of Idols from Period 6-2",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_6_2, 6)
+        )
+
+        achievement(
+            title = "Room of Idols 7-1",
+            description = "Discover and collect all treasures from the Room of Idols from Period 7-1",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_7_1, 2)
+        )
+
+        achievement(
+            title = "Room of Idols 7-2",
+            description = "Discover and collect all treasures from the Room of Idols from Period 7-2",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_7_2, 8)
+        )
+
+        achievement(
+            title = "Room of Idols 8-2",
+            description = "Discover and collect all treasures from the Room of Idols from Period 8-2",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_8_2, 5)
+        )
+
+        achievement(
+            title = "Room of Idols 8-3",
+            description = "Discover and collect all treasures from the Room of Idols from Period 8-3",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_8_3, 5)
+        )
+    // #endregion Room of Idols
 // #endregion Achivements
 
 // #region Leaderboards
