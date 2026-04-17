@@ -49,11 +49,18 @@
         PERIOD_8_5 = 0x1a
 
     function currentMapTile() => byte(0x01c0)
-        MAP_TILE_EXIT = 0x27
-        MAP_TILE_WELL = 0x2a
 
     function energyMeter() => bitcount(0x01c6)
     function energyPods() => bitcount(0x01c7)
+
+
+    function mainAreaTilemap(index) => byte(0x02fc + index)
+        MAP_TILE_EXIT = 0x27
+        MAP_TILE_WELL = 0x2a
+    function hiddenTilemap(index) => byte(0x03d9 + index)
+        HIDDEN_TILE_STAIRS = 0x1f
+        HIDDEN_TILE_CANDLE = 0x19
+    function mainAreaTilemapIndex() => byte(0x002b)
 // #endregion Memory Addresses
 
 // #region Frame Functions
@@ -67,6 +74,12 @@
         return
             prev(currentMapTile() != tileId)
             && currentMapTile() == tileId
+    }
+
+    function frameHiddenTilemapRevealed(offset, tileType) {
+        return
+            prev(hiddenTilemap(offset)) == tileType
+            && hiddenTilemap(offset) == tileType + 0x80
     }
 // #endregion 
 
@@ -102,6 +115,36 @@
             && currentMapTile() <= 0x1b
 
         return cancelConditions && measured(repeated(totalTreasures, treasureCollected))
+    }
+
+    function triggerFindSecrets(periodId, numberOfSecrets, chaliceRequiredAfter = 0) {
+        cancelConditions =
+            never(demoMode() != FALSE)
+            && never(cheatEnabled() != FALSE)
+            && never(energyMeter() + energyPods() == 0)
+            && never(currentPeriod() != periodId)
+
+        // pauseCondition = always_true()
+        // if (chaliceRequiredAfter > 0) {
+        //     pauseCondition = unless()
+        // }
+
+        secretFoundConditions = []
+        // Hidden Stairs
+        for offset in range(0, 186) { // Stairs
+            array_push(secretFoundConditions, frameHiddenTilemapRevealed(offset, HIDDEN_TILE_STAIRS))
+        }
+        // Hidden Walls
+        for offset in range(0, 221) {
+            array_push(secretFoundConditions,
+                prev(mainAreaTilemap(offset)) & 0xf0 == 0xc0
+                && mainAreaTilemap(offset) & 0xf0 != 0xc0
+                && mainAreaTilemapIndex() == prev(mainAreaTilemapIndex())
+            )
+        }
+        allSecretsFoundConditions = tally(numberOfSecrets, secretFoundConditions)
+
+        return cancelConditions && measured(allSecretsFoundConditions)
     }
 // #endregion Triggers
 
@@ -322,6 +365,15 @@
             trigger = triggerRoomOfIdols(PERIOD_8_3, 5)
         )
     // #endregion Room of Idols
+
+    // #region Cave Finder
+        achievement(
+            title = "Cave Finder 1-1",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 1-1 without looping",
+            points = 3,
+            trigger = triggerFindSecrets(PERIOD_1_1, 4)
+        )
+    // #endregion Cave Finder
 // #endregion Achivements
 
 // #region Leaderboards
