@@ -17,6 +17,7 @@
     function playerLevel() => byte(0x0098)
     function playerRange() => byte(0x01c9)
     function itemBombQuantity() => byte(0x004c)
+    function chaliceCollected() => byte(0x0069)
     function score() => byte(0x0049) * 100 + byte(0x0048) * 1000 + byte(0x0047) * 10000 + byte(0x0046) * 100000 + byte(0x0045) * 1000000
 
     function continuePeriod() => byte(0x0054)
@@ -61,6 +62,7 @@
         HIDDEN_TILE_STAIRS = 0x1f
         HIDDEN_TILE_CANDLE = 0x19
     function mainAreaTilemapIndex() => byte(0x002b)
+    function mainAreaTotalScroll() => byte(0x00dd)
 // #endregion Memory Addresses
 
 // #region Frame Functions
@@ -124,10 +126,17 @@
             && never(energyMeter() + energyPods() == 0)
             && never(currentPeriod() != periodId)
 
-        // pauseCondition = always_true()
-        // if (chaliceRequiredAfter > 0) {
-        //     pauseCondition = unless()
-        // }
+        pauseCondition = always_true()
+        if (chaliceRequiredAfter > 0) {
+            pauseCondition = unless(
+                once(
+                    currentPeriod() == periodId
+                    && mainAreaTotalScroll() > chaliceRequiredAfter
+                    && chaliceCollected() == FALSE
+                    && never(energyMeter() + energyPods() == 0)
+                )
+            )
+        }
 
         secretFoundConditions = []
         // Hidden Stairs
@@ -144,7 +153,7 @@
         }
         allSecretsFoundConditions = tally(numberOfSecrets, secretFoundConditions)
 
-        return cancelConditions && measured(allSecretsFoundConditions)
+        return cancelConditions && pauseCondition && measured(allSecretsFoundConditions)
     }
 // #endregion Triggers
 
@@ -371,7 +380,7 @@
             title = "Cave Finder 1-1",
             description = "Uncover all hidden underground entrances and destroy all fake walls from Period 1-1 without looping",
             points = 3,
-            trigger = triggerFindSecrets(PERIOD_1_1, 4)
+            trigger = triggerFindSecrets(PERIOD_1_1, 4, chaliceRequiredAfter = 0x1c)
         )
     // #endregion Cave Finder
 // #endregion Achivements
