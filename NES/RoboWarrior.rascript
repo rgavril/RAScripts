@@ -10,7 +10,7 @@
     
     function music() => byte(0x00fa) & 0x7f
         MUSIC_ROOM_OF_IDOLS = 0x0b
-    function sfx() => byte(0x00fb) & 0x7f
+    function sfx() => byte(0x00fb)
         SFX_ITEM_PICKUP = 0x03
 
     function deathTimer() => byte(0x007e)
@@ -113,8 +113,8 @@
 
         treasureCollected =
             music() == MUSIC_ROOM_OF_IDOLS
-            && prev(currentMapTile()) > 0x1b
-            && currentMapTile() <= 0x1b
+            && prev(sfx()) != SFX_ITEM_PICKUP
+            && sfx() == SFX_ITEM_PICKUP
 
         return cancelConditions && measured(repeated(totalTreasures, treasureCollected))
     }
@@ -161,7 +161,7 @@
     // #region Level Clears
         achievement(
             title = "The Fringes",
-            description = "Clear the first level",
+            description = "Clear Period 1",
             points = 5,
             trigger = triggerClearPeriod(PERIOD_1_1),
             type = "progression"
@@ -169,7 +169,7 @@
 
         achievement(
             title = "The Outlands",
-            description = "Clear the second level",
+            description = "Clear Period 2",
             points = 10,
             trigger = triggerClearPeriod(PERIOD_2_2),
             type = "progression"
@@ -177,7 +177,7 @@
 
         achievement(
             title = "The Lands of Temples",
-            description = "Clear the third level",
+            description = "Clear Period 3",
             points = 10,
             trigger = triggerClearPeriod(PERIOD_3_3),
             type = "progression"
@@ -185,7 +185,7 @@
 
         achievement(
             title = "The Iron Hills",
-            description = "Clear the forth level",
+            description = "Clear Period 4",
             points = 10,
             trigger = triggerClearPeriod(PERIOD_4_3),
             type = "progression"
@@ -193,7 +193,7 @@
 
         achievement(
             title = "Intellicon",
-            description = "Clear the fifth level",
+            description = "Clear Period 5",
             points = 10,
             trigger = triggerClearPeriod(PERIOD_5_3),
             type = "progression"
@@ -201,7 +201,7 @@
 
         achievement(
             title = "Oceania",
-            description = "Clear the sixth level",
+            description = "Clear Period 6",
             points = 10,
             trigger = triggerClearPeriod(PERIOD_6_3),
             type = "progression"
@@ -209,7 +209,7 @@
 
         achievement(
             title = "Outer City",
-            description = "Clear the seventh level",
+            description = "Clear Period 7",
             points = 25,
             trigger = triggerClearPeriod(PERIOD_7_5),
             type = "progression"
@@ -217,7 +217,7 @@
 
         achievement(
             title = "Regency",
-            description = "Clear the eigth level",
+            description = "Clear Period 8",
             points = 25,
             trigger = triggerClearPeriod(PERIOD_8_5),
             type = "win_condition"
@@ -375,14 +375,45 @@
         )
     // #endregion Room of Idols
 
-    // #region Cave Finder
+    // #region Secrets
         achievement(
-            title = "Cave Finder 1-1",
+            title = "Orienteering 1-1",
             description = "Uncover all hidden underground entrances and destroy all fake walls from Period 1-1 without looping",
             points = 3,
             trigger = triggerFindSecrets(PERIOD_1_1, 4, chaliceRequiredAfter = 0x1c)
         )
-    // #endregion Cave Finder
+
+        achievement(
+            title = "Orienteering 2-1",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 2-1",
+            points = 5,
+            trigger = triggerFindSecrets(PERIOD_2_1, 8)
+        )
+
+        achievement(
+            title = "Orienteering 2-2",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 2-2",
+            points = 3,
+            trigger = triggerFindSecrets(PERIOD_2_2, 4)
+        )
+
+        achievement(
+            title = "Orienteering 3-1",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 3-1 without looping",
+            points = 5,
+            trigger = triggerFindSecrets(PERIOD_3_1, 7, chaliceRequiredAfter = 0x24)
+        )
+
+        achievement(
+            title = "Orienteering 3-2",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 3-2",
+            points = 5,
+            trigger = triggerFindSecrets(PERIOD_3_2, 5)
+        )
+    // #endregion Secrets
+
+    // #region Candle Only Levels
+    // #endregion
 // #endregion Achivements
 
 // #region Leaderboards
