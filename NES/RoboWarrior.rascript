@@ -9,6 +9,8 @@
     function cheatEnabled() => byte(0x1ed)
     
     function music() => byte(0x00fa) & 0x7f
+        MUSIC_OVERWORLD_1 = 0x01
+        MUSIC_OVERWORLD_2 = 0x03
         MUSIC_ROOM_OF_IDOLS = 0x0b
     function sfx() => byte(0x00fb)
         SFX_ITEM_PICKUP = 0x03
@@ -17,7 +19,10 @@
     function playerLevel() => byte(0x0098)
     function playerRange() => byte(0x01c9)
     function itemBombQuantity() => byte(0x004c)
+    function itemLampQuantity() => byte(0x004f)
     function chaliceCollected() => byte(0x0069)
+    function currenSelectedItem() => byte(0x0099)
+        SELECTED_ITEM_LAMP = 0x03
     function score() => byte(0x0049) * 100 + byte(0x0048) * 1000 + byte(0x0047) * 10000 + byte(0x0046) * 100000 + byte(0x0045) * 1000000
 
     function continuePeriod() => byte(0x0054)
@@ -53,8 +58,14 @@
 
     function energyMeter() => bitcount(0x01c6)
     function energyPods() => bitcount(0x01c7)
+    function lightState() => byte(0x006d)
+        LIGHT_FULL = 0x00
+        LIGHT_DARK = 0x01
+        LIGHT_CANDLE = 0x81
 
-
+    function currentArea() => byte(0x00cd)
+        MAIN_AREA = 0x00
+        HIDDEN_AREA = 0x01
     function mainAreaTilemap(index) => byte(0x02fc + index)
         MAP_TILE_EXIT = 0x27
         MAP_TILE_WELL = 0x2a
@@ -154,6 +165,29 @@
         allSecretsFoundConditions = tally(numberOfSecrets, secretFoundConditions)
 
         return cancelConditions && pauseCondition && measured(allSecretsFoundConditions)
+    }
+
+    function triggerCandleOnly(periodId) {
+        primingConditions =
+            once (
+                (music() == MUSIC_OVERWORLD_1 || music() == MUSIC_OVERWORLD_2)
+                && lightState() == LIGHT_DARK
+            )
+
+        cancelConditions =
+            never(demoMode() != FALSE)
+            && never(cheatEnabled() != FALSE)
+            && never(energyMeter() + energyPods() == 0)
+            && never(currentPeriod() != periodId)
+            && never(
+                itemLampQuantity() < prev(itemLampQuantity())
+                && lightState() == LIGHT_FULL
+            )
+
+        targetConditions = 
+            frameMovedToTile(MAP_TILE_EXIT)
+
+        return primingConditions && cancelConditions && trigger_when(targetConditions)
     }
 // #endregion Triggers
 
@@ -413,6 +447,33 @@
     // #endregion Secrets
 
     // #region Candle Only Levels
+        achievement(
+            title = "Candle Light 2-2",
+            description = "Complete Period 2-2 without using a lamp",
+            points = 10,
+            trigger = triggerCandleOnly(PERIOD_2_2)
+        )
+
+        achievement(
+            title = "Candle Light 4-2",
+            description = "Complete Period 4-2 without using a lamp",
+            points = 10,
+            trigger = triggerCandleOnly(PERIOD_4_2)
+        )
+
+        achievement(
+            title = "Candle Light 6-3",
+            description = "Complete Period 6-3 without using a lamp",
+            points = 10,
+            trigger = triggerCandleOnly(PERIOD_6_3)
+        )
+
+        achievement(
+            title = "Cangle Light 8-2",
+            description = "Complete Period 8-2 without using a lamp",
+            points = 10,
+            trigger = triggerCandleOnly(PERIOD_8_2)
+        )
     // #endregion
 // #endregion Achivements
 
