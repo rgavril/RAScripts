@@ -202,21 +202,21 @@
         )
 
         achievement(
-            title = "Well of Hope 1-1",
+            title = "Altile's Baptism",
             description = "Discover and use the Well of Hope from Period 1-1",
             points = 2,
             trigger = triggerWellOfHope(PERIOD_1_1)
         )
 
         achievement(
-            title = "Orienteering 1-1",
+            title = "Fringe Demolitionist",
             description = "Uncover all hidden underground entrances and destroy all fake walls from Period 1-1 without looping",
             points = 3,
             trigger = triggerFindSecrets(PERIOD_1_1, 4, chaliceRequiredAfter = 0x1c)
         )
 
         achievement(
-            title = "Room of Idols 1-1",
+            title = "Test of the First Idol",
             description = "Discover and collect all treasures from the Room of Idols from Period 1-1",
             points = 2,
             trigger = triggerRoomOfIdols(PERIOD_1_1, 2)
@@ -225,7 +225,7 @@
 
     // #region Period 2-1
         achievement(
-            title = "The Outlands 2-1",
+            title = "Outland Reconnaissance",
             description = "Complete Period 2-1",
             points = 5,
             trigger = triggerClearPeriod(PERIOD_2_1),
@@ -233,14 +233,14 @@
         )
 
         achievement(
-            title = "Orienteering 2-1",
+            title = "Wasteland Cartographer",
             description = "Uncover all hidden underground entrances and destroy all fake walls from Period 2-1",
             points = 3,
             trigger = triggerFindSecrets(PERIOD_2_1, 8)
         )
 
         achievement(
-            title = "Room of Idols 2-1",
+            title = "Favor of the Barrens",
             description = "Discover and collect all treasures from the Room of Idols from Period 2-1",
             points = 2,
             trigger = triggerRoomOfIdols(PERIOD_2_2, 3)
@@ -249,7 +249,7 @@
 
     // #region Period 2-2
         achievement(
-            title = "The Outlands 2-2",
+            title = "The Emerald Passage",
             description = "Complete Period 2-2",
             points = 5,
             trigger = triggerClearPeriod(PERIOD_2_2),
@@ -257,21 +257,21 @@
         )
 
         achievement(
-            title = "Candle Light 2-2",
+            title = "Outland Flare",
             description = "Complete Period 2-2 without using a lamp",
-            points = 10,
+            points = 5,
             trigger = triggerCandleOnly(PERIOD_2_2)
         )
 
         achievement(
-            title = "Orienteering 2-2",
+            title = "Structural Exposure",
             description = "Uncover all hidden underground entrances and destroy all fake walls from Period 2-2",
-            points = 3,
+            points = 2,
             trigger = triggerFindSecrets(PERIOD_2_2, 4)
         )
 
         achievement(
-            title = "Room of Idols 2-2",
+            title = "Obscure Grace",
             description = "Discover and collect all treasures from the Room of Idols from Period 2-2",
             points = 3,
             trigger = triggerRoomOfIdols(PERIOD_2_2, 4)
@@ -280,7 +280,7 @@
 
     // #region Period 3-1
         achievement(
-            title = "Temple Lands 3-1",
+            title = "Hallowed Return",
             description = "Complete Period 3-1",
             points = 5,
             trigger = triggerClearPeriod(PERIOD_3_1),
@@ -288,14 +288,14 @@
         )
 
         achievement(
-            title = "Orienteering 3-1",
+            title = "Sacred Blueprint",
             description = "Uncover all hidden underground entrances and destroy all fake walls from Period 3-1 without looping",
             points = 5,
             trigger = triggerFindSecrets(PERIOD_3_1, 7, chaliceRequiredAfter = 0x24)
         )
 
         achievement(
-            title = "Room of Idols 3-1",
+            title = "Trial of the Trinity",
             description = "Discover and collect all treasures from the Room of Idols from Period 3-1",
             points = 3,
             trigger = triggerRoomOfIdols(PERIOD_3_1, 2)
@@ -304,7 +304,7 @@
 
     // #region Period 3-2
         achievement(
-            title = "Temple Lands 3-2",
+            title = "Sanctum Penetration",
             description = "Complete Period 3-2",
             points = 5,
             trigger = triggerClearPeriod(PERIOD_3_2),
@@ -312,14 +312,14 @@
         )
 
         achievement(
-            title = "Orienteering 3-2",
+            title = "Temple Infrastructure",
             description = "Uncover all hidden underground entrances and destroy all fake walls from Period 3-2",
-            points = 5,
+            points = 3,
             trigger = triggerFindSecrets(PERIOD_3_2, 5)
         )
 
         achievement(
-            title = "Room of Idols 3-2",
+            title = "Origin of the Grace",
             description = "Discover and collect all treasures from the Room of Idols from Period 3-2",
             points = 3,
             trigger = triggerRoomOfIdols(PERIOD_3_2, 3)
