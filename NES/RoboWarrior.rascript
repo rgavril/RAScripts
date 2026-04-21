@@ -328,7 +328,7 @@
 
     // #region Period 3-3 (Boss: Globula)
         achievement(
-            title = "Globula 3-3",
+            title = "Lord of the Amoebas",
             description = "Defeat Globula and complete Period 3-3",
             points = 5,
             trigger = triggerClearPeriod(PERIOD_3_3),
@@ -338,24 +338,31 @@
 
     // #region Period 4-1
         achievement(
-            title = "The Iron Hills 4-1",
+            title = "Iron Hills Entry",
             description = "Complete Period 4-1",
-            points = 5,
+            points = 10,
             trigger = triggerClearPeriod(PERIOD_4_1),
             type = "progression"
         )
 
         achievement(
-            title = "Well of Hope 4-1",
+            title = "Rust-Free Waters",
             description = "Discover and use the Well of Hope from Period 4-1",
-            points = 3,
+            points = 2,
             trigger = triggerWellOfHope(PERIOD_4_1)
         )
 
         achievement(
-            title = "Room of Idols 4-1",
+            title = "Iron Ore Prospector",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 4-1",
+            points = 10,
+            trigger = triggerFindSecrets(PERIOD_4_1, 20)
+        )
+
+        achievement(
+            title = "The Miner's Icons",
             description = "Discover and collect all treasures from the Room of Idols from Period 4-1",
-            points = 3,
+            points = 5,
             trigger = triggerRoomOfIdols(PERIOD_4_1, 8)
         )
     // #endregion Period 4-1
