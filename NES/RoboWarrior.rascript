@@ -369,31 +369,40 @@
 
     // #region Period 4-2
         achievement(
-            title = "The Iron Hills 4-2",
+            title = "The Steel Divide",
             description = "Complete Period 4-2",
-            points = 5,
+            points = 10,
             trigger = triggerClearPeriod(PERIOD_4_2),
             type = "progression"
         )
 
         achievement(
-            title = "Candle Light 4-2",
+            title = "Shadow of the Forge",
             description = "Complete Period 4-2 without using a lamp",
             points = 10,
             trigger = triggerCandleOnly(PERIOD_4_2)
         )
 
         achievement(
-            title = "Room of Idols 4-2",
+            title = "Idols of the Iron Deep",
             description = "Discover and collect all treasures from the Room of Idols from Period 4-2",
-            points = 3,
+            points = 5,
             trigger = triggerRoomOfIdols(PERIOD_4_2, 4)
+        )
+
+        achievement(
+            title = "Iron Hills Excavator",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 4-2, the first time you pass them and without looping more than once",
+            points = 10,
+            trigger = 
+                unless( mainAreaTotalScroll() > 0x4a && mainAreaTotalScroll() < 0x8d )
+                && triggerFindSecrets(PERIOD_4_2, 7, chaliceRequiredAfter = 0x4a) 
         )
     // #endregion
 
     // #region Period 4-3
         achievement(
-            title = "The Iron Hills 4-3",
+            title = "Strongroom Escape",
             description = "Complete Period 4-3",
             points = 5,
             trigger = triggerClearPeriod(PERIOD_4_3),
@@ -401,11 +410,20 @@
         )
 
         achievement(
-            title = "Room of Idols 4-3",
+            title = "Silver Maze Designer",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 4-1",
+            points = 10,
+            trigger = triggerFindSecrets(PERIOD_4_3, 15)
+        )
+
+        achievement(
+            title = "Iron Lion of Zion",
             description = "Discover and collect all treasures from the Room of Idols from Period 4-3",
-            points = 3,
+            points = 2,
             trigger = triggerRoomOfIdols(PERIOD_4_3, 1)
         )
+
+
     // #endregion
 
     // #region Well of Hope
