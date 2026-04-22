@@ -42,7 +42,7 @@
         PERIOD_6_1 = 0x0d
         PERIOD_6_2 = 0x0e
         PERIOD_6_3 = 0x0f
-        PERIOD_6_3 = 0x10
+        PERIOD_6_4 = 0x10
         PERIOD_7_1 = 0x11
         PERIOD_7_2 = 0x12
         PERIOD_7_3 = 0x13
@@ -506,18 +506,64 @@
             points = 3,
             trigger = triggerRoomOfIdols(PERIOD_6_1, 3)
         )
-
-
     // #endregion
 
-    // #region Well of Hope
+    // #region Period 6-2
+        achievement(
+            title = "Progress 6-2",
+            description = "Clear Period 6-2",
+            points = 10,
+            trigger = triggerClearPeriod(PERIOD_6_2),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Secrets 6-2",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 6-2 without looping",
+            points = 5,
+            trigger = triggerFindSecrets(PERIOD_6_2, 10, chaliceRequiredAfter=0x2c)
+        )
+
+        achievement(
+            title = "Room of Idols 6-2",
+            description = "Discover and collect all treasures from the Room of Idols from Period 6-2",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_6_2, 6)
+        )
+    // #endregion
+
+    // #region Period 6-3
+        achievement(
+            title = "Progress 6-3",
+            description = "Clear Period 6-3",
+            points = 10,
+            trigger = triggerClearPeriod(PERIOD_6_3),
+            type = "progression"
+        )
+
         achievement(
             title = "Well of Hope 6-3",
             description = "Discover and use the Well of Hope from Period 6-3",
-            points = 3,
+            points = 2,
             trigger = triggerWellOfHope(PERIOD_6_3)
         )
 
+        achievement(
+            title = "Secrets 6-3",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 6-3 without looping",
+            points = 10,
+            trigger = triggerFindSecrets(PERIOD_6_3, 13, chaliceRequiredAfter=0x4f)
+        )
+
+        achievement(
+            title = "Candle Light 6-3",
+            description = "Complete Period 6-3 without using a Lamp",
+            points = 10,
+            trigger = triggerCandleOnly(PERIOD_6_3)
+        )
+    // #endregion
+
+    // #region Well of Hope
         achievement(
             title = "Well of Hope 7-1",
             description = "Discover and use the Well of Hope from Period 7-1",
@@ -534,13 +580,6 @@
     // #endregion Well of Hope
 
     // #region Room of Idols
-        achievement(
-            title = "Room of Idols 6-2",
-            description = "Discover and collect all treasures from the Room of Idols from Period 6-2",
-            points = 3,
-            trigger = triggerRoomOfIdols(PERIOD_6_2, 6)
-        )
-
         achievement(
             title = "Room of Idols 7-1",
             description = "Discover and collect all treasures from the Room of Idols from Period 7-1",
@@ -571,13 +610,6 @@
     // #endregion Room of Idols
 
     // #region Candle Only Levels
-        achievement(
-            title = "Candle Light 6-3",
-            description = "Complete Period 6-3 without using a lamp",
-            points = 10,
-            trigger = triggerCandleOnly(PERIOD_6_3)
-        )
-
         achievement(
             title = "Cangle Light 8-2",
             description = "Complete Period 8-2 without using a lamp",
@@ -637,7 +669,7 @@
         0x0d: "Period 6-1: Oceania 1",
         0x0e: "Period 6-2: Oceania 2",
         0x0f: "Period 6-3: Oceania 3",
-        0x10: "Period 6-3: Oceania Boss - Aquarian",
+        0x10: "Period 6-4: Oceania Boss - Aquarian",
         0x11: "Period 7-1: Outer City 1",
         0x12: "Period 7-2: Outer City 2",
         0x13: "Period 7-3: Outer City Boss - Lian",
