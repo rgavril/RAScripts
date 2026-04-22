@@ -365,7 +365,7 @@
             points = 5,
             trigger = triggerRoomOfIdols(PERIOD_4_1, 8)
         )
-    // #endregion Period 4-1
+    // #endregion
 
     // #region Period 4-2
         achievement(
@@ -426,6 +426,90 @@
 
     // #endregion
 
+    // #region Period 5-1
+        achievement(
+            title = "Technological Hub Crossing",
+            description = "Clear Period 5-1",
+            points = 25,
+            trigger = triggerClearPeriod(PERIOD_5_1),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Circuit Breaker",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 5-1 without looping",
+            points = 10,
+            trigger = triggerFindSecrets(PERIOD_5_1, 12, chaliceRequiredAfter=0x35)
+        )
+
+        achievement(
+            title = "Tech-Lords Altar",
+            description = "Discover and collect all treasures from the Room of Idols from Period 5-1",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_5_1, 3)
+        )
+    // #endregion
+
+    // #region Period 5-2
+        achievement(
+            title = "Intellicon Dead-Zone",
+            description = "Clear Period 5-2",
+            points = 5,
+            trigger = triggerClearPeriod(PERIOD_5_2),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Void Surveyor",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 5-2",
+            points = 5,
+            trigger = triggerFindSecrets(PERIOD_5_2, 3)
+        )
+
+        achievement(
+            title = "Hidden Logic Icons",
+            description = "Discover and collect all treasures from the Room of Idols from Period 5-2",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_5_2, 3)
+        )
+    // #endregion
+
+    // #region Period 5-3 (Boss: Viripides)
+        achievement(
+            title = "Lord of the Dragons",
+            description = "Defeat Viripides and complete Period 5-3",
+            points = 5,
+            trigger = triggerClearPeriod(PERIOD_5_3),
+            type = "progression"
+        )
+    // endregion
+
+    // #region Period 6-1
+        achievement(
+            title = "Progress 6-1",
+            description = "Clear Period 6-1",
+            points = 10,
+            trigger = triggerClearPeriod(PERIOD_6_1),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Secrets 6-1",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 6-1",
+            points = 5,
+            trigger = triggerFindSecrets(PERIOD_6_1, 9)
+        )
+
+        achievement(
+            title = "Room of Idols 6-1",
+            description = "Discover and collect all treasures from the Room of Idols from Period 6-1",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_6_1, 3)
+        )
+
+
+    // #endregion
+
     // #region Well of Hope
         achievement(
             title = "Well of Hope 6-3",
@@ -450,27 +534,6 @@
     // #endregion Well of Hope
 
     // #region Room of Idols
-        achievement(
-            title = "Room of Idols 5-1",
-            description = "Discover and collect all treasures from the Room of Idols from Period 5-1",
-            points = 3,
-            trigger = triggerRoomOfIdols(PERIOD_5_1, 3)
-        )
-
-        achievement(
-            title = "Room of Idols 5-2",
-            description = "Discover and collect all treasures from the Room of Idols from Period 5-2",
-            points = 3,
-            trigger = triggerRoomOfIdols(PERIOD_5_2, 3)
-        )
-
-        achievement(
-            title = "Room of Idols 6-1",
-            description = "Discover and collect all treasures from the Room of Idols from Period 6-1",
-            points = 3,
-            trigger = triggerRoomOfIdols(PERIOD_6_1, 3)
-        )
-
         achievement(
             title = "Room of Idols 6-2",
             description = "Discover and collect all treasures from the Room of Idols from Period 6-2",
