@@ -563,28 +563,54 @@
         )
     // #endregion
 
-    // #region Well of Hope
+    // #region Period 6-4 (Boss: Aquarian)
+        achievement(
+            title = "Lord of Water",
+            description = "Defeat Aquarian and complete Period 6-4",
+            points = 5,
+            trigger = triggerClearPeriod(PERIOD_6_4),
+            type = "progression"
+        )
+    // #endregion
+
+    // #region Period 7-1
+        achievement(
+            title = "Progress 7-1",
+            description = "Clear Period 7-1",
+            points = 10,
+            trigger = triggerClearPeriod(PERIOD_7_1),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Room of Idols 7-1",
+            description = "Discover and collect all treasures from the Room of Idols from Period 7-1",
+            points = 2,
+            trigger = triggerRoomOfIdols(PERIOD_7_1, 2)
+        )
+
         achievement(
             title = "Well of Hope 7-1",
             description = "Discover and use the Well of Hope from Period 7-1",
-            points = 3,
+            points = 2,
             trigger = triggerWellOfHope(PERIOD_7_1)
         )
 
         achievement(
-            title = "Well of Hope 8-1",
-            description = "Discover and use the Well of Hope from Period 8-1",
-            points = 3,
-            trigger = triggerWellOfHope(PERIOD_8_1)
+            title = "Secrets 7-1",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 7-1 without looping",
+            points = 10,
+            trigger = triggerFindSecrets(PERIOD_7_1, 42, chaliceRequiredAfter=0x1c)
         )
-    // #endregion Well of Hope
+    // #endregion
 
-    // #region Room of Idols
+    // #region Period 7-2
         achievement(
-            title = "Room of Idols 7-1",
-            description = "Discover and collect all treasures from the Room of Idols from Period 7-1",
-            points = 3,
-            trigger = triggerRoomOfIdols(PERIOD_7_1, 2)
+            title = "Progress 7-2",
+            description = "Clear Period 7-2",
+            points = 10,
+            trigger = triggerClearPeriod(PERIOD_7_2),
+            type = "progression"
         )
 
         achievement(
@@ -595,6 +621,84 @@
         )
 
         achievement(
+            title = "Secrets 7-2",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 7-2",
+            points = 2,
+            trigger = triggerFindSecrets(PERIOD_7_2, 2)
+        )
+    // #endregion
+
+    // #region Period 7-3 (Boss: Lian)
+        achievement(
+            title = "Lord of Air",
+            description = "Defeat Lian and complete Period 7-3",
+            points = 5,
+            trigger = triggerClearPeriod(PERIOD_7_3),
+            type = "progression"
+        )
+    // #endregion
+
+    // #region Period 7-4
+        achievement(
+            title = "Progress 7-4",
+            description = "Clear Period 7-4",
+            points = 5,
+            trigger = triggerClearPeriod(PERIOD_7_4),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Secrets 7-4",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 7-4",
+            points = 5,
+            trigger = triggerFindSecrets(PERIOD_7_4, 5)
+        )
+    // #endregion
+
+    // #region Period 7-5 (Boss: Pyrodyne)
+        achievement(
+            title = "Lord of Fire",
+            description = "Defeat Pyrodyne and complete Period 7-5",
+            points = 5,
+            trigger = triggerClearPeriod(PERIOD_7_5),
+            type = "progression"
+        )
+    // #endregion
+ 
+    // #region Period 8-1
+        achievement(
+            title = "Progress 8-1",
+            description = "Clear Period 8-1",
+            points = 5,
+            trigger = triggerClearPeriod(PERIOD_8_1),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Secrets 8-1",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 8-1",
+            points = 3,
+            trigger = triggerFindSecrets(PERIOD_8_1, 6)
+        )
+
+        achievement(
+            title = "Well of Hope 8-1",
+            description = "Discover and use the Well of Hope from Period 8-1",
+            points = 2,
+            trigger = triggerWellOfHope(PERIOD_8_1)
+        )
+    // #endregion
+
+    // #region Period 8-2
+        achievement(
+            title = "Progress 8-2",
+            description = "Clear Period 8-2",
+            points = 10,
+            trigger = triggerClearPeriod(PERIOD_8_2),
+            type = "progression"
+        )
+
+        achievement(
             title = "Room of Idols 8-2",
             description = "Discover and collect all treasures from the Room of Idols from Period 8-2",
             points = 3,
@@ -602,19 +706,41 @@
         )
 
         achievement(
-            title = "Room of Idols 8-3",
-            description = "Discover and collect all treasures from the Room of Idols from Period 8-3",
-            points = 3,
-            trigger = triggerRoomOfIdols(PERIOD_8_3, 5)
-        )
-    // #endregion Room of Idols
-
-    // #region Candle Only Levels
-        achievement(
             title = "Cangle Light 8-2",
             description = "Complete Period 8-2 without using a lamp",
             points = 10,
             trigger = triggerCandleOnly(PERIOD_8_2)
+        )
+
+        achievement(
+            title = "Secrets 8-2",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 8-2",
+            points = 10,
+            trigger = triggerFindSecrets(PERIOD_8_2, 35)
+        )
+    // #endregion
+
+    // #region Period 8-3
+        achievement(
+            title = "Progress 8-3",
+            description = "Clear Period 8-3",
+            points = 10,
+            trigger = triggerClearPeriod(PERIOD_8_3),
+            type = "progression"
+        )
+
+        achievement(
+            title = "Room of Idols 8-3",
+            description = "Discover and collect all treasures from the Room of Idols from Period 8-3",
+            points = 2,
+            trigger = triggerRoomOfIdols(PERIOD_8_3, 5)
+        )
+
+        achievement(
+            title = "Secrets 8-3",
+            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 8-3",
+            points = 10,
+            trigger = triggerFindSecrets(PERIOD_8_3, 67) // Impossible
         )
     // #endregion
 // #endregion Achivements
