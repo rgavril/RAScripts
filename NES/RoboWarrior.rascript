@@ -241,7 +241,7 @@
 
         // Stairs
         achievement(
-            title = "Stairs 1-1",
+            title = "Fringe Demolitionist",
             description = "Discover all hidden underground entrances from Period 1-1 without looping",
             points = 3,
             trigger = triggerFindAllStairs(PERIOD_1_1, 2, chaliceRequiredAfter = 0x1c)
@@ -303,7 +303,7 @@
 
         // Stairs
         achievement(
-            title = "Structural Exposure",
+            title = "Outland Vaults",
             description = "Discover all hidden underground entrances from Period 2-2",
             points = 2,
             trigger = triggerFindAllStairs(PERIOD_2_2, 2)
@@ -330,7 +330,7 @@
 
         // Stairs
         achievement(
-            title = "Sacred Blueprint",
+            title = "Sacred Sanctuary",
             description = "Discover all hidden underground entrances from Period 3-1 without looping",
             points = 3,
             trigger = triggerFindAllStairs(PERIOD_3_1, 3, chaliceRequiredAfter = 0x24)
@@ -467,7 +467,7 @@
 
         // Stairs
         achievement(
-            title = "Silver Maze Designer",
+            title = "Secured Strongroom",
             description = "Discover all hidden underground entrances from Period 4-1",
             points = 2,
             trigger = triggerFindAllStairs(PERIOD_4_3, 2)
@@ -496,7 +496,7 @@
 
         // Stairs
         achievement(
-            title = "Circuit Breaker",
+            title = "Intelicon Sewers",
             description = "Discover all hidden underground entrances from Period 5-1 without looping",
             points = 3,
             trigger = triggerFindAllStairs(PERIOD_5_1, 9, chaliceRequiredAfter=0x35)
@@ -504,7 +504,7 @@
 
         // Room of Idols
         achievement(
-            title = "Tech-Lords Altar",
+            title = "Tech-Lord's Altar",
             description = "Discover and collect all treasures from the Room of Idols from Period 5-1",
             points = 3,
             trigger = triggerRoomOfIdols(PERIOD_5_1, 3)
@@ -523,7 +523,7 @@
 
         // Stairs
         achievement(
-            title = "Void Surveyor",
+            title = "Cable Tranch Survey",
             description = "Discover all hidden underground entrances from Period 5-2",
             points = 2,
             trigger = triggerFindAllStairs(PERIOD_5_2, 1)
@@ -552,7 +552,7 @@
     // #region Period 6-1
         // Progression
         achievement(
-            title = "Progress 6-1",
+            title = "Oceania Infiltrator",
             description = "Clear Period 6-1",
             points = 10,
             trigger = triggerClearPeriod(PERIOD_6_1),
@@ -561,7 +561,7 @@
 
         // Stairs
         achievement(
-            title = "Stairs 6-1",
+            title = "Dehydrated Descent",
             description = "Discover all hidden underground entrances from Period 6-1",
             points = 2,
             trigger = triggerFindAllStairs(PERIOD_6_1, 2)
@@ -569,7 +569,7 @@
 
         // Room of Idols
         achievement(
-            title = "Room of Idols 6-1",
+            title = "Riverbed Relics",
             description = "Discover and collect all treasures from the Room of Idols from Period 6-1",
             points = 3,
             trigger = triggerRoomOfIdols(PERIOD_6_1, 3)
@@ -579,7 +579,7 @@
     // #region Period 6-2
         // Progression
         achievement(
-            title = "Progress 6-2",
+            title = "Dam Destroyer",
             description = "Clear Period 6-2",
             points = 10,
             trigger = triggerClearPeriod(PERIOD_6_2),
@@ -588,7 +588,7 @@
 
         // Stairs
         achievement(
-            title = "Stairs 6-2",
+            title = "The Dam Interior",
             description = "Discover all hidden underground entrances from Period 6-2 without looping",
             points = 3,
             trigger = triggerFindAllStairs(PERIOD_6_2, 5, chaliceRequiredAfter=0x2c)
@@ -596,7 +596,7 @@
 
         // Room of Idols
         achievement(
-            title = "Room of Idols 6-2",
+            title = "Idols of the Reservoir",
             description = "Discover and collect all treasures from the Room of Idols from Period 6-2",
             points = 3,
             trigger = triggerRoomOfIdols(PERIOD_6_2, 6)
@@ -606,7 +606,7 @@
     // #region Period 6-3
         // Progression
         achievement(
-            title = "Progress 6-3",
+            title = "Salt Flat Strider",
             description = "Clear Period 6-3",
             points = 10,
             trigger = triggerClearPeriod(PERIOD_6_3),
@@ -615,7 +615,7 @@
 
         // Well of Hope
         achievement(
-            title = "Well of Hope 6-3",
+            title = "Oceania's Last Drop",
             description = "Discover and use the Well of Hope from Period 6-3",
             points = 2,
             trigger = triggerWellOfHope(PERIOD_6_3)
@@ -623,7 +623,7 @@
 
         // Candle Only
         achievement(
-            title = "Candle Light 6-3",
+            title = "Sightless Mariner",
             description = "Complete Period 6-3 without using a Lamp",
             points = 10,
             trigger = triggerCandleOnly(PERIOD_6_3)
@@ -631,7 +631,7 @@
 
         // Stairs
         achievement(
-            title = "Stairs 6-3",
+            title = "Marine Graveyard Scout",
             description = "Discover all hidden underground entrances from Period 6-3 without looping",
             points = 3,
             trigger = triggerFindAllStairs(PERIOD_6_3, 2, chaliceRequiredAfter=0x4f)
@@ -653,7 +653,7 @@
         // Progression
         achievement(
             title = "Progress 7-1",
-            description = "Clear Period 7-1",
+            description = "Outskirt Outrider",
             points = 10,
             trigger = triggerClearPeriod(PERIOD_7_1),
             type = "progression"
@@ -661,7 +661,7 @@
 
         // Well of Hope
         achievement(
-            title = "Well of Hope 7-1",
+            title = "Suburbia Spring",
             description = "Discover and use the Well of Hope from Period 7-1",
             points = 2,
             trigger = triggerWellOfHope(PERIOD_7_1)
@@ -669,7 +669,7 @@
 
         // Stairs
         achievement(
-            title = "Stairs 7-1",
+            title = "Bunker Breacher",
             description = "Discover all hidden underground entrances from Period 7-1 without looping",
             points = 3,
             trigger = triggerFindAllStairs(PERIOD_7_1, 2, chaliceRequiredAfter=0x1c)
@@ -677,7 +677,7 @@
 
         // Room of Idols
         achievement(
-            title = "Room of Idols 7-1",
+            title = "Outer City Shrine",
             description = "Discover and collect all treasures from the Room of Idols from Period 7-1",
             points = 2,
             trigger = triggerRoomOfIdols(PERIOD_7_1, 2)
@@ -687,7 +687,7 @@
     // #region Period 7-2
         // Progression
         achievement(
-            title = "Progress 7-2",
+            title = "Desolate Approach",
             description = "Clear Period 7-2",
             points = 10,
             trigger = triggerClearPeriod(PERIOD_7_2),
@@ -696,7 +696,7 @@
 
         // Stairs
         achievement(
-            title = "Stairs 7-2",
+            title = "Suburban Undergrounds",
             description = "Discover all hidden underground entrances from Period 7-2",
             points = 2,
             trigger = triggerFindAllStairs(PERIOD_7_2, 1)
@@ -704,7 +704,7 @@
 
         // Room of Idols
         achievement(
-            title = "Room of Idols 7-2",
+            title = "Outer City Cemetery",
             description = "Discover and collect all treasures from the Room of Idols from Period 7-2",
             points = 3,
             trigger = triggerRoomOfIdols(PERIOD_7_2, 8)
@@ -725,7 +725,7 @@
     // #region Period 7-4
         // Progression
         achievement(
-            title = "Progress 7-4",
+            title = "Rampart Raider",
             description = "Clear Period 7-4",
             points = 5,
             trigger = triggerClearPeriod(PERIOD_7_4),
@@ -734,7 +734,7 @@
 
         // Stairs
         achievement(
-            title = "Stairs 7-4",
+            title = "Bastion Basements",
             description = "Discover all hidden underground entrances from Period 7-4",
             points = 2,
             trigger = triggerFindAllStairs(PERIOD_7_4, 1)
@@ -755,7 +755,7 @@
     // #region Period 8-1
         // Progression
         achievement(
-            title = "Progress 8-1",
+            title = "City-Park Conqueror",
             description = "Clear Period 8-1",
             points = 5,
             trigger = triggerClearPeriod(PERIOD_8_1),
@@ -764,7 +764,7 @@
 
         // Well of Hope
         achievement(
-            title = "Well of Hope 8-1",
+            title = "Urban Oasis",
             description = "Discover and use the Well of Hope from Period 8-1",
             points = 2,
             trigger = triggerWellOfHope(PERIOD_8_1)
@@ -772,7 +772,7 @@
 
         // Stairs
         achievement(
-            title = "Stairs 8-1",
+            title = "Parkside Grotto",
             description = "Discover all hidden underground entrances from Period 8-1",
             points = 2,
             trigger = triggerFindAllStairs(PERIOD_8_1, 2)
@@ -782,7 +782,7 @@
     // #region Period 8-2
         // Progression
         achievement(
-            title = "Progress 8-2",
+            title = "Citadel Conqueror",
             description = "Clear Period 8-2",
             points = 10,
             trigger = triggerClearPeriod(PERIOD_8_2),
@@ -791,7 +791,7 @@
 
         // Candle Only
         achievement(
-            title = "Cangle Light 8-2",
+            title = "Candlelit City Walk",
             description = "Complete Period 8-2 without using a lamp",
             points = 10,
             trigger = triggerCandleOnly(PERIOD_8_2)
@@ -799,7 +799,7 @@
 
         // Stairs
         achievement(
-            title = "Stairs 8-2",
+            title = "Old City Cellars",
             description = "Discover all hidden underground entrances from Period 8-2",
             points = 2,
             trigger = triggerFindAllStairs(PERIOD_8_2, 4)
@@ -807,7 +807,7 @@
 
         // Room of Idols
         achievement(
-            title = "Room of Idols 8-2",
+            title = "Chapel Conqueror",
             description = "Discover and collect all treasures from the Room of Idols from Period 8-2",
             points = 3,
             trigger = triggerRoomOfIdols(PERIOD_8_2, 5)
@@ -817,7 +817,7 @@
     // #region Period 8-3
         // Progression
         achievement(
-            title = "Progress 8-3",
+            title = "Regency Blockade Breaker",
             description = "Clear Period 8-3",
             points = 10,
             trigger = triggerClearPeriod(PERIOD_8_3),
@@ -826,7 +826,7 @@
 
         // Stairs
         achievement(
-            title = "Stairs 8-3",
+            title = "Secret Basement Entrance",
             description = "Discover all hidden underground entrances from Period 8-3",
             points = 2,
             trigger = triggerFindAllStairs(PERIOD_8_3, 3)
@@ -834,10 +834,32 @@
 
         // Room of Idols
         achievement(
-            title = "Room of Idols 8-3",
+            title = "Final Sanctum Looter",
             description = "Discover and collect all treasures from the Room of Idols from Period 8-3",
             points = 2,
             trigger = triggerRoomOfIdols(PERIOD_8_3, 5)
+        )
+    // #endregion
+
+    // #region Period 8-4 (Boss: Pyrodyne)
+        // Progression
+        achievement(
+            title = "Lord of Stone",
+            description = "Defeat Gholem and complete Period 8-4",
+            points = 10,
+            trigger = triggerClearPeriod(PERIOD_8_4),
+            type = "progression"
+        )
+    // #endregion
+
+    // #region Period 8-5 (Boss: Xur)
+        // Progression
+        achievement(
+            title = "Dictator of Xantho",
+            description = "Defeat Xur and complete Period 8-5",
+            points = 10,
+            trigger = triggerClearPeriod(PERIOD_8_5),
+            type = "win_condition"
         )
     // #endregion
 // #endregion Achivements
