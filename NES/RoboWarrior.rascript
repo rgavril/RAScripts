@@ -130,7 +130,7 @@
         return cancelConditions && measured(repeated(totalTreasures, treasureCollected))
     }
 
-    function triggerFindSecrets(periodId, numberOfSecrets, chaliceRequiredAfter = 0) {
+    function triggerFindAllStairs(periodId, numberOfSecrets, chaliceRequiredAfter = 0) {
         cancelConditions =
             never(demoMode() != FALSE)
             && never(cheatEnabled() != FALSE)
@@ -154,7 +154,7 @@
         for offset in range(0, 186) { // Stairs
             array_push(secretFoundConditions, frameHiddenTilemapRevealed(offset, HIDDEN_TILE_STAIRS))
         }
-        // Hidden Walls
+        // Distructible Blocks
         for offset in range(0, 221) {
             array_push(secretFoundConditions,
                 prev(mainAreaTilemap(offset)) & 0xf0 == 0xc0
@@ -163,6 +163,35 @@
             )
         }
         allSecretsFoundConditions = tally(numberOfSecrets, secretFoundConditions)
+
+        return cancelConditions && pauseCondition && measured(allSecretsFoundConditions)
+    }
+
+    function triggerFindAllStairs(periodId, numberOfStairs, chaliceRequiredAfter = 0) {
+        cancelConditions =
+            never(demoMode() != FALSE)
+            && never(cheatEnabled() != FALSE)
+            && never(energyMeter() + energyPods() == 0)
+            && never(currentPeriod() != periodId)
+
+        pauseCondition = always_true()
+        if (chaliceRequiredAfter > 0) {
+            pauseCondition = unless(
+                once(
+                    currentPeriod() == periodId
+                    && mainAreaTotalScroll() > chaliceRequiredAfter
+                    && chaliceCollected() == FALSE
+                    && never(energyMeter() + energyPods() == 0)
+                )
+            )
+        }
+
+        secretFoundConditions = []
+        // Hidden Stairs
+        for offset in range(0, 186) { // Stairs
+            array_push(secretFoundConditions, frameHiddenTilemapRevealed(offset, HIDDEN_TILE_STAIRS))
+        }
+        allSecretsFoundConditions = tally(numberOfStairs, secretFoundConditions)
 
         return cancelConditions && pauseCondition && measured(allSecretsFoundConditions)
     }
@@ -193,6 +222,7 @@
 
 // #region Achivements
     // #region Period 1-1
+        // Progression
         achievement(
             title = "Reboot Initiated",
             description = "Complete Period 1-1",
@@ -200,7 +230,8 @@
             trigger = triggerClearPeriod(PERIOD_1_1),
             type = "progression"
         )
-
+        
+        // Well of Hope
         achievement(
             title = "Altile's Baptism",
             description = "Discover and use the Well of Hope from Period 1-1",
@@ -208,13 +239,15 @@
             trigger = triggerWellOfHope(PERIOD_1_1)
         )
 
+        // Stairs
         achievement(
-            title = "Fringe Demolitionist",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 1-1 without looping",
+            title = "Stairs 1-1",
+            description = "Discover all hidden underground entrances from Period 1-1 without looping",
             points = 3,
-            trigger = triggerFindSecrets(PERIOD_1_1, 4, chaliceRequiredAfter = 0x1c)
+            trigger = triggerFindAllStairs(PERIOD_1_1, 2, chaliceRequiredAfter = 0x1c)
         )
 
+        // Room of Idols
         achievement(
             title = "Test of the First Idol",
             description = "Discover and collect all treasures from the Room of Idols from Period 1-1",
@@ -224,6 +257,7 @@
     // #endregion
 
     // #region Period 2-1
+        // Progression
         achievement(
             title = "Outland Reconnaissance",
             description = "Complete Period 2-1",
@@ -232,13 +266,15 @@
             type = "progression"
         )
 
+        // Stairs
         achievement(
             title = "Wasteland Cartographer",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 2-1",
-            points = 3,
-            trigger = triggerFindSecrets(PERIOD_2_1, 8)
+            description = "Discover all hidden underground entrances from Period 2-1",
+            points = 2,
+            trigger = triggerFindAllStairs(PERIOD_2_1, 4)
         )
 
+        // Room of Idols
         achievement(
             title = "Favor of the Barrens",
             description = "Discover and collect all treasures from the Room of Idols from Period 2-1",
@@ -248,6 +284,7 @@
     // #endregion
 
     // #region Period 2-2
+        // Progression
         achievement(
             title = "The Emerald Passage",
             description = "Complete Period 2-2",
@@ -256,6 +293,7 @@
             type = "progression"
         )
 
+        // Candle Only
         achievement(
             title = "Outland Flare",
             description = "Complete Period 2-2 without using a lamp",
@@ -263,13 +301,15 @@
             trigger = triggerCandleOnly(PERIOD_2_2)
         )
 
+        // Stairs
         achievement(
             title = "Structural Exposure",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 2-2",
+            description = "Discover all hidden underground entrances from Period 2-2",
             points = 2,
-            trigger = triggerFindSecrets(PERIOD_2_2, 4)
+            trigger = triggerFindAllStairs(PERIOD_2_2, 2)
         )
 
+        // Room of Idols
         achievement(
             title = "Obscure Grace",
             description = "Discover and collect all treasures from the Room of Idols from Period 2-2",
@@ -279,6 +319,7 @@
     // #endregion
 
     // #region Period 3-1
+        // Progression
         achievement(
             title = "Hallowed Return",
             description = "Complete Period 3-1",
@@ -287,13 +328,15 @@
             type = "progression"
         )
 
+        // Stairs
         achievement(
             title = "Sacred Blueprint",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 3-1 without looping",
+            description = "Discover all hidden underground entrances from Period 3-1 without looping",
             points = 5,
-            trigger = triggerFindSecrets(PERIOD_3_1, 7, chaliceRequiredAfter = 0x24)
+            trigger = triggerFindAllStairs(PERIOD_3_1, 7, chaliceRequiredAfter = 0x24)
         )
 
+        // Room of Idols
         achievement(
             title = "Trial of the Trinity",
             description = "Discover and collect all treasures from the Room of Idols from Period 3-1",
@@ -303,6 +346,7 @@
     // #endregion
 
     // #region Period 3-2
+        // Progression
         achievement(
             title = "Sanctum Penetration",
             description = "Complete Period 3-2",
@@ -311,13 +355,15 @@
             type = "progression"
         )
 
+        // Stairs
         achievement(
             title = "Temple Infrastructure",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 3-2",
-            points = 3,
-            trigger = triggerFindSecrets(PERIOD_3_2, 5)
+            description = "Discover all hidden underground entrances from Period 3-2",
+            points = 2,
+            trigger = triggerFindAllStairs(PERIOD_3_2, 5)
         )
 
+        // Room of Idols
         achievement(
             title = "Origin of the Grace",
             description = "Discover and collect all treasures from the Room of Idols from Period 3-2",
@@ -327,6 +373,7 @@
     // #endregion
 
     // #region Period 3-3 (Boss: Globula)
+        // Progression
         achievement(
             title = "Lord of the Amoebas",
             description = "Defeat Globula and complete Period 3-3",
@@ -337,6 +384,7 @@
     // #endregion
 
     // #region Period 4-1
+        // Progression
         achievement(
             title = "Iron Hills Entry",
             description = "Complete Period 4-1",
@@ -345,6 +393,7 @@
             type = "progression"
         )
 
+        // Well of Hope
         achievement(
             title = "Rust-Free Waters",
             description = "Discover and use the Well of Hope from Period 4-1",
@@ -352,13 +401,15 @@
             trigger = triggerWellOfHope(PERIOD_4_1)
         )
 
+        // Stairs
         achievement(
             title = "Iron Ore Prospector",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 4-1",
-            points = 10,
-            trigger = triggerFindSecrets(PERIOD_4_1, 20)
+            description = "Discover all hidden underground entrances from Period 4-1",
+            points = 2,
+            trigger = triggerFindAllStairs(PERIOD_4_1, 20)
         )
 
+        // Room of Idols
         achievement(
             title = "The Miner's Icons",
             description = "Discover and collect all treasures from the Room of Idols from Period 4-1",
@@ -368,6 +419,7 @@
     // #endregion
 
     // #region Period 4-2
+        // Progression
         achievement(
             title = "The Steel Divide",
             description = "Complete Period 4-2",
@@ -376,6 +428,7 @@
             type = "progression"
         )
 
+        // Candle Only
         achievement(
             title = "Shadow of the Forge",
             description = "Complete Period 4-2 without using a lamp",
@@ -383,24 +436,27 @@
             trigger = triggerCandleOnly(PERIOD_4_2)
         )
 
+        // Stairs
+        achievement(
+            title = "Iron Hills Excavator",
+            description = "Discover all hidden underground entrances from Period 4-2, the first time you pass them and without looping more than once",
+            points = 10,
+            trigger = 
+                unless( mainAreaTotalScroll() > 0x4a && mainAreaTotalScroll() < 0x8d )
+                && triggerFindAllStairs(PERIOD_4_2, 7, chaliceRequiredAfter = 0x4a) 
+        )
+
+        // Room of Idols
         achievement(
             title = "Idols of the Iron Deep",
             description = "Discover and collect all treasures from the Room of Idols from Period 4-2",
             points = 5,
             trigger = triggerRoomOfIdols(PERIOD_4_2, 4)
         )
-
-        achievement(
-            title = "Iron Hills Excavator",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 4-2, the first time you pass them and without looping more than once",
-            points = 10,
-            trigger = 
-                unless( mainAreaTotalScroll() > 0x4a && mainAreaTotalScroll() < 0x8d )
-                && triggerFindSecrets(PERIOD_4_2, 7, chaliceRequiredAfter = 0x4a) 
-        )
     // #endregion
 
     // #region Period 4-3
+        // Progressions
         achievement(
             title = "Strongroom Escape",
             description = "Complete Period 4-3",
@@ -409,13 +465,15 @@
             type = "progression"
         )
 
+        // Stairs
         achievement(
             title = "Silver Maze Designer",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 4-1",
+            description = "Discover all hidden underground entrances from Period 4-1",
             points = 10,
-            trigger = triggerFindSecrets(PERIOD_4_3, 15)
+            trigger = triggerFindAllStairs(PERIOD_4_3, 15)
         )
 
+        // Room of Idols
         achievement(
             title = "Iron Lion of Zion",
             description = "Discover and collect all treasures from the Room of Idols from Period 4-3",
@@ -427,6 +485,7 @@
     // #endregion
 
     // #region Period 5-1
+        // Progression
         achievement(
             title = "Technological Hub Crossing",
             description = "Clear Period 5-1",
@@ -435,13 +494,15 @@
             type = "progression"
         )
 
+        // Stairs
         achievement(
             title = "Circuit Breaker",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 5-1 without looping",
+            description = "Discover all hidden underground entrances from Period 5-1 without looping",
             points = 10,
-            trigger = triggerFindSecrets(PERIOD_5_1, 12, chaliceRequiredAfter=0x35)
+            trigger = triggerFindAllStairs(PERIOD_5_1, 12, chaliceRequiredAfter=0x35)
         )
 
+        // Room of Idols
         achievement(
             title = "Tech-Lords Altar",
             description = "Discover and collect all treasures from the Room of Idols from Period 5-1",
@@ -451,6 +512,7 @@
     // #endregion
 
     // #region Period 5-2
+        // Progression
         achievement(
             title = "Intellicon Dead-Zone",
             description = "Clear Period 5-2",
@@ -459,13 +521,15 @@
             type = "progression"
         )
 
+        // Stairs
         achievement(
             title = "Void Surveyor",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 5-2",
+            description = "Discover all hidden underground entrances from Period 5-2",
             points = 5,
-            trigger = triggerFindSecrets(PERIOD_5_2, 3)
+            trigger = triggerFindAllStairs(PERIOD_5_2, 3)
         )
 
+        // Room of Idols
         achievement(
             title = "Hidden Logic Icons",
             description = "Discover and collect all treasures from the Room of Idols from Period 5-2",
@@ -475,6 +539,7 @@
     // #endregion
 
     // #region Period 5-3 (Boss: Viripides)
+        // Progression
         achievement(
             title = "Lord of the Dragons",
             description = "Defeat Viripides and complete Period 5-3",
@@ -485,6 +550,7 @@
     // endregion
 
     // #region Period 6-1
+        // Progression
         achievement(
             title = "Progress 6-1",
             description = "Clear Period 6-1",
@@ -493,13 +559,15 @@
             type = "progression"
         )
 
+        // Stairs
         achievement(
             title = "Secrets 6-1",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 6-1",
+            description = "Discover all hidden underground entrances from Period 6-1",
             points = 5,
-            trigger = triggerFindSecrets(PERIOD_6_1, 9)
+            trigger = triggerFindAllStairs(PERIOD_6_1, 9)
         )
 
+        // Room of Idols
         achievement(
             title = "Room of Idols 6-1",
             description = "Discover and collect all treasures from the Room of Idols from Period 6-1",
@@ -509,6 +577,7 @@
     // #endregion
 
     // #region Period 6-2
+        // Progression
         achievement(
             title = "Progress 6-2",
             description = "Clear Period 6-2",
@@ -517,13 +586,15 @@
             type = "progression"
         )
 
+        // Stairs
         achievement(
             title = "Secrets 6-2",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 6-2 without looping",
+            description = "Discover all hidden underground entrances from Period 6-2 without looping",
             points = 5,
-            trigger = triggerFindSecrets(PERIOD_6_2, 10, chaliceRequiredAfter=0x2c)
+            trigger = triggerFindAllStairs(PERIOD_6_2, 10, chaliceRequiredAfter=0x2c)
         )
 
+        // Room of Idols
         achievement(
             title = "Room of Idols 6-2",
             description = "Discover and collect all treasures from the Room of Idols from Period 6-2",
@@ -533,6 +604,7 @@
     // #endregion
 
     // #region Period 6-3
+        // Progression
         achievement(
             title = "Progress 6-3",
             description = "Clear Period 6-3",
@@ -541,6 +613,7 @@
             type = "progression"
         )
 
+        // Well of Hope
         achievement(
             title = "Well of Hope 6-3",
             description = "Discover and use the Well of Hope from Period 6-3",
@@ -548,22 +621,25 @@
             trigger = triggerWellOfHope(PERIOD_6_3)
         )
 
-        achievement(
-            title = "Secrets 6-3",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 6-3 without looping",
-            points = 10,
-            trigger = triggerFindSecrets(PERIOD_6_3, 13, chaliceRequiredAfter=0x4f)
-        )
-
+        // Candle Only
         achievement(
             title = "Candle Light 6-3",
             description = "Complete Period 6-3 without using a Lamp",
             points = 10,
             trigger = triggerCandleOnly(PERIOD_6_3)
         )
+
+        // Stairs
+        achievement(
+            title = "Secrets 6-3",
+            description = "Discover all hidden underground entrances from Period 6-3 without looping",
+            points = 10,
+            trigger = triggerFindAllStairs(PERIOD_6_3, 13, chaliceRequiredAfter=0x4f)
+        )
     // #endregion
 
     // #region Period 6-4 (Boss: Aquarian)
+        // Progression
         achievement(
             title = "Lord of Water",
             description = "Defeat Aquarian and complete Period 6-4",
@@ -574,6 +650,7 @@
     // #endregion
 
     // #region Period 7-1
+        // Progression
         achievement(
             title = "Progress 7-1",
             description = "Clear Period 7-1",
@@ -582,13 +659,7 @@
             type = "progression"
         )
 
-        achievement(
-            title = "Room of Idols 7-1",
-            description = "Discover and collect all treasures from the Room of Idols from Period 7-1",
-            points = 2,
-            trigger = triggerRoomOfIdols(PERIOD_7_1, 2)
-        )
-
+        // Well of Hope
         achievement(
             title = "Well of Hope 7-1",
             description = "Discover and use the Well of Hope from Period 7-1",
@@ -596,15 +667,25 @@
             trigger = triggerWellOfHope(PERIOD_7_1)
         )
 
+        // Stairs
         achievement(
             title = "Secrets 7-1",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 7-1 without looping",
+            description = "Discover all hidden underground entrances from Period 7-1 without looping",
             points = 10,
-            trigger = triggerFindSecrets(PERIOD_7_1, 42, chaliceRequiredAfter=0x1c)
+            trigger = triggerFindAllStairs(PERIOD_7_1, 42, chaliceRequiredAfter=0x1c)
+        )
+
+        // Room of Idols
+        achievement(
+            title = "Room of Idols 7-1",
+            description = "Discover and collect all treasures from the Room of Idols from Period 7-1",
+            points = 2,
+            trigger = triggerRoomOfIdols(PERIOD_7_1, 2)
         )
     // #endregion
 
     // #region Period 7-2
+        // Progression
         achievement(
             title = "Progress 7-2",
             description = "Clear Period 7-2",
@@ -613,22 +694,25 @@
             type = "progression"
         )
 
+        // Stairs
+        achievement(
+            title = "Secrets 7-2",
+            description = "Discover all hidden underground entrances from Period 7-2",
+            points = 2,
+            trigger = triggerFindAllStairs(PERIOD_7_2, 2)
+        )
+
+        // Room of Idols
         achievement(
             title = "Room of Idols 7-2",
             description = "Discover and collect all treasures from the Room of Idols from Period 7-2",
             points = 3,
             trigger = triggerRoomOfIdols(PERIOD_7_2, 8)
         )
-
-        achievement(
-            title = "Secrets 7-2",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 7-2",
-            points = 2,
-            trigger = triggerFindSecrets(PERIOD_7_2, 2)
-        )
     // #endregion
 
     // #region Period 7-3 (Boss: Lian)
+        // Progression
         achievement(
             title = "Lord of Air",
             description = "Defeat Lian and complete Period 7-3",
@@ -639,6 +723,7 @@
     // #endregion
 
     // #region Period 7-4
+        // Progression
         achievement(
             title = "Progress 7-4",
             description = "Clear Period 7-4",
@@ -647,15 +732,17 @@
             type = "progression"
         )
 
+        // Stairs
         achievement(
             title = "Secrets 7-4",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 7-4",
+            description = "Discover all hidden underground entrances from Period 7-4",
             points = 5,
-            trigger = triggerFindSecrets(PERIOD_7_4, 5)
+            trigger = triggerFindAllStairs(PERIOD_7_4, 5)
         )
     // #endregion
 
     // #region Period 7-5 (Boss: Pyrodyne)
+        // Progression
         achievement(
             title = "Lord of Fire",
             description = "Defeat Pyrodyne and complete Period 7-5",
@@ -666,6 +753,7 @@
     // #endregion
  
     // #region Period 8-1
+        // Progression
         achievement(
             title = "Progress 8-1",
             description = "Clear Period 8-1",
@@ -674,22 +762,25 @@
             type = "progression"
         )
 
-        achievement(
-            title = "Secrets 8-1",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 8-1",
-            points = 3,
-            trigger = triggerFindSecrets(PERIOD_8_1, 6)
-        )
-
+        // Well of Hope
         achievement(
             title = "Well of Hope 8-1",
             description = "Discover and use the Well of Hope from Period 8-1",
             points = 2,
             trigger = triggerWellOfHope(PERIOD_8_1)
         )
+
+        // Stairs
+        achievement(
+            title = "Secrets 8-1",
+            description = "Discover all hidden underground entrances from Period 8-1",
+            points = 3,
+            trigger = triggerFindAllStairs(PERIOD_8_1, 6)
+        )
     // #endregion
 
     // #region Period 8-2
+        // Progression
         achievement(
             title = "Progress 8-2",
             description = "Clear Period 8-2",
@@ -698,13 +789,7 @@
             type = "progression"
         )
 
-        achievement(
-            title = "Room of Idols 8-2",
-            description = "Discover and collect all treasures from the Room of Idols from Period 8-2",
-            points = 3,
-            trigger = triggerRoomOfIdols(PERIOD_8_2, 5)
-        )
-
+        // Candle Only
         achievement(
             title = "Cangle Light 8-2",
             description = "Complete Period 8-2 without using a lamp",
@@ -712,15 +797,25 @@
             trigger = triggerCandleOnly(PERIOD_8_2)
         )
 
+        // Stairs
         achievement(
             title = "Secrets 8-2",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 8-2",
+            description = "Discover all hidden underground entrances from Period 8-2",
             points = 10,
-            trigger = triggerFindSecrets(PERIOD_8_2, 35)
+            trigger = triggerFindAllStairs(PERIOD_8_2, 35)
+        )
+
+        // Room of Idols
+        achievement(
+            title = "Room of Idols 8-2",
+            description = "Discover and collect all treasures from the Room of Idols from Period 8-2",
+            points = 3,
+            trigger = triggerRoomOfIdols(PERIOD_8_2, 5)
         )
     // #endregion
 
     // #region Period 8-3
+        // Progression
         achievement(
             title = "Progress 8-3",
             description = "Clear Period 8-3",
@@ -729,18 +824,20 @@
             type = "progression"
         )
 
+        // Stairs
+        achievement(
+            title = "Secrets 8-3",
+            description = "Discover all hidden underground entrances from Period 8-3",
+            points = 10,
+            trigger = triggerFindAllStairs(PERIOD_8_3, 67) // Impossible
+        )
+
+        // Room of Idols
         achievement(
             title = "Room of Idols 8-3",
             description = "Discover and collect all treasures from the Room of Idols from Period 8-3",
             points = 2,
             trigger = triggerRoomOfIdols(PERIOD_8_3, 5)
-        )
-
-        achievement(
-            title = "Secrets 8-3",
-            description = "Uncover all hidden underground entrances and destroy all fake walls from Period 8-3",
-            points = 10,
-            trigger = triggerFindSecrets(PERIOD_8_3, 67) // Impossible
         )
     // #endregion
 // #endregion Achivements
