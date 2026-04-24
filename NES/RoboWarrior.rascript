@@ -332,8 +332,8 @@
         achievement(
             title = "Sacred Blueprint",
             description = "Discover all hidden underground entrances from Period 3-1 without looping",
-            points = 5,
-            trigger = triggerFindAllStairs(PERIOD_3_1, 7, chaliceRequiredAfter = 0x24)
+            points = 3,
+            trigger = triggerFindAllStairs(PERIOD_3_1, 3, chaliceRequiredAfter = 0x24)
         )
 
         // Room of Idols
@@ -360,7 +360,7 @@
             title = "Temple Infrastructure",
             description = "Discover all hidden underground entrances from Period 3-2",
             points = 2,
-            trigger = triggerFindAllStairs(PERIOD_3_2, 5)
+            trigger = triggerFindAllStairs(PERIOD_3_2, 1)
         )
 
         // Room of Idols
@@ -406,7 +406,7 @@
             title = "Iron Ore Prospector",
             description = "Discover all hidden underground entrances from Period 4-1",
             points = 2,
-            trigger = triggerFindAllStairs(PERIOD_4_1, 20)
+            trigger = triggerFindAllStairs(PERIOD_4_1, 4)
         )
 
         // Room of Idols
@@ -440,10 +440,10 @@
         achievement(
             title = "Iron Hills Excavator",
             description = "Discover all hidden underground entrances from Period 4-2, the first time you pass them and without looping more than once",
-            points = 10,
+            points = 3,
             trigger = 
                 unless( mainAreaTotalScroll() > 0x4a && mainAreaTotalScroll() < 0x8d )
-                && triggerFindAllStairs(PERIOD_4_2, 7, chaliceRequiredAfter = 0x4a) 
+                && triggerFindAllStairs(PERIOD_4_2, 5, chaliceRequiredAfter = 0x4a) 
         )
 
         // Room of Idols
@@ -469,8 +469,8 @@
         achievement(
             title = "Silver Maze Designer",
             description = "Discover all hidden underground entrances from Period 4-1",
-            points = 10,
-            trigger = triggerFindAllStairs(PERIOD_4_3, 15)
+            points = 2,
+            trigger = triggerFindAllStairs(PERIOD_4_3, 2)
         )
 
         // Room of Idols
@@ -498,8 +498,8 @@
         achievement(
             title = "Circuit Breaker",
             description = "Discover all hidden underground entrances from Period 5-1 without looping",
-            points = 10,
-            trigger = triggerFindAllStairs(PERIOD_5_1, 12, chaliceRequiredAfter=0x35)
+            points = 3,
+            trigger = triggerFindAllStairs(PERIOD_5_1, 9, chaliceRequiredAfter=0x35)
         )
 
         // Room of Idols
@@ -525,8 +525,8 @@
         achievement(
             title = "Void Surveyor",
             description = "Discover all hidden underground entrances from Period 5-2",
-            points = 5,
-            trigger = triggerFindAllStairs(PERIOD_5_2, 3)
+            points = 2,
+            trigger = triggerFindAllStairs(PERIOD_5_2, 1)
         )
 
         // Room of Idols
@@ -561,10 +561,10 @@
 
         // Stairs
         achievement(
-            title = "Secrets 6-1",
+            title = "Stairs 6-1",
             description = "Discover all hidden underground entrances from Period 6-1",
-            points = 5,
-            trigger = triggerFindAllStairs(PERIOD_6_1, 9)
+            points = 2,
+            trigger = triggerFindAllStairs(PERIOD_6_1, 2)
         )
 
         // Room of Idols
@@ -588,10 +588,10 @@
 
         // Stairs
         achievement(
-            title = "Secrets 6-2",
+            title = "Stairs 6-2",
             description = "Discover all hidden underground entrances from Period 6-2 without looping",
-            points = 5,
-            trigger = triggerFindAllStairs(PERIOD_6_2, 10, chaliceRequiredAfter=0x2c)
+            points = 3,
+            trigger = triggerFindAllStairs(PERIOD_6_2, 5, chaliceRequiredAfter=0x2c)
         )
 
         // Room of Idols
@@ -631,10 +631,10 @@
 
         // Stairs
         achievement(
-            title = "Secrets 6-3",
+            title = "Stairs 6-3",
             description = "Discover all hidden underground entrances from Period 6-3 without looping",
-            points = 10,
-            trigger = triggerFindAllStairs(PERIOD_6_3, 13, chaliceRequiredAfter=0x4f)
+            points = 3,
+            trigger = triggerFindAllStairs(PERIOD_6_3, 2, chaliceRequiredAfter=0x4f)
         )
     // #endregion
 
@@ -669,10 +669,10 @@
 
         // Stairs
         achievement(
-            title = "Secrets 7-1",
+            title = "Stairs 7-1",
             description = "Discover all hidden underground entrances from Period 7-1 without looping",
-            points = 10,
-            trigger = triggerFindAllStairs(PERIOD_7_1, 42, chaliceRequiredAfter=0x1c)
+            points = 3,
+            trigger = triggerFindAllStairs(PERIOD_7_1, 2, chaliceRequiredAfter=0x1c)
         )
 
         // Room of Idols
@@ -696,10 +696,10 @@
 
         // Stairs
         achievement(
-            title = "Secrets 7-2",
+            title = "Stairs 7-2",
             description = "Discover all hidden underground entrances from Period 7-2",
             points = 2,
-            trigger = triggerFindAllStairs(PERIOD_7_2, 2)
+            trigger = triggerFindAllStairs(PERIOD_7_2, 1)
         )
 
         // Room of Idols
@@ -734,10 +734,10 @@
 
         // Stairs
         achievement(
-            title = "Secrets 7-4",
+            title = "Stairs 7-4",
             description = "Discover all hidden underground entrances from Period 7-4",
-            points = 5,
-            trigger = triggerFindAllStairs(PERIOD_7_4, 5)
+            points = 2,
+            trigger = triggerFindAllStairs(PERIOD_7_4, 1)
         )
     // #endregion
 
@@ -772,10 +772,10 @@
 
         // Stairs
         achievement(
-            title = "Secrets 8-1",
+            title = "Stairs 8-1",
             description = "Discover all hidden underground entrances from Period 8-1",
-            points = 3,
-            trigger = triggerFindAllStairs(PERIOD_8_1, 6)
+            points = 2,
+            trigger = triggerFindAllStairs(PERIOD_8_1, 2)
         )
     // #endregion
 
@@ -799,10 +799,10 @@
 
         // Stairs
         achievement(
-            title = "Secrets 8-2",
+            title = "Stairs 8-2",
             description = "Discover all hidden underground entrances from Period 8-2",
-            points = 10,
-            trigger = triggerFindAllStairs(PERIOD_8_2, 35)
+            points = 2,
+            trigger = triggerFindAllStairs(PERIOD_8_2, 4)
         )
 
         // Room of Idols
@@ -826,10 +826,10 @@
 
         // Stairs
         achievement(
-            title = "Secrets 8-3",
+            title = "Stairs 8-3",
             description = "Discover all hidden underground entrances from Period 8-3",
-            points = 10,
-            trigger = triggerFindAllStairs(PERIOD_8_3, 67) // Impossible
+            points = 2,
+            trigger = triggerFindAllStairs(PERIOD_8_3, 3)
         )
 
         // Room of Idols
