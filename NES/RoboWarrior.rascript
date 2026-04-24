@@ -468,7 +468,7 @@
         // Stairs
         achievement(
             title = "Secured Strongroom",
-            description = "Discover all hidden underground entrances from Period 4-1",
+            description = "Discover all hidden underground entrances from Period 4-3",
             points = 2,
             trigger = triggerFindAllStairs(PERIOD_4_3, 2)
         )
@@ -489,7 +489,7 @@
         achievement(
             title = "Technological Hub Crossing",
             description = "Clear Period 5-1",
-            points = 25,
+            points = 10,
             trigger = triggerClearPeriod(PERIOD_5_1),
             type = "progression"
         )
@@ -643,7 +643,7 @@
         achievement(
             title = "Lord of Water",
             description = "Defeat Aquarian and complete Period 6-4",
-            points = 5,
+            points = 10,
             trigger = triggerClearPeriod(PERIOD_6_4),
             type = "progression"
         )
@@ -652,8 +652,8 @@
     // #region Period 7-1
         // Progression
         achievement(
-            title = "Progress 7-1",
-            description = "Outskirt Outrider",
+            title = "Outskirt Outrider",
+            description = "Complete Period 7-1",
             points = 10,
             trigger = triggerClearPeriod(PERIOD_7_1),
             type = "progression"
@@ -716,7 +716,7 @@
         achievement(
             title = "Lord of Air",
             description = "Defeat Lian and complete Period 7-3",
-            points = 5,
+            points = 10,
             trigger = triggerClearPeriod(PERIOD_7_3),
             type = "progression"
         )
@@ -746,7 +746,7 @@
         achievement(
             title = "Lord of Fire",
             description = "Defeat Pyrodyne and complete Period 7-5",
-            points = 5,
+            points = 10,
             trigger = triggerClearPeriod(PERIOD_7_5),
             type = "progression"
         )
@@ -841,7 +841,7 @@
         )
     // #endregion
 
-    // #region Period 8-4 (Boss: Pyrodyne)
+    // #region Period 8-4 (Boss: Gholem)
         // Progression
         achievement(
             title = "Lord of Stone",
