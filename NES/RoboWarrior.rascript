@@ -7,23 +7,36 @@
 
     function demoMode() => byte(0x009b)
     function cheatEnabled() => byte(0x1ed)
+    function buttonA() => bit7(0x000e)
     
     function music() => byte(0x00fa) & 0x7f
         MUSIC_OVERWORLD_1 = 0x01
+        MUSIC_UNDERGROUND = 0x02
         MUSIC_OVERWORLD_2 = 0x03
         MUSIC_ROOM_OF_IDOLS = 0x0b
     function sfx() => byte(0x00fb)
         SFX_ITEM_PICKUP = 0x03
 
     function deathTimer() => byte(0x007e)
-    function playerLevel() => byte(0x0098)
-    function playerRange() => byte(0x01c9)
+    function playerDefenseLevel() => byte(0x0098)
+    function playerGunRange() => byte(0x01c9)
     function itemBombQuantity() => byte(0x004c)
     function itemLampQuantity() => byte(0x004f)
+    function itemMedalQuantity() => byte(0x0058)
+    function itemEnergyCapsuleQuantity() => byte(0x0066)
     function chaliceCollected() => byte(0x0069)
     function currenSelectedItem() => byte(0x0099)
+        SELECTED_ITEM_NONE = 0x00
         SELECTED_ITEM_LAMP = 0x03
+        SELECTED_ITEM_ECAPSULE = 0x1a
     function score() => byte(0x0049) * 100 + byte(0x0048) * 1000 + byte(0x0047) * 10000 + byte(0x0046) * 100000 + byte(0x0045) * 1000000
+
+    function bombState(id) => byte(0x00c4+id-1)
+        BOMB_STATE_AVAILABLE = 0x00
+        BOMB_STATE_PLACED = 0x01
+        BOMB_STATE_EXPLODING = 0x81
+    function bombXPos(id) => byte(0x01d6+id-1)
+    function bombYPos(id) => byte(0x01dc+id-1)
 
     function continuePeriod() => byte(0x0054)
     function currentPeriod() => byte(0x004a)
@@ -69,6 +82,7 @@
     function mainAreaTilemap(index) => byte(0x02fc + index)
         MAP_TILE_EXIT = 0x27
         MAP_TILE_WELL = 0x2a
+        MAP_TILE_STAIRS_UP = 0x1f
     function hiddenTilemap(index) => byte(0x03d9 + index)
         HIDDEN_TILE_STAIRS = 0x1f
         HIDDEN_TILE_CANDLE = 0x19
@@ -218,9 +232,149 @@
 
         return primingConditions && cancelConditions && trigger_when(targetConditions)
     }
+
+    function triggerMaxBombs() {
+       return
+            demoMode() == FALSE
+            && cheatEnabled() == FALSE
+            && energyMeter() + energyPods() > 0
+            && prev(itemBombQuantity()) < 99
+            && itemBombQuantity() == 99
+    }
+
+    function triggerMaxRange() {
+        return
+            demoMode() == FALSE
+            && cheatEnabled() == FALSE
+            && energyMeter() + energyPods() > 0
+            && prev(playerGunRange()) < 9
+            && measured(playerGunRange() == 9, playerGunRange() > 1)
+    }
+
+    function triggerDefenseLevel(targetLevel) {
+        return
+            demoMode() == FALSE
+            && cheatEnabled() == FALSE
+            && energyMeter() + energyPods() > 0
+            && prev(playerDefenseLevel()) < targetLevel
+            && measured(playerDefenseLevel() == targetLevel, playerDefenseLevel() > 1)
+    }
+
+    function triggerMedalsQuantity(targetQuantity) {
+        return
+            demoMode() == FALSE
+            && cheatEnabled() == FALSE
+            && energyMeter() + energyPods() > 0
+            && prev(itemMedalQuantity()) < targetQuantity
+            && measured(itemMedalQuantity() == targetQuantity)
+    }
+
+    function triggerSpelunker() {
+        primingConditions =
+            once (
+                prev(music()) != MUSIC_UNDERGROUND
+                && music() == MUSIC_UNDERGROUND
+                && lightState() == LIGHT_DARK
+            )
+
+        cancelConditions =
+            never(demoMode() != FALSE)
+            && never(cheatEnabled() != FALSE)
+            && never(energyMeter() + energyPods() == 0)
+            && never(lightState() != LIGHT_DARK)
+
+        targetConditions =
+            prev(currentMapTile()) != MAP_TILE_STAIRS_UP
+            && currentMapTile() == MAP_TILE_STAIRS_UP
+
+        return primingConditions && cancelConditions && trigger_when(targetConditions)
+    }
+
+    function triggerDoubleBombs(times) {
+        cancelConditions =
+            never(demoMode() != FALSE)
+            && never(cheatEnabled() != FALSE)
+            && never(energyMeter() + energyPods() == 0)
+            && never(
+                prev(currenSelectedItem()) == SELECTED_ITEM_ECAPSULE
+                && currenSelectedItem() == SELECTED_ITEM_NONE
+                && itemEnergyCapsuleQuantity() < prev(itemEnergyCapsuleQuantity())
+            )
+
+        targetCondition = tally(times,
+            bombXPos(1) == bombXPos(2)
+            && bombYPos(1) == bombYPos(2)
+            && 
+                bombState(1) == BOMB_STATE_PLACED 
+                && bombState(2) == BOMB_STATE_PLACED
+                && (prev(bombState(2)) == BOMB_STATE_AVAILABLE || prev(bombState(1)) == BOMB_STATE_AVAILABLE)
+        )
+
+        return cancelConditions && measured(targetCondition)
+    }
 // #endregion Triggers
 
 // #region Achivements
+    // #region Generic Challenges
+        // Maximum Bombs Inventory
+        achievement(
+            title = "Ninety Nine Problems",
+            description = "Reach the maximum capacity of 99 regular Bombs",
+            points = 3,
+            trigger = triggerMaxBombs()
+        )
+
+        // Maximum Gun Range
+        achievement(
+            title = "Long Beam Equipped",
+            description = "Increase the firing Range or ZED's gun to maximum",
+            points = 3,
+            trigger = triggerMaxRange()
+        )
+
+        // Medals Inventory
+        achievement(
+            title = "Rainy Day Fund",
+            description = "Have at least 50 Medals in your inventory",
+            points = 10,
+            trigger = triggerMedalsQuantity(50)
+        )
+
+        // Medium Defense Power
+        achievement(
+            title = "Medium Defense Power",
+            description = "Score over 300,000 and upgrade ZED's defense power to Level 4",
+            points = 10,
+            trigger = triggerDefenseLevel(4)
+        )
+
+        // Maximum Defense Power
+        achievement(
+            title = "Maximum Defense Power",
+            description = "Score over 1,200,000 and upgrade ZED's defense power to Level 7",
+            points = 25,
+            trigger = triggerDefenseLevel(7)           
+        )
+
+        // Spelunker
+        achievement(
+            title = "Sightless Spelunker",
+            description = "Enter and exit and underground area without using a light source",
+            points = 3,
+            trigger = triggerSpelunker()
+        )
+
+        // Double Bomber Expert
+        achievement(
+            title = "Double Bombing Expert",
+            description = "Place one Bomb on top of another 10 times, without dyeing or using Energy Capsules",
+            points = 2,
+            trigger = triggerDoubleBombs(10)
+        )
+
+        // Missle Run
+    // #endregion
+
     // #region Period 1-1
         // Progression
         achievement(
