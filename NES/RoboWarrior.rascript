@@ -16,6 +16,7 @@
         MUSIC_ROOM_OF_IDOLS = 0x0b
     function sfx() => byte(0x00fb)
         SFX_ITEM_PICKUP = 0x03
+        SFX_ENEMY_DIED = 0x04
 
     function deathTimer() => byte(0x007e)
     function playerDefenseLevel() => byte(0x0098)
@@ -37,6 +38,11 @@
         BOMB_STATE_EXPLODING = 0x81
     function bombXPos(id) => byte(0x01d6+id-1)
     function bombYPos(id) => byte(0x01dc+id-1)
+
+    function missleState() => byte(0x00a8)
+        MISSLE_STATE_OFF = 0x00
+        MISSLE_STATE_ON = 0x01
+    function missleBoomAnimationFrame() => byte(0x01e4)
 
     function continuePeriod() => byte(0x0054)
     function currentPeriod() => byte(0x004a)
@@ -107,6 +113,12 @@
         return
             prev(hiddenTilemap(offset)) == tileType
             && hiddenTilemap(offset) == tileType + 0x80
+    }
+
+    function frameMissleBoomAimationStarted() {
+        return
+            prev(missleBoomAnimationFrame()) != 1
+            && missleBoomAnimationFrame() == 1
     }
 // #endregion 
 
@@ -312,6 +324,20 @@
 
         return cancelConditions && measured(targetCondition)
     }
+
+    function triggerHyperMissleDash(size) {
+        cancelConditions =
+            never(demoMode() != FALSE)
+            && never(cheatEnabled() != FALSE)
+            && never(energyMeter() + energyPods() == 0)
+            && never(missleState() == MISSLE_STATE_OFF)
+
+        targetCondition = tally(size, 
+            missleState() == MISSLE_STATE_ON && frameMissleBoomAimationStarted()
+        )
+
+        return cancelConditions && measured(targetCondition)
+    }
 // #endregion Triggers
 
 // #region Achivements
@@ -368,11 +394,17 @@
         achievement(
             title = "Double Bombing Expert",
             description = "Place one Bomb on top of another 10 times, without dyeing or using Energy Capsules",
-            points = 2,
+            points = 5,
             trigger = triggerDoubleBombs(10)
         )
 
-        // Missle Run
+        // Hyper Missile Dash
+        achievement(
+            title = "Hyper Missile Dash",
+            description = "Destroy at least 18 blocks using a single Missle",
+            points = 5,
+            trigger = triggerHyperMissleDash(18)
+        )
     // #endregion
 
     // #region Period 1-1
