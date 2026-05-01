@@ -72,6 +72,7 @@
         PERIOD_8_3 = 0x18
         PERIOD_8_4 = 0x19
         PERIOD_8_5 = 0x1a
+        PERIOD_ENDING = 0x1b
 
     function currentMapTile() => byte(0x01c0)
 
@@ -82,7 +83,7 @@
         LIGHT_DARK = 0x01
         LIGHT_CANDLE = 0x81
 
-    function currentArea() => byte(0x00cd)
+    function activeArea() => byte(0x00cd)
         MAIN_AREA = 0x00
         HIDDEN_AREA = 0x01
     function mainAreaTilemap(index) => byte(0x02fc + index)
@@ -130,6 +131,15 @@
             && energyMeter() + energyPods() > 0
             && currentPeriod() == periodId
             && frameMovedToTile(MAP_TILE_EXIT)
+    }
+
+    function triggerGameBeaten() {
+        return
+            demoMode() == FALSE
+            && cheatEnabled() == FALSE
+            && energyMeter() + energyPods() > 0
+            && prev(currentPeriod()) == PERIOD_8_5
+            && currentPeriod() == PERIOD_ENDING
     }
 
     function triggerWellOfHope(periodId) {
@@ -224,8 +234,9 @@
 
     function triggerCandleOnly(periodId) {
         primingConditions =
-            once (
+            tally (30, 
                 (music() == MUSIC_OVERWORLD_1 || music() == MUSIC_OVERWORLD_2)
+                && activeArea() == 0x00
                 && lightState() == LIGHT_DARK
             )
 
@@ -394,7 +405,7 @@
         achievement(
             title = "Double Bombing Expert",
             description = "Place one Bomb on top of another 10 times, without dyeing or using Energy Capsules",
-            points = 5,
+            points = 3,
             trigger = triggerDoubleBombs(10)
         )
 
@@ -465,7 +476,7 @@
             title = "Favor of the Barrens",
             description = "Discover and collect all treasures from the Room of Idols from Period 2-1",
             points = 2,
-            trigger = triggerRoomOfIdols(PERIOD_2_2, 3)
+            trigger = triggerRoomOfIdols(PERIOD_2_1, 3)
         )
     // #endregion
 
@@ -599,7 +610,7 @@
         achievement(
             title = "The Miner's Icons",
             description = "Discover and collect all treasures from the Room of Idols from Period 4-1",
-            points = 5,
+            points = 3,
             trigger = triggerRoomOfIdols(PERIOD_4_1, 8)
         )
     // #endregion
@@ -636,7 +647,7 @@
         achievement(
             title = "Idols of the Iron Deep",
             description = "Discover and collect all treasures from the Room of Idols from Period 4-2",
-            points = 5,
+            points = 3,
             trigger = triggerRoomOfIdols(PERIOD_4_2, 4)
         )
     // #endregion
@@ -729,7 +740,7 @@
         achievement(
             title = "Lord of the Dragons",
             description = "Defeat Viripides and complete Period 5-3",
-            points = 5,
+            points = 10,
             trigger = triggerClearPeriod(PERIOD_5_3),
             type = "progression"
         )
@@ -1043,8 +1054,8 @@
         achievement(
             title = "Dictator of Xantho",
             description = "Defeat Xur and complete Period 8-5",
-            points = 10,
-            trigger = triggerClearPeriod(PERIOD_8_5),
+            points = 25,
+            trigger = triggerGameBeaten(),
             type = "win_condition"
         )
     // #endregion
