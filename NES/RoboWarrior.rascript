@@ -217,19 +217,20 @@
                     currentPeriod() == periodId
                     && mainAreaTotalScroll() > chaliceRequiredAfter
                     && chaliceCollected() == FALSE
+                    && byte(0x0016) == TRUE
                     && never(energyMeter() + energyPods() == 0)
                 )
             )
         }
 
-        secretFoundConditions = []
-        // Hidden Stairs
-        for offset in range(0, 186) { // Stairs
-            array_push(secretFoundConditions, frameHiddenTilemapRevealed(offset, HIDDEN_TILE_STAIRS))
-        }
-        allSecretsFoundConditions = tally(numberOfStairs, secretFoundConditions)
+        stairsFoundConditions = tally_of(range(0, 186), numberOfStairs, offset => 
+            frameHiddenTilemapRevealed(offset, HIDDEN_TILE_STAIRS)
+        )
 
-        return cancelConditions && pauseCondition && measured(allSecretsFoundConditions)
+        if (chaliceRequiredAfter > 0)
+            return cancelConditions && pauseCondition && trigger_when(measured(stairsFoundConditions))
+        else
+            return cancelConditions && pauseCondition && measured(stairsFoundConditions)
     }
 
     function triggerCandleOnly(periodId) {
