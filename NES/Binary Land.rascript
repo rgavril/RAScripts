@@ -753,312 +753,333 @@ achievement(
               lives() >= 3
 )
 
+
+function leaderboardTimeInstantSubmit(roundNumber) {
+    return
+        gameStarted() == 1
+        && round() == roundNumber
+        && prev(roundWon()) == 0 && roundWon() == 1
+}
+
+function leaderboardScoreInstantSubmit() {
+    return
+        gameStarted() == 1
+        && prev(lives()) > 0 && lives() == 0
+}
+
+function leaderboardRoundInstant(penguinId) {
+    return
+        gameStarted() == 1
+        && prev(lives()) > 0 && lives() == 0
+        && playingAs() == penguinId
+}
+
 leaderboard(
     id = 3428, title = "Round 1",
     description = "Most time left clearing Round 1",
-    start  = round() == 1 && gameStarted() == 1 && timeX00() == 9,
-    cancel = round() != 1,
-    submit = unstableStageCompletedFlag() == 8 && round() == 1,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(1),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3420, title = "Round 2",
     description = "Most time left clearing Round 2",
-    start  = round() == 2 && timeX00() == 9,
-    cancel = round() != 2,
-    submit = unstableStageCompletedFlag() == 8 && round() == 2,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(2),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3425, title = "Bonus Round 3",
     description = "Most time left perfecting Bonus Round 3",
-    start  = round() == 3 && timeX00() == 4,
-    cancel = round() != 3,
-    submit = unstableStageCompletedFlag() == 8 && round() == 3 && unstableBonusRoundPerfectFlag() == 255,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(3) && bonusHearsRemaining() == 0,
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3433, title = "Round 4",
     description = "Most time left clearing Round 4",
-    start  = round() == 4 && timeX00() == 9,
-    cancel = round() != 4,
-    submit = unstableStageCompletedFlag() == 8 && round() == 4,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(4),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3417, title = "Round 5",
     description = "Most time left clearing Round 5",
-    start  = round() == 5 && timeX00() == 9,
-    cancel = round() != 5,
-    submit = unstableStageCompletedFlag() == 8 && round() == 5,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(5),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3430, title = "Round 6",
     description = "Most time left clearing Round 6",
-    start  = round() == 6 && timeX00() == 9,
-    cancel = round() != 6,
-    submit = unstableStageCompletedFlag() == 8 && round() == 6,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(6),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3413, title = "Round 7",
     description = "Most time left clearing Round 7",
-    start  = round() == 7 && timeX00() == 9,
-    cancel = round() != 7,
-    submit = unstableStageCompletedFlag() == 8 && round() == 7,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(7),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3422, title = "Bonus Round 8",
     description = "Most time left perfecting Bonus Round 8",
-    start  = round() == 8 && timeX00() == 4,
-    cancel = round() != 8,
-    submit = unstableStageCompletedFlag() == 8 && round() == 8 && unstableBonusRoundPerfectFlag() == 247,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(8) && bonusHearsRemaining() == 0,
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3427, title = "Round 9",
     description = "Most time left clearing Round 9",
-    start  = round() == 9 && timeX00() == 9,
-    cancel = round() != 9,
-    submit = unstableStageCompletedFlag() == 8 && round() == 9,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(9),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3435, title = "Round 10",
     description = "Most time left clearing Round 10",
-    start  = round() == 10 && timeX00() == 7,
-    cancel = round() != 10,
-    submit = unstableStageCompletedFlag() == 8 && round() == 10,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(10),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3419, title = "Round 11",
     description = "Most time left clearing Round 11",
-    start  = round() == 11 && timeX00() == 7,
-    cancel = round() != 11,
-    submit = unstableStageCompletedFlag() == 8 && round() == 11,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(11),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3432, title = "Round 12",
     description = "Most time left clearing Round 12",
-    start  = round() == 12 && timeX00() == 7,
-    cancel = round() != 12,
-    submit = unstableStageCompletedFlag() == 8 && round() == 12,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(12),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3416, title = "Bonus Round 13",
     description = "Most time left perfecting Bonus Round 13",
-    start  = round() == 13 && timeX00() == 3,
-    cancel = round() != 13,
-    submit = unstableStageCompletedFlag() == 8 && round() == 13 && unstableBonusRoundPerfectFlag() == 248,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(13) && bonusHearsRemaining() == 0,
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3424, title = "Round 14",
     description = "Most time left clearing Round 14",
-    start  = round() == 14 && timeX00() == 7,
-    cancel = round() != 14,
-    submit = unstableStageCompletedFlag() == 8 && round() == 14,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(14),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3429, title = "Round 15",
     description = "Most time left clearing Round 15",
-    start  = round() == 15 && timeX00() == 7,
-    cancel = round() != 15,
-    submit = unstableStageCompletedFlag() == 8 && round() == 15,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(15),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3411, title = "Round 16",
     description = "Most time left clearing Round 16",
-    start  = round() == 16 && timeX00() == 7,
-    cancel = round() != 16,
-    submit = unstableStageCompletedFlag() == 8 && round() == 16,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(16),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3421, title = "Round 17",
     description = "Most time left clearing Round 17",
-    start  = round() == 17 && timeX00() == 7,
-    cancel = round() != 17,
-    submit = unstableStageCompletedFlag() == 8 && round() == 17,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(17),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3426, title = "Bonus Round 18",
     description = "Most time left perfecting Bonus Round 18",
-    start  = round() == 18 && timeX00() == 3,
-    cancel = round() != 18,
-    submit = unstableStageCompletedFlag() == 8 && round() == 18 && unstableBonusRoundPerfectFlag() == 254,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(18) && bonusHearsRemaining() == 0,
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3434, title = "Round 19",
     description = "Most time left clearing Round 19",
-    start  = round() == 19 && timeX00() == 7,
-    cancel = round() != 19,
-    submit = unstableStageCompletedFlag() == 8 && round() == 19,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(19),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3418, title = "Round 20",
     description = "Most time left clearing Round 20",
-    start  = round() == 20 && timeX00() == 7,
-    cancel = round() != 20,
-    submit = unstableStageCompletedFlag() == 8 && round() == 20,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()) * 1,
+    start  = leaderboardTimeInstantSubmit(20),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3442, title = "Round 21",
     description = "Most time left clearing Round 21",
-    start  = round() == 21 && timeX00() == 7,
-    cancel = round() != 21,
-    submit = unstableStageCompletedFlag() == 8 && round() == 21,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()),
+    start  = leaderboardTimeInstantSubmit(21),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3484, title = "Round 22",
     description = "Most time left clearing Round 22",
-    start  = round() == 22 && timeX00() == 7,
-    cancel = round() != 22,
-    submit = unstableStageCompletedFlag() == 8 && round() == 22,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()),
+    start  = leaderboardTimeInstantSubmit(22),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3485, title = "Bonus Round 23",
     description = "Most time left perfecting Bonus Round 23",
-    start  = round() == 23 && timeX00() == 7,
-    cancel = round() != 23,
-    submit = unstableStageCompletedFlag() == 8 && round() == 23 && unstableBonusRoundPerfectFlag() >= 247,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()),
+    start  = leaderboardTimeInstantSubmit(23) && bonusHearsRemaining() == 0,
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3486, title = "Round 24",
     description = "Most time left clearing Round 24",
-    start  = round() == 24 && timeX00() == 7,
-    cancel = round() != 24,
-    submit = unstableStageCompletedFlag() == 8 && round() == 24,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()),
+    start  = leaderboardTimeInstantSubmit(24),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3487, title = "Round 25",
     description = "Most time left clearing Round 25",
-    start  = round() == 25 && timeX00() == 7,
-    cancel = round() != 25,
-    submit = unstableStageCompletedFlag() == 8 && round() == 25,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()),
+    start  = leaderboardTimeInstantSubmit(25),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3488, title = "Round 26",
     description = "Most time left clearing Round 26",
-    start  = round() == 26 && timeX00() == 7,
-    cancel = round() != 26,
-    submit = unstableStageCompletedFlag() == 8 && round() == 26,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()),
+    start  = leaderboardTimeInstantSubmit(26),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3489, title = "Round 27",
     description = "Most time left clearing Round 27",
-    start  = round() == 27 && timeX00() == 7,
-    cancel = round() != 27,
-    submit = unstableStageCompletedFlag() == 8 && round() == 27,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()),
+    start  = leaderboardTimeInstantSubmit(27),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3490, title = "Bonus Round 28",
     description = "Most time left perfecting Bonus Round 28",
-    start  = round() == 28 && timeX00() == 7,
-    cancel = round() != 28,
-    submit = unstableStageCompletedFlag() == 8 && round() == 28 && unstableBonusRoundPerfectFlag() >= 247,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()),
+    start  = leaderboardTimeInstantSubmit(28) && bonusHearsRemaining() == 0,
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3491, title = "Round 29",
     description = "Most time left clearing Round 29",
-    start  = round() == 29 && timeX00() == 7,
-    cancel = round() != 29,
-    submit = unstableStageCompletedFlag() == 8 && round() == 29,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()),
+    start  = leaderboardTimeInstantSubmit(29),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3492, title = "Round 30",
     description = "Most time left clearing Round 30",
-    start  = round() == 30 && timeX00() == 7,
-    cancel = round() != 30,
-    submit = unstableStageCompletedFlag() == 8 && round() == 30,
-    value  = bcd(timeX00()) * 100 + bcd(time0x0()) * 10 + bcd(time00x()),
+    start  = leaderboardTimeInstantSubmit(30),
+    cancel = always_false(),
+    submit = always_true(),
+    value  = timeRemaining(),
     format = "VALUE"
 )
 
 leaderboard(
     id = 3423, title = "High Score",
     description = "Highest score achieved",
-    start  = round() == 1 && gameStarted() == 1 && timeX00() == 9,
-    cancel = gameStarted() == 0,
-    submit = lives() == 0,
+    start  = leaderboardScoreInstantSubmit(),
+    cancel = always_false(),
+    submit = always_true(),
     value  = score100() * 100,
     format = "VALUE"
 )
@@ -1066,9 +1087,9 @@ leaderboard(
 leaderboard(
     id = 5643, title = "High Stage (Gurin)",
     description = "Highest Stage Reached playing as Gurin",
-    start  = round() == 1 && gameStarted() == 1 && timeX00() == 9 && playingAs() == 0,
-    cancel = gameStarted() == 0,
-    submit = lives() == 0,
+    start  = leaderboardRoundInstant(0),
+    cancel = always_false(),
+    submit = always_true(),
     value  = round(),
     format = "VALUE"
 )
@@ -1076,9 +1097,9 @@ leaderboard(
 leaderboard(
     id = 5644, title = "High Stage (Malon)",
     description = "Highest Stage Reached playing as Malon",
-    start  = round() == 1 && gameStarted() == 1 && timeX00() == 9 && playingAs() == 1,
-    cancel = gameStarted() == 0,
-    submit = lives() == 0,
+    start  = leaderboardRoundInstant(1),
+    cancel = always_false(),
+    submit = always_true(),
     value  = round(),
     format = "VALUE"
 )
