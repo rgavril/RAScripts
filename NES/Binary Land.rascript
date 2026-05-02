@@ -1103,3 +1103,20 @@ leaderboard(
     value  = round(),
     format = "VALUE"
 )
+
+lookupNames = {
+    0: "Gurin",
+    1: "Malon"
+}
+rich_presence_conditional_display(
+    gameStarted() == 1,
+    "Round {0} ● {1} ● {2} Lives ● Score {3}",
+    rich_presence_value("Round", round()),
+    rich_presence_lookup("Name", playingAs(), lookupNames),
+    rich_presence_value("Lives", lives()),
+    rich_presence_macro("Score", score100() * 100)
+)
+
+rich_presence_display(
+    "In Attract Mode"
+)
