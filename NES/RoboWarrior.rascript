@@ -389,7 +389,7 @@
         // Maximum Defense Power
         achievement(
             title = "Maximum Defense Power",
-            description = "Score over 1,200,000 and upgrade ZED's defense power to Level 7",
+            description = "Score over 1,000,000 and upgrade ZED's defense power to Level 7",
             points = 25,
             trigger = triggerDefenseLevel(7)           
         )
@@ -405,7 +405,7 @@
         // Double Bomber Expert
         achievement(
             title = "Double Bombing Expert",
-            description = "Place one Bomb on top of another 10 times, without dyeing or using Energy Capsules",
+            description = "Place one Bomb on top of another 10 times, without dying or using Energy Capsules",
             points = 3,
             trigger = triggerDoubleBombs(10)
         )
