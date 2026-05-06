@@ -31,8 +31,8 @@
                     prev(objectType(index)) == 0x14 // 0x14 ~ Alien Crawler
                     //&& prev(objectState(index)) == 0x06 // 0x06 ~ Died
 
-                    && prev(objectState(index)) != 0x01 // 0x01 ~ Spawning
-                    && prev(objectHealth(index)) != 0x04 // 0x04 ~ Alien Crawler Max Health
+                    && prev(objectState(index)) >= 0x01 // 0x01 ~ Spawning
+                    && prev(objectHealth(index)) > objectHealth(index)
                 )
             )
             && never(
@@ -43,8 +43,8 @@
                     prev(objectType(index)) == 0x15 // 0x15 ~ Alien Crawler Spawner
                     //&& prev(objectState(index)) == 0x03 // 0x03 ~ Died
 
-                    && prev(objectState(index)) != 0x01 // 0x01 ~ Spawning
-                    && prev(objectHealth(index)) != 0x1c // 0x1c ~ Alien Crawler Spawner Max Health
+                    && prev(objectState(index)) >= 0x01 // 0x01 ~ Spawning
+                    && prev(objectHealth(index)) > objectHealth(index)
                 )
             )
 
