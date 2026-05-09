@@ -3,14 +3,19 @@
 
 // #region Memory Addresses
     TRUE = 0x01
-    FALSE = 0x02
+    FALSE = 0x00
 
-    function cheatActive() => byte(0x0086)
+    function cheatActive() => byte(0x0093)
 
+    function playerIsDead() => bit3(0x0160)
+
+    function stageEndFlag() => byte(0x036b)
     function currSceneMode() => byte(0x0090)
     function nextSceneMode() => byte(0x0095)
     function currSceneIndex() => byte(0x0092)
     function nextSceneIndex() => byte(0x0097)
+        STAGE_1_1 = 0x07
+        STAGE_2_2 = 0x06
 
     function lives() => byte(0x0362)
     function coins() => byte(0x0361)
@@ -20,34 +25,22 @@
     function score() => word(0x0363) * 100
 // #endregion Memory Addresses
 
+    function frameStageEndFlatSet() {
+        return
+            prev(stageEndFlag()) == FALSE
+            && stageEndFlag() != FALSE
+    }
+
 // #region Triggers
-    function triggerStageClear(stageNumber) {
-        stageLastSceneIdx = {
-            1: 0x07, // Stage 1-1
-            2: 0x06, // Stage 2-2
-            3: 0x0b, // Stage 3-2
-            4: 0x26  // Stage 4-2
-        }
+    function triggerStageClear(stageIndex) {
+        requiredConditions =
+            cheatActive() == FALSE
+            && currSceneMode() < 0x0b
+            && currSceneIndex() == stageIndex
+            && playerIsDead() == FALSE
+            && frameStageEndFlatSet()
 
-        stageCutsceneIdx = {
-            1: 0x00, // Cutscene Scene 1
-            2: 0x01, // Cutscene Stage 2
-            3: 0x02, // Cutscene Stage 3
-            4: 0x03, // Cutscene Stage 4
-        }
-
-        requiredConditions = 
-            // Game Start (No Cheats)
-            once( currSceneMode() == 0x0b && currSceneIndex() == 0x97 )
-            && never( cheatActive() == TRUE )
-
-        targetConditions =
-            prev(currSceneMode()) < 0x0b 
-            && prev(currSceneIndex()) == stageLastSceneIdx[stageNumber]
-            && currSceneMode() == 0x0b
-            && currSceneIndex() == stageCutsceneIdx[stageNumber + 1]
-
-        return requiredConditions && targetConditions
+        return requiredConditions
     }
 // #endregion Triggers
 
@@ -58,7 +51,7 @@
         description = "Take down the rogue driver on Route 246 and complete Stage 1",
         points = 5,
         type = "progression",
-        trigger = triggerStageClear(1)
+        trigger = triggerStageClear(STAGE_1_1)
     )
 
     achievement(
@@ -67,7 +60,7 @@
         description = "Defeat \"your guardian angel\" in the construction site and complete Stage 2",
         points = 5,
         type = "progression",
-        trigger = triggerStageClear(2)
+        trigger = triggerStageClear(STAGE_2_2)
     )
 // #endregion Achievement
 

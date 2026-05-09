@@ -19,7 +19,8 @@ Defines the active game mode: Platforming, Driving, Rail Shooting, or UI / Cutsc
 0x0b = Cutscene or UI Screen
 0x0c = Stage Select UI Screen
 
-[24-bit BE] Current Scene
+-------
+
 Below are the combinations of 0x0090 / (0x0091) / 0x0092 values in the order you can see them troughout the gameplay. 
 
 ATTRACT MODE:
