@@ -6,6 +6,14 @@
     function nextSceneMode() => byte(0x0095)
     function currSceneIndex() => byte(0x0092)
     function nextSceneIndex() => byte(0x0097)
+
+    function lives() => byte(0x0362)
+    function coins() => byte(0x0361)
+    function grenades() => byte(0x0360)
+    function bullets() => byte(0x035f)
+    function health() => byte(0x0280)
+    function score() => word(0x0363) * 100
+
 // #endregion Memory Addresses
 
 // #region Rich Presence
@@ -62,14 +70,24 @@
 
     rich_presence_conditional_display(
         currSceneMode() < 0x0b,
-        "{0}",
-        rich_presence_lookup("Stage", currSceneIndex(), stageNameLookup)
+        "{0} ● {1} Lives ● 🔫 {2} ● 💣 {3} ● 💰 {4} ● {5}",
+        rich_presence_lookup("Stage", currSceneIndex(), stageNameLookup),
+        rich_presence_value("Lives", lives()),
+        rich_presence_value("Bullets", bullets()),
+        rich_presence_value("Grenades", grenades()),
+        rich_presence_value("Coins", coins()),
+        rich_presence_macro("Score", score())
     )
 
     rich_presence_conditional_display(
         nextSceneMode() < 0x0b,
-        "{0}",
-        rich_presence_lookup("Stage", nextSectionID(), stageNameLookup)
+        "{0} ● {1} Lives ● 🔫 {2} ● 💣 {3} ● 💰 {4} ● {5}",
+        rich_presence_lookup("Stage", nextSceneIndex(), stageNameLookup),
+        rich_presence_value("Lives", lives()),
+        rich_presence_value("Bullets", bullets()),
+        rich_presence_value("Grenades", grenades()),
+        rich_presence_value("Coins", coins()),
+        rich_presence_macro("Score", score())
     )
 
     rich_presence_display("In Attract Mode")
