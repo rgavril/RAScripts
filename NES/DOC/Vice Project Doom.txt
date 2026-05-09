@@ -1,0 +1,160 @@
+-------------------------------------------------------
+0x0090
+-------------------------------------------------------
+[8-bit] Current Scene Mode
+Defines the active game mode: Platforming, Driving, Rail Shooting, or UI / Cutscenes. Use in combination with Current Scene Index (0x0092) to determine the exact 'Scene' the game is currently in.
+
+* Value >= 0x0b means the game is not running an active gameplay scene
+* Value < 0x0b means the game is currently running an active gameplay scene
+
+0x00 = Gameplay: Platformer
+0x01 = Gameplay: Platformer
+0x02 = Gameplay: Platformer
+0x03 = Gameplay: Platformer
+0x04 = Gameplay: Rail Shooter
+0x05 = Gameplay: Platformer
+0x07 = Gameplay: Platformer
+0x09 = Gameplay: Platformer
+0x0a = Gameplay: Car Driving
+0x0b = Cutscene or UI Screen
+0x0c = Stage Select UI Screen
+
+[24-bit BE] Current Scene
+Below are the combinations of 0x0090 / (0x0091) / 0x0092 values in the order you can see them troughout the gameplay. 
+
+ATTRACT MODE:
+0x0b--15 = Cutscene Attract Mode
+0x0b--16 = Screen Push Start Button
+0x0b--97 = Game Start
+
+STAGE 1:
+0x0b--00 = Cutscene Stage 1
+0x0a--07 = Stage 1-1
+
+STAGE 2:
+0x0b--01 = Cutscene Stage 2
+0x02--02 = Stage 2-1 A
+0x02--03 = Stage 2-1 B
+0x02--04 = Stage 2-1 C
+0x02--05 = Stage 2-1 D
+0x03--06 = Stage 2-2
+
+STAGE 3:
+0x0b--02 = Cutscene Stage 3
+0x00--08 = Stage 3-1 A
+0x00--09 = Stage 3-1 B
+0x00--0a = Stage 3-1 C
+0x05--0b = Stage 3-2
+
+STAGE 4:
+0x0b--03 = Cutscene Stage 4
+0x00--00 = Stage 4-1
+0x0b--04 = Cutscene Stage 4-2
+0x04--26 = Stage 4-2
+
+STAGE 5:
+0x0b--05 = Cutscene Stage 5
+0x00--0c = Stage 5-1 A
+0x01--0d = Stage 5-1 B
+0x00--0e = Stage 5-2 A
+0x00--0f = Stage 5-2 B
+0x09--17 = Stage 5-3
+
+STAGE 6:
+0x0b--06 = Cutscene Stage 6
+0x00--12 = Stage 6-1 A
+0x00--13 = Stage 6-1 B
+0x00--14 = Stage 6-1 C
+0x01--15 = Stage 6-2 A
+0x00--2f = Stage 6-2 B
+0x00--16 = Stage 6-3
+
+STAGE 7:
+0x0b--07 = Cutscene Stage 7
+0x07--10 = Stage 7-1
+0x00--18 = Stage 7-2
+
+-------------------------------------------------------
+0x0091
+-------------------------------------------------------
+[8-bit] Current Scene State
+0x00 = Start / Reset
+0x01 = Active
+
+NOTE: 
+ * When this value is 0x00 the game initialises the Scene (see 0x0090 and 0x0092) and then switches the value to 0x01
+ * Useful for detecting the exact frame a scene loads or forcing a scene load during debugging
+
+-------------------------------------------------------
+0x0092
+-------------------------------------------------------
+[8-bit] Current Scene Index
+Sub-ID for the current Scene Mode (0x0090). Identifies specific stage segment, cutscene sequences or ui screen.
+
+IMPORTANT: Use this value only in combination with 0x0090 !!!
+
+0x00 = Stage 4-1
+0x01 = <Unknown / Unused>
+0x02 = Stage 2-1 A
+0x03 = Stage 2-1 B
+0x04 = Stage 2-1 C
+0x05 = Stage 2-1 D
+0x06 = Stage 2-2
+0x07 = Stage 1-1
+0x08 = Stage 3-1 A
+0x09 = Stage 3-1 B
+0x0a = Stage 3-1 C
+0x0b = Stage 3-2
+0x0c = Stage 5-1 A
+0x0d = Stage 5-1 B
+0x0e = Stage 5-2 A
+0x0f = Stage 5-2 B
+0x10 = Stage 7-1
+0x11 = End Game Credits
+0x12 = Stage 6-1 A
+0x13 = Stage 6-1 B
+0x14 = Stage 6-1 C
+0x15 = Stage 6-2 A
+0x16 = Stage 6-3
+0x17 = Stage 5-3
+0x18 = Stage 7-2 A
+0x19 = Stage 7-2 B
+0x1a = Stage 7-2 C
+0x1b = Stage 7-2 D
+0x1c = Stage 8-1 A
+0x1d = Stage 8-1 B
+0x1e = Stage 8-1 C
+0x1f = Stage 8-2 A
+0x20 = Stage 8-3
+0x21 = Stage 9-1 A
+0x22 = Stage 9-1 B
+0x23 = Stage 9-1 C
+0x24 = Stage 9-2 A
+0x25 = Stage 9-3
+0x26 = Stage 4-2
+0x27 = Stage 10-1
+0x28 = Stage 11-1
+0x29 = Stage 11-2 A
+0x2a = Stage 11-2 B
+0x2b = Stage 11-2 C
+0x2c = Stage 11-3
+0x2d = Stage 11-4
+0x2e = Stage 7-3
+0x2f = Stage 6-2 B
+0x30 = Stage 8-2 B
+
+-------------------------------------------------------
+0x0095
+-------------------------------------------------------
+[8-bit] Next Scene Mode
+Just like 0x0090 this holds a game mode: Platforming, Driving, Rail Shooting, or UI / Cutscenes. It needs to be used in combination with Next Scene Index (0x0097).
+
+Together with 0x0097, it is used to determine what scene will run after a UI / Cutscene is completed.
+
+-------------------------------------------------------
+0x0097
+-------------------------------------------------------
+[8-bit] Next Scene Index
+Just like 0x0092 this identifies a specific Stage Segment, Cutscene or UI Screen.
+
+Together with 0x0095, it is used to determine what scene will run after a Cutscene / UI Screen is completed.
