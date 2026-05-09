@@ -94,11 +94,11 @@ Sub-ID for the current Scene Mode (0x0090). Identifies specific stage segment, c
 IMPORTANT: Use this value only in combination with 0x0090 !!!
 
 0x00 = Stage 4-1
-0x01 = <Unknown / Unused>
-0x02 = Stage 2-1 A
-0x03 = Stage 2-1 B
-0x04 = Stage 2-1 C
-0x05 = Stage 2-1 D
+0x01 = Cutscene Stage 2 
+0x02 = Stage 2-1 A | Cutscene Stage 3
+0x03 = Stage 2-1 B | Cutscene Stage 4
+0x04 = Stage 2-1 C | Cutscene Stage 4-2
+0x05 = Stage 2-1 D | Cutscene Stage 5
 0x06 = Stage 2-2
 0x07 = Stage 1-1
 0x08 = Stage 3-1 A
