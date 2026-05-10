@@ -50,7 +50,7 @@ STAGE 3:
 STAGE 4:
 0x0b--03 = Cutscene Stage 4
 0x00--00 = Stage 4-1
-0x0b--04 = Cutscene Stage 4-2
+0x0b--04 = Cutscene Stage 4 Intermission
 0x04--26 = Stage 4-2
 
 STAGE 5:
@@ -73,7 +73,50 @@ STAGE 6:
 STAGE 7:
 0x0b--07 = Cutscene Stage 7
 0x07--10 = Stage 7-1
-0x00--18 = Stage 7-2
+0x00--18 = Stage 7-2 A
+0x00--19 = Stage 7-2 B
+0x01--1a = Stage 7-2 C
+0x00--1b = Stage 7-2 D
+0x00--2e = Stage 7-3
+
+STAGE 8:
+0x0b--08 = Cutscene Stage 8
+0x00--1c = Stage 8-1 A
+0x00--1d = Stage 8-1 B
+0x00--1e = Stage 8-1 C
+0x01--1f = Stage 8-1 A
+0x00--30 = Stage 8-2
+0x00--20 = Stage 8-3
+
+STAGE 9:
+0x0b--09 = Cutscene Stage 9
+0x00--21 = Stage 9-1 A
+0x00--22 = Stage 9-1 B
+0x01--23 = Stage 9-1 C
+0x00--24 = Stage 9-2
+0x00--25 = Stage 9-3
+0x0b--0a = Cutscene Stage 9 Ending
+
+STAGE 10:
+0x0b--0b = Cutscene Stage 10
+0x0a--27 = Stage 10-1
+0x0b--0c = Cutscene Stage 10 Ending
+
+STAGE 11:
+0x0b--0d = Cutscene Stage 11
+0x04--28 = Stage 11-1
+0x00--29 = Stage 11-2 A
+0x00--2a = Stage 11-2 B
+0x00--2b = Stage 11-2 C
+0x0b--0e = Cutscene Stage 11-2 Intermission
+0x00--2c = Stage 11-3
+0x0b--0f = Cutscene Stage 11-3 Intermission
+0x05--2d = Stage 11-4
+
+ENDING:
+0x0b--10 = Cutscene Stage 11 Ending
+0x0b--11 = Cutscene End Credits
+
 
 -------------------------------------------------------
 0x0091
@@ -125,12 +168,12 @@ IMPORTANT: Use this value only in combination with 0x0090 !!!
 0x1c = Stage 8-1 A
 0x1d = Stage 8-1 B
 0x1e = Stage 8-1 C
-0x1f = Stage 8-2 A
+0x1f = Stage 8-2
 0x20 = Stage 8-3
 0x21 = Stage 9-1 A
 0x22 = Stage 9-1 B
 0x23 = Stage 9-1 C
-0x24 = Stage 9-2 A
+0x24 = Stage 9-2
 0x25 = Stage 9-3
 0x26 = Stage 4-2
 0x27 = Stage 10-1

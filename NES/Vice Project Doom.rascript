@@ -167,7 +167,7 @@
     )
 
     achievement(
-        id = 22076,
+        id = 22077,
         title = "Every Dog Has Its Day...",
         description = "Defeat Damian Hawke's true form in Stage 11-4 and complete the game",
         points = 25,
