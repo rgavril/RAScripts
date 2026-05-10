@@ -16,6 +16,17 @@
     function nextSceneIndex() => byte(0x0097)
         STAGE_1_1 = 0x07
         STAGE_2_2 = 0x06
+        STAGE_3_2 = 0x0b
+        STAGE_4_2 = 0x26
+        STAGE_5_3 = 0x17
+        STAGE_6_3 = 0x16
+        STAGE_7_3 = 0x2e
+        STAGE_8_3 = 0x20
+        STAGE_9_3 = 0x25
+        STAGE_10_1 = 0x27
+        STAGE_11_1 = 0x28
+        STAGE_11_3 = 0x2c
+        STAGE_11_4 = 0x2d
 
     function lives() => byte(0x0362)
     function coins() => byte(0x0361)
@@ -25,11 +36,13 @@
     function score() => word(0x0363) * 100
 // #endregion Memory Addresses
 
+// #region Frame Functions
     function frameStageEndFlatSet() {
         return
             prev(stageEndFlag()) == FALSE
             && stageEndFlag() != FALSE
     }
+// #endregion Frame Functions
 
 // #region Triggers
     function triggerStageClear(stageIndex) {
@@ -61,6 +74,105 @@
         points = 5,
         type = "progression",
         trigger = triggerStageClear(STAGE_2_2)
+    )
+
+    achievement(
+        id = 22067,
+        title = "Urban Black Magic",
+        description = "Defeat Kim Ron in Chinatown and complete Stage 3",
+        points = 5,
+        type = "progression",
+        trigger = triggerStageClear(STAGE_3_2)
+    )
+
+    achievement(
+        id = 22068,
+        title = "Party in the CSA",
+        description = "Fight your way through the industrial area and complete Stage 4",
+        points = 5,
+        type = "progression",
+        trigger = triggerStageClear(STAGE_4_2)
+    )
+
+    achievement(
+        id = 22069,
+        title = "Tanks for the Vacation",
+        description = "Defeat the M5 Scorpion in the jungles of Central America and complete Stage 5",
+        points = 10,
+        type = "progression",
+        trigger = triggerStageClear(STAGE_5_3)
+    )
+
+    achievement(
+        id = 22070,
+        title = "Blades & Ladders",
+        description = "Defeat the PCU-100 Vardkin in the factory and complete Stage 6",
+        points = 10,
+        type = "progression",
+        trigger = triggerStageClear(STAGE_6_3)
+    )
+
+    achievement(
+        id = 22071,
+        title = "A Chip on My Shoulder",
+        description = "Defeat the PCU-10 Rogue in the sewers and complete Stage 7",
+        points = 10,
+        type = "progression",
+        trigger = triggerStageClear(STAGE_7_3)
+    )
+
+    achievement(
+        id = 22072,
+        title = "High-Voltage Nightmare",
+        description = "Fight your way through the power plant and complete Stage 8",
+        points = 10,
+        type = "progression",
+        trigger = triggerStageClear(STAGE_8_3)
+    )
+
+    achievement(
+        id = 22073,
+        title = "Everything but the Girl",
+        description = "Fight your way through the Bio-Tech Lab and complete Stage 9",
+        points = 10,
+        type = "progression",
+        trigger = triggerStageClear(STAGE_9_3)
+    )
+
+    achievement(
+        id = 22074,
+        title = "Death in the Fast Lane",
+        description = "Take down the serpent on the way to the BEDA building and complete Stage 10",
+        points = 10,
+        type = "progression",
+        trigger = triggerStageClear(STAGE_10_1)
+    )
+
+    achievement(
+        id = 22075,
+        title = "War-Torn Welcome",
+        description = "Shoot down BEDA's forces at the entrance to the building and complete Stage 11-1",
+        points = 10,
+        type = "progression",
+        trigger = triggerStageClear(STAGE_11_1)
+    )
+
+    achievement(
+        id = 22076,
+        title = "Hart to Hart",
+        description = "Defeat Damian Hawke in the BEDA Corporation HQ and complete Stage 11-3",
+        points = 10,
+        type = "progression",
+        trigger = triggerStageClear(STAGE_11_3)
+    )
+
+    achievement(
+        id = 22076,
+        title = "Every Dog Has Its Day...",
+        description = "Defeat Damian Hawke's true form in Stage 11-4 and complete the game",
+        points = 25,
+        type = "win_condition",
+        trigger = triggerStageClear(STAGE_11_4)
     )
 // #endregion Achievement
 
