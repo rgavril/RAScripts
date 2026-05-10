@@ -153,7 +153,7 @@ IMPORTANT: Use this value only in combination with 0x0090 !!!
 0x0d = Stage 5-1 B
 0x0e = Stage 5-2 A
 0x0f = Stage 5-2 B
-0x10 = Stage 7-1
+0x10 = Stage 7-1 | Cutscene After 11-4
 0x11 = End Game Credits
 0x12 = Stage 6-1 A
 0x13 = Stage 6-1 B

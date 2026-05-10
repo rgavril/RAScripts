@@ -91,6 +91,47 @@
             && prev(score()) < targetScore
             && score() >= targetScore
     }
+
+    function triggerGunDecadence() {
+        return
+            cheatActive() == FALSE
+            && lives() >= 3
+            && score() >= 390000
+            && prev(currSceneMode()) < 0x0b && prev(currSceneIndex()) == STAGE_11_4
+            && currSceneMode() == 0x0b && currSceneIndex() == 0x10 // Cutscene After 11-4
+    }
+
+    function triggerCoins(targetQuantity) {
+        return
+            cheatActive() == FALSE
+            && currSceneMode() < 0x0b
+            && prev(coins()) < targetQuantity
+            && coins() == targetQuantity
+    }
+
+    function triggerGrenades(targetQuantity) {
+        return
+            cheatActive() == FALSE
+            && currSceneMode() < 0x0b
+            && prev(grenades()) < targetQuantity
+            && grenades() == targetQuantity
+    }
+
+    function triggerLives(targetQuantity) {
+        return
+            cheatActive() == FALSE
+            && currSceneMode() < 0x0b
+            && prev(lives()) < targetQuantity
+            && lives() == targetQuantity
+    }
+
+    function triggerBullets(targetQuantity) {
+        return
+            cheatActive() == FALSE
+            && currSceneMode() < 0x0b
+            && prev(bullets()) < targetQuantity
+            && bullets() == targetQuantity
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -251,6 +292,46 @@
         description = "Score 332,700 points",
         points = 25,
         trigger = triggerScore(332700)
+    )
+
+    achievement(
+        id = 22082,
+        title = "Gun-Decadence",
+        description = "Beat the game with at least 3 lives and 390,000 points",
+        points = 50,
+        trigger = triggerGunDecadence()
+    )
+
+    achievement(
+        id = 22078,
+        title = "Super Stash",
+        description = "Collect 99 coins",
+        points = 5,
+        trigger = triggerCoins(99)
+    )
+
+    achievement(
+        id = 22080,
+        title = "Pineapple Surprise",
+        description = "Collect 99 hand grenades",
+        points = 10,
+        trigger = triggerGrenades(99)
+    )
+
+    achievement(
+        id = 22083,
+        title = "Loosening the Vice",
+        description = "Reach 3 lives",
+        points = 10,
+        trigger = triggerLives(3)
+    )
+
+    achievement(
+        id = 22081,
+        title = "Crowded Chambers",
+        description = "Collect 99 bullets for the A4 Magnum",
+        points = 5,
+        trigger = triggerBullets(99)
     )
 // #endregion Achievement
 
