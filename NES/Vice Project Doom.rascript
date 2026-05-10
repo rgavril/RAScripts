@@ -27,7 +27,11 @@
         STAGE_11_1 = 0x28
         STAGE_11_3 = 0x2c
         STAGE_11_4 = 0x2d
+    function currSceneState() => byte(0x0091)
+        STAGE_STATE_START = 0x00
+        STAGE_STATE_ACTIVE = 0x01
 
+    function time() => byte(0x035e)
     function lives() => byte(0x0362)
     function coins() => byte(0x0361)
     function grenades() => byte(0x0360)
@@ -37,7 +41,7 @@
 // #endregion Memory Addresses
 
 // #region Frame Functions
-    function frameStageEndFlatSet() {
+    function frameStageEndFlagSet() {
         return
             prev(stageEndFlag()) == FALSE
             && stageEndFlag() != FALSE
@@ -51,128 +55,202 @@
             && currSceneMode() < 0x0b
             && currSceneIndex() == stageIndex
             && playerIsDead() == FALSE
-            && frameStageEndFlatSet()
+            && frameStageEndFlagSet()
 
         return requiredConditions
+    }
+
+    function triggerStageSpeedrun(stageIndex, timeLeft) {
+        return
+            triggerStageClear(stageIndex)
+            && time() >= timeLeft
+        
+        // Challange Indicator Version:
+        // primingConditions =
+        //     once(
+        //         currSceneMode() < 0x0b
+        //         && currSceneIndex() == stageIndex
+        //         && currSceneState() == STAGE_STATE_START
+        //     )
+
+        // cancelConditions =
+        //     never( cheatActive() != FALSE )
+        //     && never( time() < timeLeft )
+
+        // targetConditions =
+        //     playerIsDead() == FALSE
+        //     && frameStageEndFlagSet()
+
+        // return primingConditions && cancelConditions && trigger_when(targetConditions)
+    }
+
+    function triggerScore(targetScore) {
+        return
+            cheatActive() == FALSE
+            && currSceneMode() < 0x0b
+            && prev(score()) < targetScore
+            && score() >= targetScore
     }
 // #endregion Triggers
 
 // #region Achievements
-    achievement(
-        id = 22065,
-        title = "Highway Patrol",
-        description = "Take down the rogue driver on Route 246 and complete Stage 1",
-        points = 5,
-        type = "progression",
-        trigger = triggerStageClear(STAGE_1_1)
-    )
+    // #region Progression
+        achievement(
+            id = 22065,
+            title = "Highway Patrol",
+            description = "Take down the rogue driver on Route 246 and complete Stage 1",
+            points = 5,
+            type = "progression",
+            trigger = triggerStageClear(STAGE_1_1)
+        )
+
+        achievement(
+            id = 22066,
+            title = "Murder on the Girders",
+            description = "Defeat \"your guardian angel\" in the construction site and complete Stage 2",
+            points = 5,
+            type = "progression",
+            trigger = triggerStageClear(STAGE_2_2)
+        )
+
+        achievement(
+            id = 22067,
+            title = "Urban Black Magic",
+            description = "Defeat Kim Ron in Chinatown and complete Stage 3",
+            points = 5,
+            type = "progression",
+            trigger = triggerStageClear(STAGE_3_2)
+        )
+
+        achievement(
+            id = 22068,
+            title = "Party in the CSA",
+            description = "Fight your way through the industrial area and complete Stage 4",
+            points = 5,
+            type = "progression",
+            trigger = triggerStageClear(STAGE_4_2)
+        )
+
+        achievement(
+            id = 22069,
+            title = "Tanks for the Vacation",
+            description = "Defeat the M5 Scorpion in the jungles of Central America and complete Stage 5",
+            points = 10,
+            type = "progression",
+            trigger = triggerStageClear(STAGE_5_3)
+        )
+
+        achievement(
+            id = 22070,
+            title = "Blades & Ladders",
+            description = "Defeat the PCU-100 Vardkin in the factory and complete Stage 6",
+            points = 10,
+            type = "progression",
+            trigger = triggerStageClear(STAGE_6_3)
+        )
+
+        achievement(
+            id = 22071,
+            title = "A Chip on My Shoulder",
+            description = "Defeat the PCU-10 Rogue in the sewers and complete Stage 7",
+            points = 10,
+            type = "progression",
+            trigger = triggerStageClear(STAGE_7_3)
+        )
+
+        achievement(
+            id = 22072,
+            title = "High-Voltage Nightmare",
+            description = "Fight your way through the power plant and complete Stage 8",
+            points = 10,
+            type = "progression",
+            trigger = triggerStageClear(STAGE_8_3)
+        )
+
+        achievement(
+            id = 22073,
+            title = "Everything but the Girl",
+            description = "Fight your way through the Bio-Tech Lab and complete Stage 9",
+            points = 10,
+            type = "progression",
+            trigger = triggerStageClear(STAGE_9_3)
+        )
+
+        achievement(
+            id = 22074,
+            title = "Death in the Fast Lane",
+            description = "Take down the serpent on the way to the BEDA building and complete Stage 10",
+            points = 10,
+            type = "progression",
+            trigger = triggerStageClear(STAGE_10_1)
+        )
+
+        achievement(
+            id = 22075,
+            title = "War-Torn Welcome",
+            description = "Shoot down BEDA's forces at the entrance to the building and complete Stage 11-1",
+            points = 10,
+            type = "progression",
+            trigger = triggerStageClear(STAGE_11_1)
+        )
+
+        achievement(
+            id = 22076,
+            title = "Hart to Hart",
+            description = "Defeat Damian Hawke in the BEDA Corporation HQ and complete Stage 11-3",
+            points = 10,
+            type = "progression",
+            trigger = triggerStageClear(STAGE_11_3)
+        )
+
+        achievement(
+            id = 22077,
+            title = "Every Dog Has Its Day...",
+            description = "Defeat Damian Hawke's true form in Stage 11-4 and complete the game",
+            points = 25,
+            type = "win_condition",
+            trigger = triggerStageClear(STAGE_11_4)
+        )
+    // #endregion Progression
 
     achievement(
-        id = 22066,
-        title = "Murder on the Girders",
-        description = "Defeat \"your guardian angel\" in the construction site and complete Stage 2",
-        points = 5,
-        type = "progression",
-        trigger = triggerStageClear(STAGE_2_2)
-    )
-
-    achievement(
-        id = 22067,
-        title = "Urban Black Magic",
-        description = "Defeat Kim Ron in Chinatown and complete Stage 3",
-        points = 5,
-        type = "progression",
-        trigger = triggerStageClear(STAGE_3_2)
-    )
-
-    achievement(
-        id = 22068,
-        title = "Party in the CSA",
-        description = "Fight your way through the industrial area and complete Stage 4",
-        points = 5,
-        type = "progression",
-        trigger = triggerStageClear(STAGE_4_2)
-    )
-
-    achievement(
-        id = 22069,
-        title = "Tanks for the Vacation",
-        description = "Defeat the M5 Scorpion in the jungles of Central America and complete Stage 5",
+        id = 22084,
+        title = "Hitting the Speed Limit",
+        description = "Complete Stage 1 with at least 203 seconds left",
         points = 10,
-        type = "progression",
-        trigger = triggerStageClear(STAGE_5_3)
+        trigger = triggerStageSpeedrun(STAGE_1_1, timeLeft=203)
     )
 
+    // achievement(
+    //     id = 22079,
+    //     title = "Speedrun of Steel",
+    //     description = "Defeat the Stage 2-2 boss within 8 seconds",
+    //     points = 10,
+    //     trigger = triggerStageSpeedrun(STAGE_2_2, timeLeft=250-8)
+    // )
+
     achievement(
-        id = 22070,
-        title = "Blades & Ladders",
-        description = "Defeat the PCU-100 Vardkin in the factory and complete Stage 6",
+        id = 22181,
+        title = "And It Was Fast as Lightning",
+        description = "Complete Stage 3 with at least 239 seconds left",
         points = 10,
-        type = "progression",
-        trigger = triggerStageClear(STAGE_6_3)
+        trigger = triggerStageSpeedrun(STAGE_3_2, timeLeft=239)
     )
 
     achievement(
-        id = 22071,
-        title = "A Chip on My Shoulder",
-        description = "Defeat the PCU-10 Rogue in the sewers and complete Stage 7",
-        points = 10,
-        type = "progression",
-        trigger = triggerStageClear(STAGE_7_3)
-    )
-
-    achievement(
-        id = 22072,
-        title = "High-Voltage Nightmare",
-        description = "Fight your way through the power plant and complete Stage 8",
-        points = 10,
-        type = "progression",
-        trigger = triggerStageClear(STAGE_8_3)
-    )
-
-    achievement(
-        id = 22073,
-        title = "Everything but the Girl",
-        description = "Fight your way through the Bio-Tech Lab and complete Stage 9",
-        points = 10,
-        type = "progression",
-        trigger = triggerStageClear(STAGE_9_3)
-    )
-
-    achievement(
-        id = 22074,
-        title = "Death in the Fast Lane",
-        description = "Take down the serpent on the way to the BEDA building and complete Stage 10",
-        points = 10,
-        type = "progression",
-        trigger = triggerStageClear(STAGE_10_1)
-    )
-
-    achievement(
-        id = 22075,
-        title = "War-Torn Welcome",
-        description = "Shoot down BEDA's forces at the entrance to the building and complete Stage 11-1",
-        points = 10,
-        type = "progression",
-        trigger = triggerStageClear(STAGE_11_1)
-    )
-
-    achievement(
-        id = 22076,
-        title = "Hart to Hart",
-        description = "Defeat Damian Hawke in the BEDA Corporation HQ and complete Stage 11-3",
-        points = 10,
-        type = "progression",
-        trigger = triggerStageClear(STAGE_11_3)
-    )
-
-    achievement(
-        id = 22077,
-        title = "Every Dog Has Its Day...",
-        description = "Defeat Damian Hawke's true form in Stage 11-4 and complete the game",
+        id = 22183,
+        title = "Bladed Blitz",
+        description = "Complete Stage 6 with at least 236 seconds left",
         points = 25,
-        type = "win_condition",
-        trigger = triggerStageClear(STAGE_11_4)
+        trigger = triggerStageSpeedrun(STAGE_6_3, timeLeft=236)
+    )
+
+    achievement(
+        id = 22182,
+        title = "Mercenary Instincts",
+        description = "Score 332,700 points",
+        points = 25,
+        trigger = triggerScore(332700)
     )
 // #endregion Achievement
 
