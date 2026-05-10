@@ -23,9 +23,14 @@ Defines the active game mode: Platforming, Driving, Rail Shooting, or UI / Cutsc
 
 Below are the combinations of 0x0090 / (0x0091) / 0x0092 values in the order you can see them troughout the gameplay. 
 
+VARIOUS:
+0x0b--14 = Time Over Screen (Car Levels)
+0x0b--12 = Game Over Screen
+0x0b--93 = Ready Screen
+
 ATTRACT MODE:
 0x0b--15 = Cutscene Attract Mode
-0x0b--16 = Screen Push Start Button
+0x0b--16 = Push Start Button Screen
 0x0b--97 = Game Start
 
 STAGE 1:

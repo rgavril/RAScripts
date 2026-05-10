@@ -341,6 +341,24 @@
     )
 // #endregion Achievement
 
+// #region Leaderboards
+    leaderboard(
+        id = 4560,
+        title = "Hi-Score",
+        description = "Get your highest score before game over",
+        format = "SCORE",
+        start = 
+            cheatActive() == FALSE
+            && lives() == 0
+            && prev(playerIsDead()) == 0
+            && playerIsDead() == 1
+        ,
+        cancel = always_false(),
+        submit = always_true(),
+        value = score()
+    )
+// #endregion
+
 // #region Rich Presence
     stageNameLookup = {
         0x00 : "Stage 4-1",
