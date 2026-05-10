@@ -60,31 +60,37 @@
         return requiredConditions
     }
 
-    function triggerStageSpeedrun(stageIndex, timeLeft) {
+    function triggerStageTime(stageIndex, timeLeft) {
         return
             triggerStageClear(stageIndex)
             && time() >= timeLeft
-        
-        // Challange Indicator Version:
-        // primingConditions =
-        //     once(
-        //         currSceneMode() < 0x0b
-        //         && currSceneIndex() == stageIndex
-        //         && currSceneState() == STAGE_STATE_START
-        //     )
-
-        // cancelConditions =
-        //     never( cheatActive() != FALSE )
-        //     && never( time() < timeLeft )
-
-        // targetConditions =
-        //     playerIsDead() == FALSE
-        //     && frameStageEndFlagSet()
-
-        // return primingConditions && cancelConditions && trigger_when(targetConditions)
     }
 
-    function triggerScore(targetScore) {
+    function triggerSubStageSpeedrun(stageIndex, maxSeconds) {
+        primingConditions =
+            cheatActive() == FALSE
+            && currSceneMode() < 0x0b
+            && currSceneIndex() == stageIndex
+
+        timerCondition = unless(
+            repeated(maxSeconds, 
+                time() < prev(time())
+                && never(
+                    currSceneMode() < 0x0b
+                    && currSceneIndex() == stageIndex
+                    && currSceneState() == STAGE_STATE_START
+                )
+            )
+        )
+
+        targetConditions =
+            playerIsDead() == FALSE
+            && frameStageEndFlagSet()
+
+        return primingConditions && trigger_when(targetConditions) && timerCondition
+    }
+
+ function triggerScore(targetScore) {
         return
             cheatActive() == FALSE
             && currSceneMode() < 0x0b
@@ -259,23 +265,23 @@
         title = "Hitting the Speed Limit",
         description = "Complete Stage 1 with at least 203 seconds left",
         points = 10,
-        trigger = triggerStageSpeedrun(STAGE_1_1, timeLeft=203)
+        trigger = triggerStageTime(STAGE_1_1, timeLeft=203)
     )
 
-    // achievement(
-    //     id = 22079,
-    //     title = "Speedrun of Steel",
-    //     description = "Defeat the Stage 2-2 boss within 8 seconds",
-    //     points = 10,
-    //     trigger = triggerStageSpeedrun(STAGE_2_2, timeLeft=250-8)
-    // )
+    achievement(
+        id = 22079,
+        title = "Speedrun of Steel",
+        description = "Defeat the Stage 2-2 boss within 8 seconds",
+        points = 10,
+        trigger = triggerSubStageSpeedrun(STAGE_2_2, maxSeconds=8)
+    )
 
     achievement(
         id = 22181,
         title = "And It Was Fast as Lightning",
         description = "Complete Stage 3 with at least 239 seconds left",
         points = 10,
-        trigger = triggerStageSpeedrun(STAGE_3_2, timeLeft=239)
+        trigger = triggerStageTime(STAGE_3_2, timeLeft=239)
     )
 
     achievement(
@@ -283,7 +289,7 @@
         title = "Bladed Blitz",
         description = "Complete Stage 6 with at least 236 seconds left",
         points = 25,
-        trigger = triggerStageSpeedrun(STAGE_6_3, timeLeft=236)
+        trigger = triggerStageTime(STAGE_6_3, timeLeft=236)
     )
 
     achievement(
