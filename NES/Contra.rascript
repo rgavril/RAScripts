@@ -58,7 +58,9 @@
             // Main Boss Died:
             any_of(range(0, 15), index =>
                 objectType(index) == 0x16 // 0x16 ~ Final Stage Boss Brain
-                && objectState(index) == 0x04 // 0x04 ~ Died
+                && prev(objectHealth(index)) > 0
+                && objectHealth(index) == 0
+                //&& objectState(index) == 0x04 // 0x04 ~ Died
             )
 
         return primingConditions && trigger_when(targetConditions) && cancelConditions
