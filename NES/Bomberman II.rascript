@@ -10,7 +10,7 @@
 
     function area() => byte(0x004b) + 1
         AREA_INTRO = 0x07
-    function subArea() => byte(0x004c) + 1
+    function areaLevel() => byte(0x004c) + 1
     function isBonusStage() => byte(0x004e)
 
     function sfx() => byte(0x0205)
@@ -37,14 +37,13 @@
         
         triggerConditions = 
             tally(8,
-                once( subArea() == 1  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE),
-                once( subArea() == 2  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE),
-                once( subArea() == 3  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE),
-                once( subArea() == 4  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE),
-                once( subArea() == 5  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE),
-                once( subArea() == 6  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE),
-                once( subArea() == 7  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE),
-                once( subArea() == 8  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
+                once(areaLevel() == 1 && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE && prev(music()) != MUSIC_STAGE_COMPLETED_JINGLE),
+                once(areaLevel() == 2 && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE && prev(music()) != MUSIC_STAGE_COMPLETED_JINGLE),
+                once(areaLevel() == 3 && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE && prev(music()) != MUSIC_STAGE_COMPLETED_JINGLE),
+                once(areaLevel() == 4 && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE && prev(music()) != MUSIC_STAGE_COMPLETED_JINGLE),
+                once(areaLevel() == 6 && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE && prev(music()) != MUSIC_STAGE_COMPLETED_JINGLE),
+                once(areaLevel() == 7 && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE && prev(music()) != MUSIC_STAGE_COMPLETED_JINGLE),
+                once(areaLevel() == 8 && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE && prev(music()) != MUSIC_STAGE_COMPLETED_JINGLE)
             )
 
         return cancelConditions && measured(triggerConditions)
@@ -107,6 +106,8 @@
             trigger = triggerClearArea(6)
         )
     // #endregion Progression
+
+
 // #endregion Achievements
 
 
@@ -151,7 +152,7 @@
         gameMode() == GAME_MODE_NORMAL,
         "Area {0}-{1} ● {2} Lives ● Score {3}",
         rich_presence_value("Area", area()),
-        rich_presence_value("SubArea", subArea()),
+        rich_presence_value("areaLevel", areaLevel()),
         rich_presence_value("Lives", lives()),
         rich_presence_macro("Score", score())
     )
