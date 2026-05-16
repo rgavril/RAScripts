@@ -26,6 +26,23 @@
         GAME_MODE_BATTLE = 0x02
 // #endregion Memory Addresses
 
+// #region Leaderboards
+leaderboard(
+        title = "High Score",
+        description = "Highest score achieved in normal mode",
+        format = "SCORE",
+        start = 
+            demoMode() == FALSE
+            && gameMode() == GAME_MODE_NORMAL
+            && score() > 0
+            && prev(lives()) == 0x00
+            && lives() == 0xff,
+        cancel = always_false(),
+        submit = always_true(),
+        value = score()
+)
+
+// #endregion Leaderboards
 
 // #region Rich Presence
     rich_presence_conditional_display(
