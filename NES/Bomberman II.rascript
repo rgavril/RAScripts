@@ -36,73 +36,77 @@
             && never(area() != areaNumber)
         
         triggerConditions = 
-               once( subArea() == 1  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
-            && once( subArea() == 2  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
-            && once( subArea() == 3  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
-            && once( subArea() == 4  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
-            && once( subArea() == 5  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
-            && once( subArea() == 6  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
-            && once( subArea() == 7  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
-            && once( subArea() == 8  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
+            tally(8,
+                once( subArea() == 1  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE),
+                once( subArea() == 2  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE),
+                once( subArea() == 3  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE),
+                once( subArea() == 4  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE),
+                once( subArea() == 5  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE),
+                once( subArea() == 6  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE),
+                once( subArea() == 7  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE),
+                once( subArea() == 8  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
+            )
 
-        return cancelConditions && triggerConditions
+        return cancelConditions && measured(triggerConditions)
     }
 // #endregion Triggers
 
 // #region Achievements
-    achievement(
-        id = 27339,
-        title = "Prison Demolition",
-        description = "Complete Area 1",
-        type = "progression",
-        points = 10,
-        trigger = triggerClearArea(1)
-    )
+    // #region Progression
+        achievement(
+            id = 27339,
+            title = "Prison Demolition",
+            description = "Complete Area 1",
+            type = "progression",
+            points = 10,
+            trigger = triggerClearArea(1)
+        )
 
-    achievement(
-        id = 27341,
-        title = "Only You Can Start Forest Fires",
-        description = "Complete Area 2",
-        type = "progression",
-        points = 10,
-        trigger = triggerClearArea(2)
-    )
+        achievement(
+            id = 27341,
+            title = "Only You Can Start Forest Fires",
+            description = "Complete Area 2",
+            type = "progression",
+            points = 10,
+            trigger = triggerClearArea(2)
+        )
 
-    achievement(
-        id = 27343,
-        title = "Leveling the Summit",
-        description = "Complete Area 3",
-        type = "progression",
-        points = 10,
-        trigger = triggerClearArea(3)
-    )
+        achievement(
+            id = 27343,
+            title = "Leveling the Summit",
+            description = "Complete Area 3",
+            type = "progression",
+            points = 10,
+            trigger = triggerClearArea(3)
+        )
 
-    achievement(
-        id = 27345,
-        title = "Cold Water and Burning Fire",
-        description = "Complete Area 4",
-        type = "progression",
-        points = 10,
-        trigger = triggerClearArea(4)
-    )
+        achievement(
+            id = 27345,
+            title = "Cold Water and Burning Fire",
+            description = "Complete Area 4",
+            type = "progression",
+            points = 10,
+            trigger = triggerClearArea(4)
+        )
 
-    achievement(
-        id = 27347,
-        title = "Reckless Mining Technique",
-        description = "Complete Area 5",
-        type = "progression",
-        points = 10,
-        trigger = triggerClearArea(5)
-    )
+        achievement(
+            id = 27347,
+            title = "Reckless Mining Technique",
+            description = "Complete Area 5",
+            type = "progression",
+            points = 10,
+            trigger = triggerClearArea(5)
+        )
 
-    achievement(
-        id = 27349,
-        title = "Have Mercy, Please!",
-        description = "Catch up to Black Bomber and get your revenge!",
-        type = "win_condition",
-        points = 25,
-        trigger = triggerClearArea(6)
-    )
+        achievement(
+            id = 27349,
+            title = "Have Mercy, Please!",
+            description = "Catch up to Black Bomber and get your revenge!",
+            type = "win_condition",
+            points = 25,
+            trigger = triggerClearArea(6)
+        )
+    // #endregion Progression
 // #endregion Achievements
 
 
