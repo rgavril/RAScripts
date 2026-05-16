@@ -11,6 +11,7 @@
     function area() => byte(0x004b) + 1
         AREA_INTRO = 0x07
     function subArea() => byte(0x004c) + 1
+    function isBonusStage() => byte(0x004e)
 
     function sfx() => byte(0x0205)
         SFX_TITLE_SCREEN = 0x01
@@ -18,6 +19,7 @@
         MUSIC_TITLE_SCREEN = 0x0d
         MUSIC_GAME_MENU = 0x13
         MUSIC_GAME_OVER_JINGLE = 0x19
+        MUSIC_STAGE_COMPLETED_JINGLE = 0x16
 
     function demoMode() => byte(0x03ef)
     function gameMode() => byte(0x0049)
@@ -26,22 +28,99 @@
         GAME_MODE_BATTLE = 0x02
 // #endregion Memory Addresses
 
-// #region Leaderboards
-leaderboard(
-        title = "High Score",
-        description = "Highest score achieved in normal mode",
-        format = "SCORE",
-        start = 
-            demoMode() == FALSE
-            && gameMode() == GAME_MODE_NORMAL
-            && score() > 0
-            && prev(lives()) == 0x00
-            && lives() == 0xff,
-        cancel = always_false(),
-        submit = always_true(),
-        value = score()
-)
+// #region Triggers
+    function triggerClearArea(areaNumber) {
+        cancelConditions =
+            never(demoMode() == TRUE)
+            && never(music() == MUSIC_GAME_MENU)
+            && never(area() != areaNumber)
+        
+        triggerConditions = 
+               once( subArea() == 1  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
+            && once( subArea() == 2  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
+            && once( subArea() == 3  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
+            && once( subArea() == 4  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
+            && once( subArea() == 5  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
+            && once( subArea() == 6  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
+            && once( subArea() == 7  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
+            && once( subArea() == 8  && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE)
 
+        return cancelConditions && triggerConditions
+    }
+// #endregion Triggers
+
+// #region Achievements
+    achievement(
+        id = 27339,
+        title = "Prison Demolition",
+        description = "Complete Area 1",
+        type = "progression",
+        points = 10,
+        trigger = triggerClearArea(1)
+    )
+
+    achievement(
+        id = 27341,
+        title = "Only You Can Start Forest Fires",
+        description = "Complete Area 2",
+        type = "progression",
+        points = 10,
+        trigger = triggerClearArea(2)
+    )
+
+    achievement(
+        id = 27343,
+        title = "Leveling the Summit",
+        description = "Complete Area 3",
+        type = "progression",
+        points = 10,
+        trigger = triggerClearArea(3)
+    )
+
+    achievement(
+        id = 27345,
+        title = "Cold Water and Burning Fire",
+        description = "Complete Area 4",
+        type = "progression",
+        points = 10,
+        trigger = triggerClearArea(4)
+    )
+
+    achievement(
+        id = 27347,
+        title = "Reckless Mining Technique",
+        description = "Complete Area 5",
+        type = "progression",
+        points = 10,
+        trigger = triggerClearArea(5)
+    )
+
+    achievement(
+        id = 27349,
+        title = "Have Mercy, Please!",
+        description = "Catch up to Black Bomber and get your revenge!",
+        type = "win_condition",
+        points = 25,
+        trigger = triggerClearArea(6)
+    )
+// #endregion Achievements
+
+
+// #region Leaderboards
+    leaderboard(
+            title = "High Score",
+            description = "Highest score achieved in normal mode",
+            format = "SCORE",
+            start = 
+                demoMode() == FALSE
+                && gameMode() == GAME_MODE_NORMAL
+                && score() > 0
+                && prev(lives()) == 0x00
+                && lives() == 0xff,
+            cancel = always_false(),
+            submit = always_true(),
+            value = score()
+    )
 // #endregion Leaderboards
 
 // #region Rich Presence
