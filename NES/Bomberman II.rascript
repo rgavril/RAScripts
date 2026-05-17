@@ -12,6 +12,7 @@
         AREA_INTRO = 0x07
     function areaLevel() => byte(0x004c) + 1
     function isBonusStage() => byte(0x004e)
+    function bonusItemCollected() => byte(0x00b4)
 
     function sfx() => byte(0x0205)
         SFX_TITLE_SCREEN = 0x01
@@ -28,6 +29,20 @@
         GAME_MODE_BATTLE = 0x02
 // #endregion Memory Addresses
 
+// region Frames
+    function frameBonusItemCollcted() {
+        return
+            prev(bonusItemCollected()) == FALSE
+            && bonusItemCollected() == TRUE
+    }
+
+    function frameStageCompletedJingleStarted() {
+        return
+            prev(music()) != MUSIC_STAGE_COMPLETED_JINGLE
+            && music() == MUSIC_STAGE_COMPLETED_JINGLE 
+    }
+// endregion Frames
+
 // #region Triggers
     function triggerClearArea(areaNumber) {
         cancelConditions =
@@ -37,16 +52,35 @@
         
         triggerConditions = 
             tally(8,
-                once(areaLevel() == 1 && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE && prev(music()) != MUSIC_STAGE_COMPLETED_JINGLE),
-                once(areaLevel() == 2 && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE && prev(music()) != MUSIC_STAGE_COMPLETED_JINGLE),
-                once(areaLevel() == 3 && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE && prev(music()) != MUSIC_STAGE_COMPLETED_JINGLE),
-                once(areaLevel() == 4 && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE && prev(music()) != MUSIC_STAGE_COMPLETED_JINGLE),
-                once(areaLevel() == 6 && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE && prev(music()) != MUSIC_STAGE_COMPLETED_JINGLE),
-                once(areaLevel() == 7 && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE && prev(music()) != MUSIC_STAGE_COMPLETED_JINGLE),
-                once(areaLevel() == 8 && isBonusStage() == FALSE && music() == MUSIC_STAGE_COMPLETED_JINGLE && prev(music()) != MUSIC_STAGE_COMPLETED_JINGLE)
+                once(areaLevel() == 1 && isBonusStage() == FALSE && frameStageCompletedJingleStarted()),
+                once(areaLevel() == 2 && isBonusStage() == FALSE && frameStageCompletedJingleStarted()),
+                once(areaLevel() == 3 && isBonusStage() == FALSE && frameStageCompletedJingleStarted()),
+                once(areaLevel() == 4 && isBonusStage() == FALSE && frameStageCompletedJingleStarted()),
+                once(areaLevel() == 6 && isBonusStage() == FALSE && frameStageCompletedJingleStarted()),
+                once(areaLevel() == 7 && isBonusStage() == FALSE && frameStageCompletedJingleStarted()),
+                once(areaLevel() == 8 && isBonusStage() == FALSE && frameStageCompletedJingleStarted())
             )
 
         return cancelConditions && measured(triggerConditions)
+    }
+
+    function triggerBonusArea(areaNumber) {
+        cancelConditions =
+            never(demoMode() == TRUE)
+            && never(music() == MUSIC_GAME_MENU)
+            && never(area() != areaNumber)
+
+        primingConditions =
+            once(
+                area() == areaNumber
+                && areaLevel() == 6
+                && frameBonusItemCollcted()
+            )
+        
+        triggerConditions =
+            frameStageCompletedJingleStarted()
+
+        return cancelConditions && primingConditions && trigger_when(triggerConditions)
     }
 // #endregion Triggers
 
@@ -107,6 +141,55 @@
         )
     // #endregion Progression
 
+    // #region Bonus Level
+        achievement(
+            id = 27340,
+            title = "Bonus on a Prison Tour",
+            description = "Find the bonus level in Area 1",
+            points = 10,
+            trigger = triggerBonusArea(1)
+        )
+
+        achievement(
+            id = 27342,
+            title = "Bonus on a Forest Stroll",
+            description = "Find the bonus level in Area 2",
+            points = 10,
+            trigger = triggerBonusArea(2)
+        )
+
+        achievement(
+            id = 27344,
+            title = "Bonus on a Mountain Hike",
+            description = "Find the bonus level in Area 3",
+            points = 10,
+            trigger = triggerBonusArea(3)
+        )
+
+        achievement(
+            id = 27346,
+            title = "Bonus on a Lakeside Swim",
+            description = "Find the bonus level in Area 4",
+            points = 10,
+            trigger = triggerBonusArea(4)
+        )
+
+        achievement(
+            id = 27348,
+            title = "Bonus on a Caving Expedition",
+            description = "Find the bonus level in Area 5",
+            points = 10,
+            trigger = triggerBonusArea(5)
+        )
+
+        achievement(
+            id = 27350,
+            title = "Bonus on a Dungeon Delve",
+            description = "Find the bonus level in Area 6",
+            points = 10,
+            trigger = triggerBonusArea(6)
+        )
+    // #endregion Bonus Levels
 
 // #endregion Achievements
 
