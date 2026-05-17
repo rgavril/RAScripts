@@ -13,6 +13,7 @@
     function areaLevel() => byte(0x004c) + 1
     function isBonusStage() => byte(0x004e)
     function bonusItemCollected() => byte(0x00b4)
+    function inGameplayScreen() => byte(0x0031)
 
     function sfx() => byte(0x0205)
         SFX_TITLE_SCREEN = 0x01
@@ -27,10 +28,11 @@
         GAME_MODE_NORMAL = 0x00
         GAME_MODE_VS = 0x01
         GAME_MODE_BATTLE = 0x02
+        GAME_MODE_PASSWORD = 0x03
 // #endregion Memory Addresses
 
 // region Frames
-    function frameBonusItemCollcted() {
+    function frameBonusItemCollected() {
         return
             prev(bonusItemCollected()) == FALSE
             && bonusItemCollected() == TRUE
@@ -74,7 +76,7 @@
             once(
                 area() == areaNumber
                 && areaLevel() == 6
-                && frameBonusItemCollcted()
+                && frameBonusItemCollected()
             )
         
         triggerConditions =
@@ -82,9 +84,24 @@
 
         return cancelConditions && primingConditions && trigger_when(triggerConditions)
     }
+
+    function triggerAnyLevelCleared() {
+        return
+            demoMode() == FALSE
+            && inGameplayScreen() == TRUE
+            && frameStageCompletedJingleStarted()
+    }
 // #endregion Triggers
 
 // #region Achievements
+    achievement(
+        id = 27338,
+        title = "Level Clear!",
+        description = "Complete a stage",
+        points = 5,
+        trigger = triggerAnyLevelCleared()
+    )
+
     // #region Progression
         achievement(
             id = 27339,
