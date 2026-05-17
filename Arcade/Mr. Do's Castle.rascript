@@ -190,6 +190,8 @@ TRUE  = 0x01
             && never( gameplayActive()  != TRUE                 )
             && never( multiplayerMode() == TRUE                 )
             && never( frameLivesZeroed() )
+            && never( scene() > 4 )
+            && never( frameSceneCompletedFlagRaised() && cherryRemaining() != 0 )
         
         return cancelConditions && primingConditions && trigger_when(goalConditions)
     }
