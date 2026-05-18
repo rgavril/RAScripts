@@ -12,8 +12,13 @@
         AREA_INTRO = 0x07
     function areaLevel() => byte(0x004c) + 1
     function isBonusStage() => byte(0x004e)
-    function bonusItemCollected() => byte(0x00b4)
     function inGameplayScreen() => byte(0x0031)
+    
+    function bonusItemCollected() => byte(0x00b4)
+    function bombBlastLength_US() => byte(0x0092)
+    function bombBlastLength_EU() => byte(0x0093)
+    function detonatorPowerup() => byte(0x00af)
+    function skatesPowerup() => byte(0x00b3)
 
     function sfx() => byte(0x0205)
         SFX_TITLE_SCREEN = 0x01
@@ -91,6 +96,52 @@
             && inGameplayScreen() == TRUE
             && frameStageCompletedJingleStarted()
     }
+
+    function triggerFlamePowerupCollected() {
+        requiredConditions = 
+            demoMode() == FALSE
+            && prev(inGameplayScreen()) == TRUE
+            && inGameplayScreen() == TRUE
+            && gameMode() != GAME_MODE_VS
+            && gameMode() != GAME_MODE_BATTLE
+
+        triggerConditions = (
+            bombBlastLength_US() > prev(bombBlastLength_US())
+            || bombBlastLength_EU() > prev(bombBlastLength_EU())
+        )
+
+        return requiredConditions && triggerConditions
+    }
+
+    function triggerDetonatorPowerupCollected() {
+        requiredConditions = 
+            demoMode() == FALSE
+            && prev(inGameplayScreen()) == TRUE
+            && inGameplayScreen() == TRUE
+            && gameMode() != GAME_MODE_VS
+            && gameMode() != GAME_MODE_BATTLE
+
+        triggerConditions = 
+            prev(detonatorPowerup()) == FALSE
+            && detonatorPowerup() == TRUE
+
+        return requiredConditions && triggerConditions
+    }
+
+    function triggerSkatesPowerupCollected() {
+        requiredConditions = 
+            demoMode() == FALSE
+            && prev(inGameplayScreen()) == TRUE
+            && inGameplayScreen() == TRUE
+            && gameMode() != GAME_MODE_VS
+            && gameMode() != GAME_MODE_BATTLE
+
+        triggerConditions = 
+            prev(skatesPowerup()) == FALSE
+            && skatesPowerup() == TRUE
+
+        return requiredConditions && triggerConditions
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -100,6 +151,30 @@
         description = "Complete a stage",
         points = 5,
         trigger = triggerAnyLevelCleared()
+    )
+
+    achievement(
+        id = 27351,
+        title = "Flamin' Hot",
+        description = "Obtain a Flame Face powerup and increase your bombs' flame length",
+        points = 5,
+        trigger = triggerFlamePowerupCollected()
+    )
+
+    achievement(
+        id = 27352,
+        title = "Heartburn",
+        description = "Obtain a Detonator powerup and gain the ability to detonate bombs remotely",
+        points = 5,
+        trigger = triggerDetonatorPowerupCollected()
+    )
+
+    achievement(
+        id = 27354,
+        title = "Skating on Thin Ice",
+        description = "Obtain a Skate powerup and increase your maximum movement speed",
+        points = 5,
+        trigger = triggerSkatesPowerupCollected()
     )
 
     // #region Progression
