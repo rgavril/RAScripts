@@ -21,6 +21,8 @@
     function blastInvincibilitySeconds() => byte(0x00b2)
     function detonatorPowerup() => byte(0x00af)
     function skatesPowerup() => byte(0x00b3)
+    function wallPassPowerup() => byte(0x00ad)
+    function bombPassPowerup() => byte(0x00ae)
 
     function sfx() => byte(0x0205)
         SFX_TITLE_SCREEN = 0x01
@@ -161,6 +163,36 @@
 
         return requiredConditions && triggerConditions
     }
+
+    function triggerWallPassPowerupCollected() {
+        requiredConditions = 
+            demoMode() == FALSE
+            && prev(inGameplayScreen()) == TRUE
+            && inGameplayScreen() == TRUE
+            && gameMode() != GAME_MODE_VS
+            && gameMode() != GAME_MODE_BATTLE
+
+        triggerConditions = 
+            prev(wallPassPowerup()) == FALSE
+            && wallPassPowerup() == TRUE
+
+        return requiredConditions && triggerConditions
+    }
+
+    function triggerBombPassPowerupCollected() {
+        requiredConditions = 
+            demoMode() == FALSE
+            && prev(inGameplayScreen()) == TRUE
+            && inGameplayScreen() == TRUE
+            && gameMode() != GAME_MODE_VS
+            && gameMode() != GAME_MODE_BATTLE
+
+        triggerConditions = 
+            prev(bombPassPowerup()) == FALSE
+            && bombPassPowerup() == TRUE
+
+        return requiredConditions && triggerConditions
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -210,6 +242,22 @@
         description = "Obtain a Vest powerup and and gain the ability to survive explosion for 23 seconds",
         points = 5,
         trigger = triggerBlastInvincibilityCollected(23)
+    )
+
+    achievement(
+        id = 27357,
+        title = "Like a Ghost",
+        description = "Obtain a Wall Pass powerup and gain the ability to walk through soft blocks",
+        points = 5,
+        trigger = triggerWallPassPowerupCollected()
+    )
+
+    achievement(
+        id = 27358,
+        title = "No More Stupid Deaths!",
+        description = "Obtain a Bomb Pass powerup and gain the ability to walk through bombs",
+        points = 5,
+        trigger = triggerBombPassPowerupCollected()
     )
 
     // #region Progression
