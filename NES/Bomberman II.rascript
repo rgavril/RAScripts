@@ -17,6 +17,8 @@
     function bonusItemCollected() => byte(0x00b4)
     function bombBlastLength_US() => byte(0x0092)
     function bombBlastLength_EU() => byte(0x0093)
+    function blastInvincibilityStarted() => byte(0x00b0)
+    function blastInvincibilitySeconds() => byte(0x00b2)
     function detonatorPowerup() => byte(0x00af)
     function skatesPowerup() => byte(0x00b3)
 
@@ -142,6 +144,23 @@
 
         return requiredConditions && triggerConditions
     }
+
+    function triggerBlastInvincibilityCollected(seconds) {
+        requiredConditions = 
+            demoMode() == FALSE
+            && prev(inGameplayScreen()) == TRUE
+            && inGameplayScreen() == TRUE
+            && gameMode() != GAME_MODE_VS
+            && gameMode() != GAME_MODE_BATTLE
+
+        triggerConditions =
+            prev(blastInvincibilitySeconds()) != seconds
+            && blastInvincibilitySeconds() == seconds
+            && prev(blastInvincibilityStarted()) == 0
+            && blastInvincibilityStarted() != 0
+
+        return requiredConditions && triggerConditions
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -175,6 +194,22 @@
         description = "Obtain a Skate powerup and increase your maximum movement speed",
         points = 5,
         trigger = triggerSkatesPowerupCollected()
+    )
+
+    achievement(
+        id = 27355,
+        title = "I'm Invincible! (From Myself)",
+        description = "Obtain a Flameproof powerup and become immune to explosions for 15 seconds",
+        points = 5,
+        trigger = triggerBlastInvincibilityCollected(15)
+    )
+
+    achievement(
+        id = 27356,
+        title = "Protection from Your Own Mistakes",
+        description = "Obtain a Vest powerup and and gain the ability to survive explosion for 23 seconds",
+        points = 5,
+        trigger = triggerBlastInvincibilityCollected(23)
     )
 
     // #region Progression
