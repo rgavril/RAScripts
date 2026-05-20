@@ -15,8 +15,10 @@
     function inGameplayScreen() => byte(0x0031)
     
     function bonusItemCollected() => byte(0x00b4)
-    function bombBlastLength_US() => byte(0x0092)
-    function bombBlastLength_EU() => byte(0x0093)
+    function bombBlastLength_US() => byte(0x0093)
+    function bombBlastLength_EU() => byte(0x0092)
+    function bombSupply_US() => byte(0x0090)
+    function bombSupply_EU() => byte(0x008f)
     function blastInvincibilityStarted() => byte(0x00b0)
     function blastInvincibilitySeconds() => byte(0x00b2)
     function detonatorPowerup() => byte(0x00af)
@@ -193,6 +195,54 @@
 
         return requiredConditions && triggerConditions
     }
+
+    function triggerFlameMax() {
+        cancelConditions =
+            never(demoMode() == TRUE)
+            && never(area() == AREA_INTRO)
+            && never(music() == MUSIC_GAME_MENU)
+            && never(music() == MUSIC_TITLE_SCREEN)
+            && never(gameMode() == GAME_MODE_VS)
+            && never(gameMode() == GAME_MODE_BATTLE)
+
+        triggerConditions = repeated(4,
+            prev(inGameplayScreen()) == TRUE
+            && inGameplayScreen() == TRUE
+            && prev(bombBlastLength_US()) < bombBlastLength_US()
+        )
+
+        measuredIfCondition = 
+            once(
+                bombBlastLength_US() == 0
+                && inGameplayScreen() == TRUE
+            )
+
+        return cancelConditions && measured(triggerConditions, measuredIfCondition)
+    }
+
+    function triggerBombsMax() {
+        cancelConditions =
+            never(demoMode() == TRUE)
+            && never(area() == AREA_INTRO)
+            && never(music() == MUSIC_GAME_MENU)
+            && never(music() == MUSIC_TITLE_SCREEN)
+            && never(gameMode() == GAME_MODE_VS)
+            && never(gameMode() == GAME_MODE_BATTLE)
+
+        triggerConditions = repeated(7,
+            prev(inGameplayScreen()) == TRUE
+            && inGameplayScreen() == TRUE
+            && prev(bombSupply_US()) < bombSupply_US()
+        )
+
+        measuredIfCondition = 
+            once(
+                bombSupply_US() == 0
+                && inGameplayScreen() == TRUE
+            )
+
+        return cancelConditions && measured(triggerConditions, measuredIfCondition)
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -258,6 +308,22 @@
         description = "Obtain a Bomb Pass powerup and gain the ability to walk through bombs",
         points = 5,
         trigger = triggerBombPassPowerupCollected()
+    )
+
+    achievement(
+        id = 27359,
+        title = "Burnin' Up",
+        description = "Increase your flame length to its maximum",
+        points = 10,
+        trigger = triggerFlameMax()
+    )
+
+    achievement(
+        id = 27360,
+        title = "Bombs Away, All the Way ",
+        description = "Increase your bomb limit to its maximum",
+        points = 10,
+        trigger = triggerBombsMax()
     )
 
     // #region Progression
