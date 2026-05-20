@@ -6,7 +6,7 @@
     FALSE = 0x00
     
     function lives() => byte(0x04e5)
-    function score() => byte(0x03d0) + byte(0x03d1) * 10 + byte(0x03d2) * 100 + byte(0x03d3) * 1000 + byte(0x03d4) * 10000 + byte(0x03d5) * 100000 + byte(0x03d6) * 1000000
+    function score() => byte(0x03d0) + byte(0x03d1) * 10 + byte(0x03d2) * 100 + byte(0x03d3) * 1000 + byte(0x03d4) * 10000 + byte(0x03d5) * 100000 + byte(0x03d6) * 1000000 + byte(0x03d7) * 10000000
 
     function area() => byte(0x004b) + 1
         AREA_INTRO = 0x07
@@ -16,10 +16,8 @@
     
     function blocksRemaining() => byte(0x04e2)
     function bonusItemCollected() => byte(0x00b4)
-    function bombBlastLength_US() => byte(0x0093)
-    function bombBlastLength_EU() => byte(0x0092)
-    function bombSupply_US() => byte(0x0090)
-    function bombSupply_EU() => byte(0x008f)
+    function bombBlastLength() => byte(0x0093)
+    function bombSupply() => byte(0x0090)
     function blastInvincibilityStarted() => byte(0x00b0)
     function blastInvincibilitySeconds() => byte(0x00b2)
     function detonatorPowerup() => byte(0x00af)
@@ -113,10 +111,8 @@
             && gameMode() != GAME_MODE_VS
             && gameMode() != GAME_MODE_BATTLE
 
-        triggerConditions = (
-            bombBlastLength_US() > prev(bombBlastLength_US())
-            || bombBlastLength_EU() > prev(bombBlastLength_EU())
-        )
+        triggerConditions =
+            bombBlastLength() > prev(bombBlastLength())
 
         return requiredConditions && triggerConditions
     }
@@ -210,12 +206,12 @@
         triggerConditions = repeated(4,
             prev(inGameplayScreen()) == TRUE
             && inGameplayScreen() == TRUE
-            && prev(bombBlastLength_US()) < bombBlastLength_US()
+            && prev(bombBlastLength()) < bombBlastLength()
         )
 
         measuredIfCondition = 
             once(
-                bombBlastLength_US() == 0
+                bombBlastLength() == 0
                 && inGameplayScreen() == TRUE
             )
 
@@ -234,12 +230,12 @@
         triggerConditions = repeated(7,
             prev(inGameplayScreen()) == TRUE
             && inGameplayScreen() == TRUE
-            && prev(bombSupply_US()) < bombSupply_US()
+            && prev(bombSupply()) < bombSupply()
         )
 
         measuredIfCondition = 
             once(
-                bombSupply_US() == 0
+                bombSupply() == 0
                 && inGameplayScreen() == TRUE
             )
 
