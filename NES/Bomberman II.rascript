@@ -243,6 +243,16 @@
 
         return cancelConditions && measured(triggerConditions, measuredIfCondition)
     }
+
+    function triggerBomberDomination() {
+        return
+            demoMode() == FALSE
+            && inGameplayScreen() == TRUE
+            && area() == 6
+            && areaLevel() == 8
+            && lives() >= 4
+            && frameStageCompletedJingleStarted()
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -324,6 +334,14 @@
         description = "Increase your bomb limit to its maximum",
         points = 10,
         trigger = triggerBombsMax()
+    )
+
+    achievement(
+        id = 27365,
+        title = "Bomber Domination",
+        description = "Complete the game with at least 4 lives remaining",
+        points = 25,
+        trigger = triggerBomberDomination()
     )
 
     // #region Progression
