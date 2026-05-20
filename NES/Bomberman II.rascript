@@ -14,6 +14,7 @@
     function isBonusStage() => byte(0x004e)
     function inGameplayScreen() => byte(0x0031)
     
+    function blocksRemaining() => byte(0x04e2)
     function bonusItemCollected() => byte(0x00b4)
     function bombBlastLength_US() => byte(0x0093)
     function bombBlastLength_EU() => byte(0x0092)
@@ -25,6 +26,7 @@
     function skatesPowerup() => byte(0x00b3)
     function wallPassPowerup() => byte(0x00ad)
     function bombPassPowerup() => byte(0x00ae)
+    function stageTimer() => byte(0x055d) * 100 + byte(0x055c) * 10 + byte(0x055b)
 
     function sfx() => byte(0x0205)
         SFX_TITLE_SCREEN = 0x01
@@ -244,13 +246,13 @@
         return cancelConditions && measured(triggerConditions, measuredIfCondition)
     }
 
-    function triggerBomberDomination() {
+    function triggerFinalStageLivesRemaining(minLives) {
         return
             demoMode() == FALSE
             && inGameplayScreen() == TRUE
             && area() == 6
             && areaLevel() == 8
-            && lives() >= 4
+            && lives() >= minLives
             && frameStageCompletedJingleStarted()
     }
 
@@ -267,6 +269,50 @@
             && lives() == quantity
 
         return requiredConditions && triggerConditions
+    }
+
+    function triggerScore(targetScore) {
+        requiredConditions = 
+            demoMode() == FALSE
+            && prev(inGameplayScreen()) == TRUE
+            && inGameplayScreen() == TRUE
+
+        triggerConditions = 
+            prev(score()) < targetScore
+            && score() >= targetScore
+
+        return requiredConditions && triggerConditions
+    }
+
+    function triggerMaxBombsExploding() {
+        return
+            demoMode() == FALSE
+            && prev(inGameplayScreen()) == TRUE
+            && inGameplayScreen() == TRUE
+            && isBonusStage() == FALSE
+            && prev(byte(0x6001) + byte(0x6002) + byte(0x6003) + byte(0x6004) + byte(0x6005) + byte(0x6006) + byte(0x6007) + byte(0x6008)) < 8
+            && byte(0x6001) + byte(0x6002) + byte(0x6003) + byte(0x6004) + byte(0x6005) + byte(0x6006) + byte(0x6007) + byte(0x6008) == 8
+    }
+
+    function triggerFinalStageBlocksDestroyed() {
+        return
+            demoMode() == FALSE
+            && prev(inGameplayScreen()) == TRUE
+            && inGameplayScreen() == TRUE
+            && area() == 6
+            && areaLevel() == 8
+            && prev(blocksRemaining()) > 0
+            && blocksRemaining() == 0
+    }
+
+    function triggerFinalStageTimeRemaining(minSeconds) {
+        return
+            demoMode() == FALSE
+            && inGameplayScreen() == TRUE
+            && area() == 6
+            && areaLevel() == 8
+            && stageTimer() >= minSeconds
+            && frameStageCompletedJingleStarted()
     }
 // #endregion Triggers
 
@@ -345,7 +391,7 @@
 
     achievement(
         id = 27360,
-        title = "Bombs Away, All the Way ",
+        title = "Bombs Away, All the Way",
         description = "Increase your bomb limit to its maximum",
         points = 10,
         trigger = triggerBombsMax()
@@ -356,7 +402,7 @@
         title = "Bomber Domination",
         description = "Complete the game with at least 4 lives remaining",
         points = 25,
-        trigger = triggerBomberDomination()
+        trigger = triggerFinalStageLivesRemaining(4)
     )
 
     achievement(
@@ -374,6 +420,64 @@
         points = 10,
         trigger = triggerLives(5)
     )
+
+    achievement(
+        id = 27401,
+        title = "Maximum Ordinance",
+        description = "Have the maximum amount of active bombs out at once, and watch them explode!",
+        points = 10,
+        trigger = triggerMaxBombsExploding()
+    )
+
+    achievement(
+        id = 27402,
+        title = "Block Blaster",
+        description = "Destroy every possible wall in Area 6-8",
+        points = 10,
+        trigger = triggerFinalStageBlocksDestroyed()
+    )
+
+    achievement(
+        id = 27403,
+        title = "Final Time Attack",
+        description = "Finish Area 6-8 with more than 60 seconds remaining",
+        points = 10,
+        trigger = triggerFinalStageTimeRemaining(60)
+    )
+
+    // #region Score
+        achievement(
+            id = 27368,
+            title = "Bombing Trainee",
+            description = "Obtain a score of 50,000",
+            points = 10,
+            trigger = triggerScore(50000)
+        )
+
+        achievement(
+            id = 27369,
+            title = "Bombing Amateur",
+            description = "Obtain a score of 100,000",
+            points = 5,
+            trigger = triggerScore(100000)
+        )
+
+        achievement(
+            id = 27370,
+            title = "Bombing Professional",
+            description = "Obtain a score of 150,000",
+            points = 10,
+            trigger = triggerScore(150000)
+        )
+
+        achievement(
+            id = 27371,
+            title = "Bombing Champion",
+            description = "Obtain a score of 250,000",
+            points = 10,
+            trigger = triggerScore(250000)
+        )
+    // #endregion Score
 
     // #region Progression
         achievement(
