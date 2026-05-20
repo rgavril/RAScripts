@@ -253,6 +253,21 @@
             && lives() >= 4
             && frameStageCompletedJingleStarted()
     }
+
+    function triggerLives(quantity) {
+        requiredConditions = 
+            demoMode() == FALSE
+            && prev(inGameplayScreen()) == TRUE
+            && inGameplayScreen() == TRUE
+            && gameMode() != GAME_MODE_VS
+            && gameMode() != GAME_MODE_BATTLE
+
+        triggerConditions = 
+            prev(lives()) == quantity-1
+            && lives() == quantity
+
+        return requiredConditions && triggerConditions
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -342,6 +357,22 @@
         description = "Complete the game with at least 4 lives remaining",
         points = 25,
         trigger = triggerBomberDomination()
+    )
+
+    achievement(
+        id = 27366,
+        title = "A Surplus of Bombermen",
+        description = "Have 3 lives remaining",
+        points = 5,
+        trigger = triggerLives(3)
+    )
+
+    achievement(
+        id = 27367,
+        title = "A Lifetime Supply of Bombermen",
+        description = "Have 5 lives remaining",
+        points = 10,
+        trigger = triggerLives(5)
     )
 
     // #region Progression
