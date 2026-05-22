@@ -20,6 +20,9 @@
 
     function sfxEnemySmushed() => bit2(0x00f1)
     function sfxEnemyKO() => bit3(0x00f1)
+    
+    function music() => byte(0x0000f4)
+        MUSIC_UNDERWATER = 0x02
 // #endregion
 
 // #region Frames
@@ -88,8 +91,8 @@
             // Fire Flower Used
             && never(activePowerup() == ACTIVE_POWERUP_FLOWER)
             // Enemy Damaged
-            && never(sfxEnemyKO() == TRUE)
-            && never(sfxEnemySmushed() == TRUE)
+            && never(music() != MUSIC_UNDERWATER && sfxEnemyKO() == TRUE)
+            && never(music() != MUSIC_UNDERWATER && sfxEnemySmushed() == TRUE)
 
         targetConditions =
             // Target World Finished
