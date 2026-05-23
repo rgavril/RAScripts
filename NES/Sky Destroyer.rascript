@@ -120,7 +120,7 @@
         achievement(
             id = 153827,
             title = "Warming Up The Engine",
-            description = "Beat scene 1",
+            description = "Complete Scene 1",
             points = 3,
             type = "progression",
             trigger = triggerCompleteScene(1)
@@ -129,7 +129,7 @@
         achievement(
             id = 153829,
             title = "Getting There",
-            description = "Beat scene 5",
+            description = "Complete Scene 5",
             points = 5,
             type = "progression",
             trigger = triggerCompleteScene(5)
@@ -138,7 +138,7 @@
         achievement(
             id = 153831,
             title = "I Kindly Claim This",
-            description = "Beat the copyright scene",
+            description = "Complete Scene 10, the copyright symbol",
             points = 10,
             type = "win_condition",
             trigger = triggerCompleteScene(10)
@@ -147,7 +147,7 @@
         achievement(
             id = 153833,
             title = "Sesame Street: Elmo's ABCs",
-            description = "Beat a letter scene",
+            description = "Complete Scene 16, the letter A",
             points = 10,
             trigger = triggerCompleteScene(16)
         )
@@ -157,7 +157,7 @@
         achievement(
             id = 153828,
             title = "Carrier",
-            description = "Beat scene 1 deathless",
+            description = "Complete Scene 1 without dying",
             points = 5,
             trigger = triggerDeathlessScene(1)
         )
@@ -165,7 +165,7 @@
         achievement(
             id = 153830,
             title = "Dog Fight",
-            description = "Beat scene 5 deathless",
+            description = "Complete Scene 5 without dying",
             points = 10,
             trigger = triggerDeathlessScene(5)
         )
@@ -173,7 +173,7 @@
         achievement(
             id = 153832,
             title = "Nintendo Loves It",
-            description = "Beat copyright scene deathless",
+            description = "Complete Scene 10 without dying",
             points = 25,
             trigger = triggerDeathlessScene(10)
         )
@@ -181,7 +181,7 @@
         achievement(
             id = 153834,
             title = "Mario's Early Years: Fun With Letters",
-            description = "Beat a letter scene deathless",
+            description = "Complete Scene 16 without dying",
             points = 25,
             trigger = triggerDeathlessScene(16)
         )
@@ -189,7 +189,7 @@
         achievement(
             id = 153835,
             title = "Who Wants To Be A Millionaire?",
-            description = "Obtain 500.000 points",
+            description = "Score over 500,000 points",
             points = 25,
             trigger = triggerScore(500000)
         )
