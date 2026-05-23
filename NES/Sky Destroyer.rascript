@@ -15,6 +15,7 @@
     function livesRemaining() => byte(0x002c)
     function score() => tbyte(0x0034)*10
     function bonusStageCounter() => byte(0x00c4)
+    function planeDeathAnimation() => byte(0x006d)
 
     function missonCompletedCountdown() => byte(0x00c0)
 
@@ -30,6 +31,12 @@
         return
             prev(bonusStageCounter()) > 0
             && bonusStageCounter() == 0
+    }
+
+    function framePlaneDeathAnimationStarted() {
+        return
+            prev(planeDeathAnimation()) == 0x00
+            && planeDeathAnimation() != 0x00
     }
 // #endregion Frames
 
@@ -60,6 +67,7 @@
             && never(gameStarted() != TRUE)
             && never(prev(sceneNumber()) != scene && sceneNumber() != scene)
             && never(frameLivesDecreased())
+            && never(framePlaneDeathAnimationStarted())
 
         triggerConditions =
             prev(sceneNumber() == scene)
@@ -77,6 +85,35 @@
     }
 // #endregion Triggers
 
+// #region Leaderboards
+    leaderboard(
+        title = "Best Shooter",
+        description = "Highest score achieved before game over",
+        format = "POINTS",
+        start = 
+            cheatActive() == FALSE
+            && gameStarted() == TRUE
+            && livesRemaining() == 0
+            && framePlaneDeathAnimationStarted(),
+        cancel = always_false(),
+        submit = always_true(),
+        value = score()
+    )
+
+    leaderboard(
+        title = "Longest Flight",
+        description = "Highest scene reached before game over",
+        format = "VALUE",
+        start = 
+            cheatActive() == FALSE
+            && gameStarted() == TRUE
+            && livesRemaining() == 0
+            && framePlaneDeathAnimationStarted(),
+        cancel = always_false(),
+        submit = always_true(),
+        value = sceneNumber()
+    )
+// #endregion
 
 // #region Achievements
     // #region Stage Clears
