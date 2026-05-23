@@ -17,12 +17,11 @@
         ACTIVE_POWERUP_NONE = 0x00
         ACTIVE_POWERUP_MUSHROOM = 0x01
         ACTIVE_POWERUP_FLOWER = 0x02
+    function swimEnabled() => byte(0x0704)
 
     function sfxEnemySmushed() => bit2(0x00f1)
     function sfxEnemyKO() => bit3(0x00f1)
     
-    function music() => byte(0x0000f4)
-        MUSIC_UNDERWATER = 0x02
 // #endregion
 
 // #region Frames
@@ -91,8 +90,8 @@
             // Fire Flower Used
             && never(activePowerup() == ACTIVE_POWERUP_FLOWER)
             // Enemy Damaged
-            && never(music() != MUSIC_UNDERWATER && sfxEnemyKO() == TRUE)
-            && never(music() != MUSIC_UNDERWATER && sfxEnemySmushed() == TRUE)
+            && never(sfxEnemyKO() == TRUE)
+            && never(swimEnabled() == FALSE && sfxEnemySmushed() == TRUE)
 
         targetConditions =
             // Target World Finished
