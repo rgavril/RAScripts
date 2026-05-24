@@ -38,6 +38,16 @@
             && difficultyLevel() == level
             && frameGameWon()
     }
+
+    function triggerStraightSetsLevel(level) {
+        return
+            inAttractMode() == FALSE
+            && difficultyLevel() == level
+            && isSetWonByComputer(1) == FALSE
+            && isSetWonByComputer(2) == FALSE
+            && isSetWonByComputer(3) == FALSE
+            && frameGameWon()
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -45,7 +55,7 @@
         achievement(
             id = 349659,
             title = "Break Out Ya Tennis Shoes",
-            description = "Win a game of singles on level 1",
+            description = "Win a game of singles on Level 1",
             type = "win_condition",
             points = 3,
             trigger = triggerWinSinglesOnLevel(1)
@@ -54,7 +64,7 @@
         achievement(
             id = 349660,
             title = "A Bit Faster",
-            description = "Win a game of singles on level 2",
+            description = "Win a game of singles on Level 2",
             type = "win_condition",
             points = 5,
             trigger = triggerWinSinglesOnLevel(2)
@@ -63,7 +73,7 @@
         achievement(
             id = 349661,
             title = "Quick Feet",
-            description = "Win a game of singles on level 3",
+            description = "Win a game of singles on Level 3",
             type = "win_condition",
             points = 5,
             trigger = triggerWinSinglesOnLevel(3)
@@ -72,7 +82,7 @@
         achievement(
             id = 349662,
             title = "Break Out Ya Running Shoes",
-            description = "Win a game of singles on level 4",
+            description = "Win a game of singles on Level 4",
             type = "win_condition",
             points = 10,
             trigger = triggerWinSinglesOnLevel(4)
@@ -81,12 +91,54 @@
         achievement(
             id = 349663,
             title = "Please Slow Down",
-            description = "Win a game of singles on level 5",
+            description = "Win a game of singles on Level 5",
             type = "win_condition",
             points = 25,
             trigger = triggerWinSinglesOnLevel(5)
         )
     // Level Wins
+
+    // Level Straight Wins
+        achievement(
+            id = 28255,
+            title = "Baby Steps",
+            description = "Beat Level 1 in straight sets",
+            points = 5,
+            trigger = triggerStraightSetsLevel(1)
+        )
+
+        achievement(
+            id = 28256,
+            title = "New Guy on Tour",
+            description = "Beat Level 2 in straight sets",
+            points = 10,
+            trigger = triggerStraightSetsLevel(2)
+        )
+
+        achievement(
+            id = 28257,
+            title = "Moments Till Stardom",
+            description = "Beat Level 3 in straight sets",
+            points = 10,
+            trigger = triggerStraightSetsLevel(3)
+        )
+
+        achievement(
+            id = 28258,
+            title = "Tennis Star",
+            description = "Beat Level 4 in straight sets",
+            points = 25,
+            trigger = triggerStraightSetsLevel(4)
+        )
+
+        achievement(
+            id = 28259,
+            title = "Tennis Legend",
+            description = "Beat Level 5 in straight sets",
+            points = 50,
+            trigger = triggerStraightSetsLevel(5)
+        )
+    // Level Straight Wins
 // #endregion Achievements
 
 // #region Rich Presence
