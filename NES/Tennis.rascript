@@ -7,7 +7,7 @@
 
     function inAttractMode() => byte(0x0038)
     function numberOfPlayers() => byte(0x0039) + 1
-    function difficultyLevel() => byte(0x003a) + 1
+    function difficultyLevel() => byte(0x004c) + 1
     function gameplayState() => byte(0x003d)
         GAMEPLAY_STATE_SELECT_DIFFICULTY = 0x00
     function currentSet() => byte(0x0050) + 1
@@ -22,6 +22,72 @@
     function computerPoints() => byte(0x0059)
 // #endregion Memory Locations
 
+// #region Frames
+    function frameGameWon() {
+        return
+            prev(isSetWonByPlayer(1)) + prev(isSetWonByPlayer(2)) + prev(isSetWonByPlayer(3)) < 2
+            && isSetWonByPlayer(1) + isSetWonByPlayer(2) + isSetWonByPlayer(3) >= 2
+    }
+// #endregion Frames
+
+// #region Triggers
+    function triggerWinSinglesOnLevel(level) {
+        return
+            inAttractMode() == FALSE
+            && numberOfPlayers() == 1
+            && difficultyLevel() == level
+            && frameGameWon()
+    }
+// #endregion Triggers
+
+// #region Achievements
+    // Level Wins
+        achievement(
+            id = 349659,
+            title = "Break Out Ya Tennis Shoes",
+            description = "Win a game of singles on level 1",
+            type = "win_condition",
+            points = 3,
+            trigger = triggerWinSinglesOnLevel(1)
+        )
+
+        achievement(
+            id = 349660,
+            title = "A Bit Faster",
+            description = "Win a game of singles on level 2",
+            type = "win_condition",
+            points = 5,
+            trigger = triggerWinSinglesOnLevel(2)
+        )
+
+        achievement(
+            id = 349661,
+            title = "Quick Feet",
+            description = "Win a game of singles on level 3",
+            type = "win_condition",
+            points = 5,
+            trigger = triggerWinSinglesOnLevel(3)
+        )
+
+        achievement(
+            id = 349662,
+            title = "Break Out Ya Running Shoes",
+            description = "Win a game of singles on level 4",
+            type = "win_condition",
+            points = 10,
+            trigger = triggerWinSinglesOnLevel(4)
+        )
+
+        achievement(
+            id = 349663,
+            title = "Please Slow Down",
+            description = "Win a game of singles on level 5",
+            type = "win_condition",
+            points = 25,
+            trigger = triggerWinSinglesOnLevel(5)
+        )
+    // Level Wins
+// #endregion Achievements
 
 // #region Rich Presence
     gameTypeLookup = {
