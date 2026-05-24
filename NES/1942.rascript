@@ -2,15 +2,25 @@
 // #ID = 1515
 
 // #region Memory Locations
+    FALSE = 0x00
+    TRUE = 0x01
+
     function gameState() => byte(0x0106)
         GAMESTATE_PLAYING = 0xff
 
     function player1Score() => byte(0x0427) * 100000 + byte(0x0428) * 10000 + byte(0x0429) * 1000 + byte(0x042a) * 100 + byte(0x042b) * 10 + byte(0x042c)
+    function livesRemaining() => byte(0x0431) * 10 + byte(0x0432)
 
     function enemiesShot() => byte(0x0442) * 1000 + byte(0x0443) * 100 + byte(0x0444) * 10 + byte(0x0445)
     function currentStage() => 32 - byte(0x0438)
     function currentStageStage() => byte(0x437)
         STAGE_STATE_COMPLETED = 0xff
+    function quadShotEquiped() => bit1(0x048e)
+    function leftSidePlaneState() => byte(0x048f)
+    function righSidePlaneState() => byte(0x0490)
+        PLANE_STATE_ATTACHING = 0x8c
+        PLANE_STATE_ACTIVE = 0x88
+
 // #endregion Memory Locations
 
 // #regrion Triggers
@@ -237,4 +247,48 @@
             trigger = triggerEnemiesShot(3000)
         )
     // #endregion Enemy Shot Achievements
+
+    achievement(
+        id = 3646,
+        title = "Quadshot",
+        description = "Get the Quadshot Upgrade",
+        points = 2,
+        trigger = 
+            gameState() == GAMESTATE_PLAYING
+            && prev(quadShotEquiped()) == FALSE
+            && quadShotEquiped() == TRUE
+    )
+
+    achievement(
+        id = 3645,
+        title = "Swat Kats",
+        description = "Obtain 9 Lives",
+        points = 25,
+        trigger = 
+            gameState() == GAMESTATE_PLAYING
+            && prev(livesRemaining()) < 9
+            && measured(livesRemaining() >= 9, livesRemaining() > 2)
+    )
+
+    achievement(
+        id = 3613,
+        title = "Reinforcements",
+        description = "Earn an Extra Life",
+        points = 3,
+        trigger = 
+            gameState() == GAMESTATE_PLAYING
+            && livesRemaining() > prev(livesRemaining())
+    )
+
+    achievement(
+        id = 3647,
+        title = "Twin Fighters",
+        description = "Get the Twin Fighters Upgrade",
+        points = 3,
+        trigger = 
+            gameState() == GAMESTATE_PLAYING
+            && prev(leftSidePlaneState() != PLANE_STATE_ATTACHING)
+            && leftSidePlaneState() == PLANE_STATE_ATTACHING
+
+    )
 // #endregion Achievements
