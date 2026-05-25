@@ -288,7 +288,7 @@
     pointTypeLookup = {
         0x00: "Points",
         0x01: "Deuce",
-        0x02: "Tie-Break    "
+        0x02: "Tie-Break"
     }
 
     playerPointsLookup = {
