@@ -340,8 +340,9 @@
     }
 
    leaderboard(
+        id = 163485,
         title = "High Score",
-        description = "Highest score in 1 credit",
+        description = "Highest score achieved on a single credit",
         start =
             frameLastLifeLost() || frameGameCompleted() || frameScoreOverflowed()
         ,
@@ -357,7 +358,7 @@
     leaderboard(
         id = 160,
         title = "High Score First Life",
-        description = "Highest score without losing a life",
+        description = "Highest score achieved on first life",
         start =
             // Activate on game start
             once(prev(gameState()) != GAME_STATE_GAMEPLAY && gameState() == GAME_STATE_GAMEPLAY)
@@ -384,7 +385,7 @@
     leaderboard(
         id = 154,
         title = "Shoot Down Challenge",
-        description = "Shoot down as many enemies as you can in 1 credit",
+        description = "Shoot down as many enemies on a single credit",
         start =
             frameLastLifeLost() || frameGameCompleted()
         ,
