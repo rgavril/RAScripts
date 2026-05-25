@@ -20,6 +20,7 @@
     function inDeuce() => byte(0x0057)
     function playerPoints() => byte(0x0058)
     function computerPoints() => byte(0x0059)
+    function gamesFinished() => byte(0x005a)
 // #endregion Memory Locations
 
 // #region Frames
@@ -48,10 +49,65 @@
             && isSetWonByComputer(3) == FALSE
             && frameGameWon()
     }
+
+    function triggerTwo60SetsLevel(level) {
+        return
+            inAttractMode() == FALSE
+            && difficultyLevel() == level
+            
+            && isSetWonByPlayer(1) == TRUE
+            && playerScoreForSet(1) == 6
+            && computerScoreForSet(1) == 0
+
+            && prev(isSetWonByPlayer(2)) == FALSE
+            && isSetWonByPlayer(2) == TRUE
+            && playerScoreForSet(2) == 6
+            && computerScoreForSet(2) == 0
+    }
+
+    function triggerWinGame() {
+        return
+            inAttractMode() == FALSE
+            && any_of(range(1, 3), setNumber =>
+                playerScoreForSet(setNumber) == prev(playerScoreForSet(setNumber)) + 1
+            )
+    }
+
+    function triggerWinAnySet() {
+        return
+            inAttractMode() == FALSE
+            && any_of(range(1, 3), setNumber =>
+                prev(isSetWonByPlayer(setNumber)) == FALSE
+                && isSetWonByPlayer(setNumber) == TRUE
+            ) 
+    }
+
+    function triggerWinSet(setNumber) {
+        return
+            inAttractMode() == FALSE
+            && prev(isSetWonByPlayer(setNumber)) == FALSE
+            && isSetWonByPlayer(setNumber) == TRUE
+    }
+
+    function triggerTieBreaker() {
+        return
+            inAttractMode() == FALSE
+            && any_of(range(1, 3), setNumber =>
+                prev(playerScoreForSet(setNumber)) == 6
+                && playerScoreForSet(setNumber) == 7
+            )  
+    }
+
+    function triggerGamesInMatch(minGames) {
+        return
+            inAttractMode() == FALSE
+            && prev(gamesFinished()) == minGames - 1
+            && measured(gamesFinished() == minGames)
+    }
 // #endregion Triggers
 
 // #region Achievements
-    // Level Wins
+    // #region Level Wins
         achievement(
             id = 349659,
             title = "Break Out Ya Tennis Shoes",
@@ -96,9 +152,9 @@
             points = 25,
             trigger = triggerWinSinglesOnLevel(5)
         )
-    // Level Wins
+    // #endregion Level Wins
 
-    // Level Straight Wins
+    // #region Level Straight Wins
         achievement(
             id = 28255,
             title = "Baby Steps",
@@ -138,7 +194,89 @@
             points = 50,
             trigger = triggerStraightSetsLevel(5)
         )
-    // Level Straight Wins
+    // #endregion Level Straight Wins
+
+    // #region Level 6-0, 6-0 Wins
+        achievement(
+            id = 28280,
+            title = "Start of something new",
+            description = "Beat Level 1 in straight sets 6-0 6-0",
+            points = 10,
+            trigger = triggerTwo60SetsLevel(1)
+        )
+
+        achievement(
+            id = 28281,
+            title = "Two to Tango",
+            description = "Beat Level 2 in straight sets 6-0 6-0",
+            points = 25,
+            trigger = triggerTwo60SetsLevel(2)
+        )
+
+        achievement(
+            id = 28282,
+            title = "Three is usually Company",
+            description = "Beat Level 3 in straight sets 6-0 6-0",
+            points = 25,
+            trigger = triggerTwo60SetsLevel(3)
+        )
+    // #endregion Level 6-0, 6-0 Wins
+
+    achievement(
+        id = 28274,
+        title = "Game",
+        description = "Win a game",
+        points = 3,
+        trigger = triggerWinGame()
+    )
+
+    achievement(
+        id = 28275,
+        title = "Set",
+        description = "Win a set",
+        points = 5,
+        trigger = triggerWinAnySet()
+    )
+
+    achievement(
+        id = 28276,
+        title = "Tie Breaker",
+        description = "Win a Tie Breaker",
+        points = 3,
+        trigger = triggerTieBreaker()
+    )
+
+    achievement(
+        id = 28283,
+        title = "Long Match Day",
+        description = "Play a very long match",
+        points = 10,
+        trigger = triggerGamesInMatch(38)
+    )
+
+    achievement(
+        id = 28277,
+        title = "1st of many",
+        description = "Win 1st set",
+        points = 5,
+        trigger = triggerWinSet(1)
+    )
+
+    achievement(
+        id = 28278,
+        title = "2nd of the match",
+        description = "Win 2nd set",
+        points = 5,
+        trigger = triggerWinSet(2)
+    )
+
+    achievement(
+        id = 28279,
+        title = "Final Set",
+        description = "Win 3rd set",
+        points = 5,
+        trigger = triggerWinSet(3)
+    )
 // #endregion Achievements
 
 // #region Rich Presence
