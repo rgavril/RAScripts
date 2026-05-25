@@ -199,7 +199,7 @@
     // #region Level 6-0, 6-0 Wins
         achievement(
             id = 28280,
-            title = "Start of something new",
+            title = "Start of Something New",
             description = "Beat Level 1 in straight sets 6-0 6-0",
             points = 10,
             trigger = triggerTwo60SetsLevel(1)
@@ -215,7 +215,7 @@
 
         achievement(
             id = 28282,
-            title = "Three is usually Company",
+            title = "Three Is Usually Company",
             description = "Beat Level 3 in straight sets 6-0 6-0",
             points = 25,
             trigger = triggerTwo60SetsLevel(3)
@@ -225,7 +225,7 @@
     achievement(
         id = 28274,
         title = "Game",
-        description = "Win a game",
+        description = "Win a game in any match",
         points = 3,
         trigger = triggerWinGame()
     )
@@ -233,7 +233,7 @@
     achievement(
         id = 28275,
         title = "Set",
-        description = "Win a set",
+        description = "Win a set in any match",
         points = 5,
         trigger = triggerWinAnySet()
     )
@@ -241,7 +241,7 @@
     achievement(
         id = 28276,
         title = "Tie Breaker",
-        description = "Win a Tie Breaker",
+        description = "Win a tie-breaker game",
         points = 3,
         trigger = triggerTieBreaker()
     )
@@ -249,23 +249,23 @@
     achievement(
         id = 28283,
         title = "Long Match Day",
-        description = "Play a very long match",
+        description = "Play 38 or more games in a single match",
         points = 10,
         trigger = triggerGamesInMatch(38)
     )
 
     achievement(
         id = 28277,
-        title = "1st of many",
-        description = "Win 1st set",
+        title = "First of Many",
+        description = "Win the first set of a match",
         points = 5,
         trigger = triggerWinSet(1)
     )
 
     achievement(
         id = 28278,
-        title = "2nd of the match",
-        description = "Win 2nd set",
+        title = "Second of the Match",
+        description = "Win the second set of a match",
         points = 5,
         trigger = triggerWinSet(2)
     )
@@ -273,7 +273,7 @@
     achievement(
         id = 28279,
         title = "Final Set",
-        description = "Win 3rd set",
+        description = "Win the third set of a match",
         points = 5,
         trigger = triggerWinSet(3)
     )
