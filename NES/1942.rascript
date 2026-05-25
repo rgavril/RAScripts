@@ -40,11 +40,18 @@
             && score() > 0
     }
 
-    function frameGameFinished() {
+    function frameGameCompleted() {
         return
             currentStage() == 1
             && prev(currentStageState()) != STAGE_STATE_COMPLETED
             && currentStageState() == STAGE_STATE_COMPLETED
+    }
+
+    function frameLastLifeLost() {
+        return
+            livesRemaining() == 0
+            && prev(lifeLostFlag()) == LIFE_LOST_FLAG_OFF
+            && lifeLostFlag() == LIFE_LOST_FLAG_ON
     }
 // #endregion
 
@@ -332,6 +339,21 @@
         return max_of(reset, overflow_none, overflow_1st, overflow_2nd)
     }
 
+   leaderboard(
+        title = "High Score",
+        description = "Highest score in 1 credit",
+        start =
+            frameLastLifeLost() || frameGameCompleted() || frameScoreOverflowed()
+        ,
+        cancel = 
+            gameState() != GAME_STATE_GAMEPLAY
+        ,
+        submit = 
+            frameLastLifeLost() || frameGameCompleted()
+        ,
+        value = valueHiscoreLeaderboard()
+    )
+
     leaderboard(
         id = 160,
         title = "High Score First Life",
@@ -347,12 +369,28 @@
             )
             // Actuall Start
             && (
-                frameLifeLost() || frameScoreOverflowed() || frameGameFinished()
+                frameLifeLost() || frameScoreOverflowed() || frameGameCompleted()
             )
         ,
-        cancel = gameState() != GAME_STATE_GAMEPLAY,
-        submit = frameLifeLost() || frameGameFinished(),
+        cancel = 
+            gameState() != GAME_STATE_GAMEPLAY
+        ,
+        submit =
+            frameLifeLost() || frameGameCompleted()
+        ,
         value = valueHiscoreLeaderboard()
+    )
+
+    leaderboard(
+        id = 154,
+        title = "Shoot Down Challenge",
+        description = "Shoot down as many enemies as you can in 1 credit",
+        start =
+            frameLastLifeLost() || frameGameCompleted()
+        ,
+        cancel = always_false(),
+        submit = always_true(),
+        value = enemiesShot()
     )
 // #endregion Leaderboards
 
