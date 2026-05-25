@@ -5,10 +5,13 @@
     FALSE = 0x00
     TRUE = 0x01
 
-    function inMainMenu() => byte(0x0004)
-        MM_FALSE = 0x00
+    function lifeLostFlag() => byte(0x048c)
+        LIFE_LOST_FLAG_ON = 0xff
+        LIFE_LOST_FLAG_OFF = 0x00
+    function gameState() => byte(0x0004)
+        GAME_STATE_GAMEPLAY = 0x00
     function activePlayer() => byte(0x0386) + 1
-    function player1Score() => byte(0x0427) * 100000 + byte(0x0428) * 10000 + byte(0x0429) * 1000 + byte(0x042a) * 100 + byte(0x042b) * 10 + byte(0x042c)
+    function score() => byte(0x0427) * 100000 + byte(0x0428) * 10000 + byte(0x0429) * 1000 + byte(0x042a) * 100 + byte(0x042b) * 10 + byte(0x042c)
     function livesRemaining() => byte(0x0431) * 10 + byte(0x0432)
 
     function enemiesShot() => byte(0x0442) * 1000 + byte(0x0443) * 100 + byte(0x0444) * 10 + byte(0x0445)
@@ -26,26 +29,26 @@
 // #regrion Triggers
     function triggerScoreWentOver(targetScore) {
         requiredConditions = 
-            inMainMenu() == MM_FALSE
+            gameState() == GAME_STATE_GAMEPLAY
 
         scoreOverflowCondition = always_false()
         if (targetScore > 1000000 - 20000) {
             scoreOverflowCondition = 
                 prev(byte(0x0427)) == 9 && prev(byte(0x0428)) >= 8
                 && byte(0x0427) == 0
-                && player1Score() > 0
+                && score() > 0
         }
 
         scoreIncreasedCondition = 
-            prev(player1Score()) < targetScore 
-            && player1Score() >= targetScore
+            prev(score()) < targetScore 
+            && score() >= targetScore
 
         return requiredConditions && (scoreIncreasedCondition || scoreOverflowCondition)
     }
 
     function triggerClearStage(stagesRemaining) {
         return
-            inMainMenu() == MM_FALSE
+            gameState() == GAME_STATE_GAMEPLAY
             && currentStage() == stagesRemaining
             && prev(currentStageState()) != STAGE_STATE_COMPLETED
             && currentStageState() == STAGE_STATE_COMPLETED
@@ -53,7 +56,7 @@
 
     function triggerEnemiesShot(target) {
         return
-            inMainMenu() == MM_FALSE
+            gameState() == GAME_STATE_GAMEPLAY
             && prev(enemiesShot()) < target
             && measured(enemiesShot() >= target)
     }
@@ -254,7 +257,7 @@
         description = "Get the Quadshot Upgrade",
         points = 2,
         trigger = 
-            inMainMenu() == MM_FALSE
+            gameState() == GAME_STATE_GAMEPLAY
             && prev(quadShotEquiped()) == FALSE
             && quadShotEquiped() == TRUE
     )
@@ -265,7 +268,7 @@
         description = "Obtain 9 Lives",
         points = 25,
         trigger = 
-            inMainMenu() == MM_FALSE
+            gameState() == GAME_STATE_GAMEPLAY
             && prev(livesRemaining()) < 9
             && measured(livesRemaining() >= 9, livesRemaining() > 2)
     )
@@ -276,8 +279,8 @@
         description = "Earn an Extra Life",
         points = 3,
         trigger = 
-            prev(inMainMenu()) == MM_FALSE
-            && inMainMenu() == MM_FALSE
+            prev(gameState()) == GAME_STATE_GAMEPLAY
+            && gameState() == GAME_STATE_GAMEPLAY
             && livesRemaining() > prev(livesRemaining())
     )
 
@@ -287,21 +290,51 @@
         description = "Get the Twin Fighters Upgrade",
         points = 3,
         trigger = 
-            inMainMenu() == MM_FALSE
+            gameState() == GAME_STATE_GAMEPLAY
             && prev(leftSidePlaneState() != PLANE_STATE_ATTACHING)
             && leftSidePlaneState() == PLANE_STATE_ATTACHING
 
     )
 // #endregion Achievements
 
+// #region Leaderboards
+    leaderboard(
+        id = 160,
+        title = "High Score First Life",
+        description = "Highest score without losing a life",
+        start =
+            // Start Condition
+            once(
+                prev(gameState()) != GAME_STATE_GAMEPLAY
+                && gameState() == GAME_STATE_GAMEPLAY
+            )
+            // Cancel Conditions
+            && never(gameState() != GAME_STATE_GAMEPLAY)
+            // Stop Conditions
+            && never(
+                prev(gameState() == GAME_STATE_GAMEPLAY)
+                && prev(lifeLostFlag()) == LIFE_LOST_FLAG_ON 
+                && lifeLostFlag() == LIFE_LOST_FLAG_OFF
+            )
+            // Submit Conditions
+            && (
+                prev(lifeLostFlag()) == LIFE_LOST_FLAG_OFF
+                && lifeLostFlag() == LIFE_LOST_FLAG_ON
+            ),
+        cancel = always_false(),
+        submit = always_true(),
+        value = score()
+    )
+// #endregion Leaderboards
+
 // #region Rich Presence
     rich_presence_conditional_display(
-        inMainMenu() == MM_FALSE,
+        gameState() == GAME_STATE_GAMEPLAY,
         "Last {0} Stage • {1} Lives • {2} Kills • {3}",
         rich_presence_value("Stage", currentStage()),
         rich_presence_value("Lives", livesRemaining()),
         rich_presence_value("Kills", enemiesShot()),
-        rich_presence_macro("Score", player1Score()),
+        rich_presence_macro("Score", score()),
         rich_presence_value("Player", activePlayer())
     )
 
