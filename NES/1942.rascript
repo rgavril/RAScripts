@@ -5,8 +5,8 @@
     FALSE = 0x00
     TRUE = 0x01
 
-    function gameState() => byte(0x0106)
-        GAMESTATE_PLAYING = 0xff
+    function inMainMenu() => byte(0x0004)
+        MM_FALSE = 0x00
 
     function player1Score() => byte(0x0427) * 100000 + byte(0x0428) * 10000 + byte(0x0429) * 1000 + byte(0x042a) * 100 + byte(0x042b) * 10 + byte(0x042c)
     function livesRemaining() => byte(0x0431) * 10 + byte(0x0432)
@@ -26,7 +26,7 @@
 // #regrion Triggers
     function triggerScoreWentOver(targetScore) {
         requiredConditions = 
-            gameState() == GAMESTATE_PLAYING
+            inMainMenu() == MM_FALSE
 
         scoreOverflowCondition = always_false()
         if (targetScore > 1000000 - 20000) {
@@ -45,7 +45,7 @@
 
     function triggerClearStage(stagesRemaining) {
         return
-            gameState() == GAMESTATE_PLAYING
+            inMainMenu() == MM_FALSE
             && currentStage() == stagesRemaining
             && prev(currentStageStage()) != STAGE_STATE_COMPLETED
             && currentStageStage() == STAGE_STATE_COMPLETED
@@ -53,7 +53,7 @@
 
     function triggerEnemiesShot(target) {
         return
-            gameState() == GAMESTATE_PLAYING
+            inMainMenu() == MM_FALSE
             && prev(enemiesShot()) < target
             && measured(enemiesShot() >= target)
     }
@@ -254,7 +254,7 @@
         description = "Get the Quadshot Upgrade",
         points = 2,
         trigger = 
-            gameState() == GAMESTATE_PLAYING
+            inMainMenu() == MM_FALSE
             && prev(quadShotEquiped()) == FALSE
             && quadShotEquiped() == TRUE
     )
@@ -265,7 +265,7 @@
         description = "Obtain 9 Lives",
         points = 25,
         trigger = 
-            gameState() == GAMESTATE_PLAYING
+            inMainMenu() == MM_FALSE
             && prev(livesRemaining()) < 9
             && measured(livesRemaining() >= 9, livesRemaining() > 2)
     )
@@ -276,7 +276,8 @@
         description = "Earn an Extra Life",
         points = 3,
         trigger = 
-            gameState() == GAMESTATE_PLAYING
+            prev(inMainMenu()) == MM_FALSE
+            && inMainMenu() == MM_FALSE
             && livesRemaining() > prev(livesRemaining())
     )
 
@@ -286,7 +287,7 @@
         description = "Get the Twin Fighters Upgrade",
         points = 3,
         trigger = 
-            gameState() == GAMESTATE_PLAYING
+            inMainMenu() == MM_FALSE
             && prev(leftSidePlaneState() != PLANE_STATE_ATTACHING)
             && leftSidePlaneState() == PLANE_STATE_ATTACHING
 
