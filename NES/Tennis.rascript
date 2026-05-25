@@ -17,7 +17,7 @@
     function isSetWonByPlayer(setNumber) => bit7(0x0051 + setNumber - 1)
     function isSetWonByComputer(setNumber) => bit7(0x0054 + setNumber - 1)
     
-    function inDeuce() => byte(0x0057)
+    function inDeuceOrTie() => byte(0x0057)
     function playerPoints() => byte(0x0058)
     function computerPoints() => byte(0x0059)
     function gamesFinished() => byte(0x005a)
@@ -285,13 +285,29 @@
         2: "Double"
     }
 
+    pointTypeLookup = {
+        0x00: "Points",
+        0x01: "Deuce",
+        0x02: "Tie-Break    "
+    }
+
     playerPointsLookup = {
         0x0000: "0",
         0x0001: "15",
         0x0002: "30",
         0x0003: "40",
-        0x0100: "40",
-        0x0101: "A"
+
+        0x0100: "0",
+        0x0101: "A",
+        
+        0x0200: "0",
+        0x0201: "1",
+        0x0202: "2",
+        0x0203: "3",
+        0x0204: "4",
+        0x0205: "5",
+        0x0206: "6",
+        0x0207: "7"
     }
 
     rich_presence_conditional_display(
@@ -299,11 +315,11 @@
         && gameplayState() != GAMEPLAY_STATE_SELECT_DIFFICULTY
         // && currentSet() == 1
         ,
-        "Level {1} • {0} • Sets {10}-{11} ({4}-{5}, {6}-{7}, {8}-{9}) • Points {2}-{3}",
+        "Level {1} • {0} • Sets {10}-{11} ({4}-{5}, {6}-{7}, {8}-{9}) • {12} {2}-{3}",
         rich_presence_lookup("GameType", numberOfPlayers(), gameTypeLookup),
         rich_presence_value("Level", difficultyLevel()),
-        rich_presence_lookup("Points", inDeuce() * 0x100  + playerPoints(), playerPointsLookup),
-        rich_presence_lookup("Points", inDeuce() * 0x100  + computerPoints(), playerPointsLookup),
+        rich_presence_lookup("Points", inDeuceOrTie() * 0x100 + playerPoints(), playerPointsLookup),
+        rich_presence_lookup("Points", inDeuceOrTie() * 0x100 + computerPoints(), playerPointsLookup),
         rich_presence_value("Game", playerScoreForSet(1)),
         rich_presence_value("Game", computerScoreForSet(1)),
         rich_presence_value("Game", playerScoreForSet(2)),
@@ -311,7 +327,8 @@
         rich_presence_value("Game", playerScoreForSet(3)),
         rich_presence_value("Game", computerScoreForSet(3)),
         rich_presence_value("Set", isSetWonByPlayer(1) + isSetWonByPlayer(2) + isSetWonByPlayer(3)),
-        rich_presence_value("Set", isSetWonByComputer(1) + isSetWonByComputer(2) + isSetWonByComputer(3))
+        rich_presence_value("Set", isSetWonByComputer(1) + isSetWonByComputer(2) + isSetWonByComputer(3)),
+        rich_presence_lookup("PoinsType", inDeuceOrTie(), pointTypeLookup)
     )
 
     rich_presence_display("In Attract Mode")
