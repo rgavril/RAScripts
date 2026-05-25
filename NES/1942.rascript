@@ -26,6 +26,28 @@
 
 // #endregion Memory Locations
 
+// #region Frames
+    function frameLifeLost() {
+        return
+            prev(lifeLostFlag()) == LIFE_LOST_FLAG_OFF
+            && lifeLostFlag() == LIFE_LOST_FLAG_ON
+    }
+
+    function frameScoreOverflowed() {
+        return
+            prev(byte(0x0427)) == 9 && prev(byte(0x0428)) >= 8
+            && byte(0x0427) == 0
+            && score() > 0
+    }
+
+    function frameGameFinished() {
+        return
+            currentStage() == 1
+            && prev(currentStageState()) != STAGE_STATE_COMPLETED
+            && currentStageState() == STAGE_STATE_COMPLETED
+    }
+// #endregion
+
 // #regrion Triggers
     function triggerScoreWentOver(targetScore) {
         requiredConditions = 
@@ -298,32 +320,39 @@
 // #endregion Achievements
 
 // #region Leaderboards
+    function valueHiscoreLeaderboard() {
+        reset =
+            never(gameState() != GAME_STATE_GAMEPLAY) &&
+            measured( tally(0, always_false()) )
+
+        overflow_none = measured( score())
+        overflow_1st  = measured( score() + 1000000, when = repeated(1, frameScoreOverflowed()) )
+        overflow_2nd  = measured( score() + 2000000, when = repeated(2, frameScoreOverflowed()) )
+
+        return max_of(reset, overflow_none, overflow_1st, overflow_2nd)
+    }
+
     leaderboard(
         id = 160,
         title = "High Score First Life",
         description = "Highest score without losing a life",
         start =
-            // Start Condition
-            once(
-                prev(gameState()) != GAME_STATE_GAMEPLAY
-                && gameState() == GAME_STATE_GAMEPLAY
-            )
-            // Cancel Conditions
-            && never(gameState() != GAME_STATE_GAMEPLAY)
-            // Stop Conditions
+            // Activate on game start
+            once(prev(gameState()) != GAME_STATE_GAMEPLAY && gameState() == GAME_STATE_GAMEPLAY)
+            // Deactivate on sequential life start
             && never(
-                prev(gameState() == GAME_STATE_GAMEPLAY)
-                && prev(lifeLostFlag()) == LIFE_LOST_FLAG_ON 
-                && lifeLostFlag() == LIFE_LOST_FLAG_OFF
-            )
-            // Submit Conditions
-            && (
-                prev(lifeLostFlag()) == LIFE_LOST_FLAG_OFF
+                prev(gameState()) == GAME_STATE_GAMEPLAY
+                && prev(lifeLostFlag()) == LIFE_LOST_FLAG_ON
                 && lifeLostFlag() == LIFE_LOST_FLAG_ON
-            ),
-        cancel = always_false(),
-        submit = always_true(),
-        value = score()
+            )
+            // Actuall Start
+            && (
+                frameLifeLost() || frameScoreOverflowed() || frameGameFinished()
+            )
+        ,
+        cancel = gameState() != GAME_STATE_GAMEPLAY,
+        submit = frameLifeLost() || frameGameFinished(),
+        value = valueHiscoreLeaderboard()
     )
 // #endregion Leaderboards
 
