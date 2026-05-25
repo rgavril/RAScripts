@@ -7,13 +7,13 @@
 
     function inMainMenu() => byte(0x0004)
         MM_FALSE = 0x00
-
+    function activePlayer() => byte(0x0386) + 1
     function player1Score() => byte(0x0427) * 100000 + byte(0x0428) * 10000 + byte(0x0429) * 1000 + byte(0x042a) * 100 + byte(0x042b) * 10 + byte(0x042c)
     function livesRemaining() => byte(0x0431) * 10 + byte(0x0432)
 
     function enemiesShot() => byte(0x0442) * 1000 + byte(0x0443) * 100 + byte(0x0444) * 10 + byte(0x0445)
     function currentStage() => 32 - byte(0x0438)
-    function currentStageStage() => byte(0x437)
+    function currentStageState() => byte(0x437)
         STAGE_STATE_COMPLETED = 0xff
     function quadShotEquiped() => bit1(0x048e)
     function leftSidePlaneState() => byte(0x048f)
@@ -47,8 +47,8 @@
         return
             inMainMenu() == MM_FALSE
             && currentStage() == stagesRemaining
-            && prev(currentStageStage()) != STAGE_STATE_COMPLETED
-            && currentStageStage() == STAGE_STATE_COMPLETED
+            && prev(currentStageState()) != STAGE_STATE_COMPLETED
+            && currentStageState() == STAGE_STATE_COMPLETED
     }
 
     function triggerEnemiesShot(target) {
@@ -293,3 +293,17 @@
 
     )
 // #endregion Achievements
+
+// #region Rich Presence
+    rich_presence_conditional_display(
+        inMainMenu() == MM_FALSE,
+        "Last {0} Stage • {1} Lives • {2} Kills • {3}",
+        rich_presence_value("Stage", currentStage()),
+        rich_presence_value("Lives", livesRemaining()),
+        rich_presence_value("Kills", enemiesShot()),
+        rich_presence_macro("Score", player1Score()),
+        rich_presence_value("Player", activePlayer())
+    )
+
+    rich_presence_display("In Main Menu")
+// #endregion Rich Presence
