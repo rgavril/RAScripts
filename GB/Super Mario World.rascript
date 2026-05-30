@@ -14,14 +14,21 @@
         GAMEPLAY_FLYING = 0x0d
         GAMEPLAY_BONUS_GOAL = 0x1a
         GAMEPLAY_STAGE_COMPLETED = 0x07
-    
+        GAMEPLAY_NEW_GAME = 0x11 
     function currentStage() => byte(0x00ffb4)
         WORLD_1_3 = 0x13
     function currentWorld() => high4(0x00ffb4)
-
     function stageProgress() => byte(0x00c0ab)
-        STAGE_PROGRESS_START = 0x0c 
+        STAGE_PROGRESS_START = 0x0c
 
+    function bonusGamePrize() => byte(0x00da17)
+        BONUS_PRIZE_DECIDING = 0x00
+        BONUS_PRIZE_1LIFE = 0x02
+        BONUS_PRIZE_2LIVES = 0x03
+        BONUS_PRIZE_3LIVES = 0x04
+        BONUS_PRIZE_FLOWER = 0x10
+
+    function livesRemaining() => bcd(byte(0xda15))
     function marioSize() => byte(0xff99)
         MARIO_SIZE_SMALL = 0x00
         MARIO_SIZE_GROWING = 0x01
@@ -93,6 +100,33 @@
 
         return primingConditions && cancelConditions && trigger_when(targetConditions)
     }
+
+    function triggerBonusGame3Lives() {
+        return
+            gameState() == GAME_STATE_STARTED
+            && gameplayState() == GAMEPLAY_BONUS_GOAL
+            && prev(bonusGamePrize() == BONUS_PRIZE_DECIDING)
+            && bonusGamePrize() == BONUS_PRIZE_3LIVES
+    }
+
+    function triggerDeathlessExtraLives(quantity) {
+        primingConditions = 
+            once (
+                prev(gameplayState()) != GAMEPLAY_NEW_GAME
+                && gameplayState() == GAMEPLAY_NEW_GAME
+            )
+
+        cancelConditions = 
+            never(gameState() != GAME_STATE_STARTED)
+            && never(gameplayState() == GAMEPLAY_DEATH)
+
+        targetConditions =
+            prev(livesRemaining()) < quantity
+            && measured(livesRemaining() >= quantity, primingConditions)
+            // FIXME: BCD tag is not correctly generated in ralibretro
+
+        return primingConditions && cancelConditions && targetConditions
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -134,6 +168,22 @@
         description = "Complete World 1 without collecting any coins",
         points = 25,
         trigger = triggerCoinlessWorld(1)
+    )
+
+    achievement(
+        id = 1232,
+        title = "Mamma Mia!",
+        description = "Get 3 extra lives from the bonus game",
+        points = 3,
+        trigger = triggerBonusGame3Lives()
+    )
+
+    achievement(
+        id = 75398,
+        title = "Heart Collector",
+        description = "Obtain 15 extra lives without dying",
+        points = 10,
+        trigger = triggerDeathlessExtraLives(15)
     )
 // #endregion Achievements
 
