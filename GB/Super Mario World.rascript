@@ -12,6 +12,7 @@
         GAMEPLAY_DEATH = 0x01
         GAMEPLAY_START_LIFE_OR_LEVEL = 0x02
         GAMEPLAY_FLYING = 0x0d
+        GAMEPLAY_BONUS_INIT = 0x12
         GAMEPLAY_BONUS_GOAL = 0x1a
         GAMEPLAY_STAGE_COMPLETED = 0x07
         GAMEPLAY_NEW_GAME = 0x11 
@@ -165,6 +166,47 @@
             && prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
             && gameplayState() == GAMEPLAY_STAGE_COMPLETED
     }
+
+    function triggerDeathlessWorld(worldNumber) {
+        primingConditions = 
+            once(
+                currentStage() == worldNumber*0x10 + 1
+                && gameplayState() == GAMEPLAY_START_LIFE_OR_LEVEL
+                && stageProgress() == STAGE_PROGRESS_START
+            )
+
+        cancelConditions = 
+            never(gameState() != GAME_STATE_STARTED)
+            && never(currentWorld() != worldNumber)
+            && never(gameplayState() == GAMEPLAY_DEATH)
+        
+        targetConditions = 
+            currentStage() == worldNumber*0x10 + 3
+            && prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
+            && gameplayState() == GAMEPLAY_STAGE_COMPLETED
+
+        return primingConditions && cancelConditions && trigger_when(targetConditions)
+    }
+
+    function triggerAllBonusGamesWorld(worldNumber) {
+        requiredConditions =
+            once (
+                currentStage() == worldNumber*0x10 + 1
+                && prev(gameplayState()) != GAMEPLAY_BONUS_INIT
+                && gameplayState() == GAMEPLAY_BONUS_INIT
+            )
+            && once (
+                currentStage() == worldNumber*0x10 + 2
+                && prev(gameplayState()) != GAMEPLAY_BONUS_INIT
+                && gameplayState() == GAMEPLAY_BONUS_INIT
+            )
+
+        cancelConditions = 
+            never(gameState() != GAME_STATE_STARTED)
+            && never(currentWorld() != worldNumber)
+
+        return requiredConditions && cancelConditions
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -293,6 +335,74 @@
             trigger = triggerWorldClear(4)
         )
     // #endregion Stage Clears
+
+    // #region Deathless Stage Clears
+        achievement(
+            id = 75393,
+            title = "Birabuto Kingdom Master",
+            description = "Complete World 1 without dying",
+            points = 10,
+            trigger = triggerDeathlessWorld(1)
+        )
+
+        achievement(
+            id = 75394,
+            title = "Muda Kingdom Master",
+            description = "Complete World 2 without dying",
+            points = 10,
+            trigger = triggerDeathlessWorld(2)
+        )
+
+        achievement(
+            id = 75395,
+            title = "Easton Kingdom Master",
+            description = "Complete World 3 without dying",
+            points = 10,
+            trigger = triggerDeathlessWorld(3)
+        )
+
+        achievement(
+            id = 75396,
+            title = "Chai Kingdom Master",
+            description = "Complete World 4 without dying",
+            points = 25,
+            trigger = triggerDeathlessWorld(4)
+        )
+    // #endregion Deathless Stage Clears
+
+    // #region Bonus Seeker
+        achievement(
+            id = 75403,
+            title = "Birabuto Kingdom Bonus Seeker",
+            description = "Enter the bonus games in World 1-1 and World 1-2",
+            points = 5,
+            trigger = triggerAllBonusGamesWorld(1)
+        )
+
+        achievement(
+            id = 75404,
+            title = "Muda Kingdom Bonus Seeker",
+            description = "Enter the bonus games in World 2-1 and World 2-2",
+            points = 5,
+            trigger = triggerAllBonusGamesWorld(2)
+        )
+
+        achievement(
+            id = 75405,
+            title = "Easton Kingdom Bonus Seeker",
+            description = "Enter the bonus games in World 3-1 and World 3-2",
+            points = 5,
+            trigger = triggerAllBonusGamesWorld(3)
+        )
+
+        achievement(
+            id = 75406,
+            title = "Chai Kingdom Bonus Seeker",
+            description = "Enter the bonus games in World 4-1 and World 4-2",
+            points = 5,
+            trigger = triggerAllBonusGamesWorld(4)
+        )
+    // #endregion Bonus Seeker
 // #endregion Achievements
 
 // #region Leaderboards
