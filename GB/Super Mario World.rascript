@@ -28,7 +28,10 @@
         BONUS_PRIZE_3LIVES = 0x04
         BONUS_PRIZE_FLOWER = 0x10
 
-    function livesRemaining() => bcd(byte(0xda15))
+    //function score() => bcd(byte(0xc0a0)) + bcd(byte(0xc0a1)) * 100 + bcd(byte(0xc0a2)) * 10000
+    function score() => low4(0xc0a0) + high4(0xc0a0) * 10 + low4(0xc0a1) * 100 + high4(0xc0a1) * 1000 + low4(0xc0a2) * 10000 + high4(0xc0a2) * 100000
+    //function livesRemaining() => bcd(byte(0xda15))
+    function livesRemaining() => high4(0xda15)*10 + low4(0xda15)
     function marioSize() => byte(0xff99)
         MARIO_SIZE_SMALL = 0x00
         MARIO_SIZE_GROWING = 0x01
@@ -123,9 +126,15 @@
         targetConditions =
             prev(livesRemaining()) < quantity
             && measured(livesRemaining() >= quantity, primingConditions)
-            // FIXME: BCD tag is not correctly generated in ralibretro
 
         return primingConditions && cancelConditions && targetConditions
+    }
+
+    function triggerScore(targetScore) {
+        return
+            gameState() == GAME_STATE_STARTED
+            && prev(score()) < targetScore
+            && score() >= targetScore
     }
 // #endregion Triggers
 
@@ -184,6 +193,30 @@
         description = "Obtain 15 extra lives without dying",
         points = 10,
         trigger = triggerDeathlessExtraLives(15)
+    )
+
+    achievement(
+        id = 1145,
+        title = "The Start of Something Big",
+        description = "Accumulate 20,000 points",
+        points = 5,
+        trigger = triggerScore(20000)
+    )
+
+    achievement(
+        id = 1246,
+        title = "An Adventure Told in Points",
+        description = "Accumulate 100,000 points",
+        points = 5,
+        trigger = triggerScore(100000)
+    )
+
+    achievement(
+        id = 1236,
+        title = "Super, Super Mario!",
+        description = "Accumulate 250,000 points",
+        points = 10,
+        trigger = triggerScore(250000)
     )
 // #endregion Achievements
 
