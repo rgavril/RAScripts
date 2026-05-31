@@ -20,6 +20,7 @@
     function currentWorld() => high4(0x00ffb4)
     function stageProgress() => byte(0x00c0ab)
         STAGE_PROGRESS_START = 0x0c
+    function timesGameCompleted() => byte(0xff9a)
 
     function bonusGamePrize() => byte(0x00da17)
         BONUS_PRIZE_DECIDING = 0x00
@@ -36,7 +37,8 @@
         MARIO_SIZE_SMALL = 0x00
         MARIO_SIZE_GROWING = 0x01
     function superBallState() => byte(0xffb5)
-    function coinsCollected() => byte(0xfffa)
+    // function coinsCollected() => bcd(byte(0xfffa))
+    function coinsCollected() => high4(0xfffa)*10 + low4(0xfffa)
     function playerYPos() => byte(0xc201)
 // #endregion Memory Locations
 
@@ -136,6 +138,33 @@
             && prev(score()) < targetScore
             && score() >= targetScore
     }
+
+    function triggerHardModeDeathlessScore(targetScore) {
+        primingConditions = 
+            once (
+                timesGameCompleted() == 1
+                && prev(gameplayState()) != GAMEPLAY_NEW_GAME
+                && gameplayState() == GAMEPLAY_NEW_GAME
+            )
+        
+        cancelConditions = 
+            never(gameState() != GAME_STATE_STARTED)
+            && never(gameplayState() == GAMEPLAY_DEATH)
+
+        targetConditions =
+            prev(score()) < targetScore
+            && score() >= targetScore
+
+        return primingConditions && cancelConditions && targetConditions
+    }
+
+    function triggerWorldClear(worldNumber) {
+        return
+            gameState() == GAME_STATE_STARTED
+            && currentStage() == worldNumber*0x10 + 3
+            && prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
+            && gameplayState() == GAMEPLAY_STAGE_COMPLETED
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -218,6 +247,52 @@
         points = 10,
         trigger = triggerScore(250000)
     )
+
+    achievement(
+        id = 75401,
+        title = "Legend",
+        description = "Accumulate 100,000 points on Hard Mode without dying [No Level Select Mode Allowed]",
+        points = 25,
+        trigger = triggerHardModeDeathlessScore(100000)
+    )
+
+    // #region Stage Clears
+        achievement(
+            id = 1237,
+            title = "The Sphinx's Riddle",
+            description = "Complete World 1",
+            points = 5,
+            type = "progression",
+            trigger = triggerWorldClear(1)
+        )
+
+        achievement(
+            id = 1238,
+            title = "Deep Sea Diver",
+            description = "Complete World 2",
+            points = 5,
+            type = "progression",
+            trigger = triggerWorldClear(2)
+        )
+
+        achievement(
+            id = 1239,
+            title = "Trouble on the Beachside",
+            description = "Complete World 3",
+            points = 5,
+            type = "progression",
+            trigger = triggerWorldClear(3)
+        )
+
+        achievement(
+            id = 1235,
+            title = "Sarasaland Rescue!",
+            description = "Complete World 4",
+            points = 10,
+            type = "win_condition",
+            trigger = triggerWorldClear(4)
+        )
+    // #endregion Stage Clears
 // #endregion Achievements
 
 // #region Leaderboards
