@@ -15,13 +15,15 @@
         GAMEPLAY_BONUS_INIT = 0x12
         GAMEPLAY_BONUS_GOAL = 0x1a
         GAMEPLAY_STAGE_COMPLETED = 0x07
-        GAMEPLAY_NEW_GAME = 0x11 
+        GAMEPLAY_NEW_GAME = 0x11
+        GAMEPLAY_SECRET_AREA_INIT = 0x0a
     function currentStage() => byte(0x00ffb4)
         WORLD_1_3 = 0x13
     function currentWorld() => high4(0x00ffb4)
     function stageProgress() => byte(0x00c0ab)
         STAGE_PROGRESS_START = 0x0c
     function timesGameCompleted() => byte(0xff9a)
+    function secretAreaID() => word(0xfff4)
 
     function bonusGamePrize() => byte(0x00da17)
         BONUS_PRIZE_DECIDING = 0x00
@@ -206,6 +208,31 @@
             && never(currentWorld() != worldNumber)
 
         return requiredConditions && cancelConditions
+    }
+
+    function triggerWorldSecrets(worldNumber) {
+        secretAreaIDs = [
+            [],
+            [0x0501, 0x0a02, 0x0702, 0x0b01],
+            [0x0701, 0x0e02, 0x0501, 0x0f02],
+            [0x0602, 0x1101, 0x0801, 0x0f02, 0x0701, 0x0b02],
+            [0x0302, 0x1602, 0x0601, 0x1201]
+        ]
+
+        requiredConditions = tally_of(secretAreaIDs[worldNumber], length(secretAreaIDs[worldNumber]), secretID =>
+            once(
+                currentWorld() == worldNumber
+                && prev(gameplayState()) != GAMEPLAY_SECRET_AREA_INIT
+                && gameplayState() == GAMEPLAY_SECRET_AREA_INIT
+                && secretAreaID() == secretID
+            )
+        )
+
+        cancelConditions = 
+            never(gameState() != GAME_STATE_STARTED)
+            && never(currentWorld() != worldNumber)
+
+        return cancelConditions && measured(requiredConditions)
     }
 // #endregion Triggers
 
@@ -403,6 +430,40 @@
             trigger = triggerAllBonusGamesWorld(4)
         )
     // #endregion Bonus Seeker
+
+    // #region Secret Seeker
+        achievement(
+            id = 75407,
+            title = "Birabuto Kingdom Secret Seeker",
+            description = "Find every secret area in World 1",
+            points = 10,
+            trigger = triggerWorldSecrets(1)
+        )
+
+        achievement(
+            id = 75408,
+            title = "Muda Kingdom Secret Seeker",
+            description = "Find every secret area in World 2",
+            points = 10,
+            trigger = triggerWorldSecrets(2)
+        )
+
+        achievement(
+            id = 75409,
+            title = "Easton Kingdom Secret Seeker",
+            description = "Find every secret area in World 3",
+            points = 10,
+            trigger = triggerWorldSecrets(3)
+        )
+
+        achievement(
+            id = 75410,
+            title = "Chai Kingdom Secret Seeker",
+            description = "Find every secret area in World 4",
+            points = 10,
+            trigger = triggerWorldSecrets(4)
+        )
+    // #endregion Secret Seeker
 // #endregion Achievements
 
 // #region Leaderboards
