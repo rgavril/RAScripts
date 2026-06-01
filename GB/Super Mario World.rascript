@@ -19,11 +19,13 @@
         GAMEPLAY_SECRET_AREA_INIT = 0x0a
     function currentStage() => byte(0x00ffb4)
         WORLD_1_3 = 0x13
+        WORLD_2_2 = 0x22
     function currentWorld() => high4(0x00ffb4)
     function stageProgress() => byte(0x00c0ab)
         STAGE_PROGRESS_START = 0x0c
     function timesGameCompleted() => byte(0xff9a)
     function secretAreaID() => word(0xfff4)
+    function timeRemaining() => low4(0x00da02)*100 + high4(0x00da01)*10 + low4(0x00da01)
 
     function bonusGamePrize() => byte(0x00da17)
         BONUS_PRIZE_DECIDING = 0x00
@@ -233,6 +235,29 @@
             && never(currentWorld() != worldNumber)
 
         return cancelConditions && measured(requiredConditions)
+    }
+
+    function triggerSpeedrun(targetStage, time) {
+        primingConditions = 
+            once(
+                currentStage() == targetStage
+                && gameplayState() == GAMEPLAY_START_LIFE_OR_LEVEL
+                && stageProgress() == STAGE_PROGRESS_START
+            )
+
+        cancelConditions = 
+            never(gameState() != GAME_STATE_STARTED)
+            && never(currentStage() != targetStage)
+            && never(gameplayState() == GAMEPLAY_DEATH)
+            && never(gameplayState() == GAMEPLAY_SECRET_AREA_INIT)
+            && never(timeRemaining() < 400 - time)
+
+        targetConditions = 
+            currentStage() == targetStage
+            && prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
+            && gameplayState() == GAMEPLAY_STAGE_COMPLETED
+
+        return primingConditions && cancelConditions && trigger_when(targetConditions)
     }
 // #endregion Triggers
 
@@ -464,6 +489,16 @@
             trigger = triggerWorldSecrets(4)
         )
     // #endregion Secret Seeker
+
+    // #region Speedruns
+        achievement(
+            id = 1244,
+            title = "Muda Kingdom Speedrunner",
+            description = "Complete World 2-2 in under 70 seconds without using checkpoints or pipes",
+            points = 10,
+            trigger = triggerSpeedrun(WORLD_2_2, 70)
+        )
+    // #endregion Speedruns
 // #endregion Achievements
 
 // #region Leaderboards
