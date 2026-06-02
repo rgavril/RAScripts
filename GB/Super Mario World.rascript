@@ -27,22 +27,22 @@
     function secretAreaID() => word(0xfff4)
     function timeRemaining() => low4(0x00da02)*100 + high4(0x00da01)*10 + low4(0x00da01)
 
+    function enemyType(index) => byte(0xd100 + (index-1)*0x10)
+    function enemySuperballStats(index) => byte(0xd10c + (index-1)*0x10)
+
     function bonusGamePrize() => byte(0x00da17)
         BONUS_PRIZE_DECIDING = 0x00
         BONUS_PRIZE_1LIFE = 0x02
         BONUS_PRIZE_2LIVES = 0x03
         BONUS_PRIZE_3LIVES = 0x04
         BONUS_PRIZE_FLOWER = 0x10
-
-    //function score() => bcd(byte(0xc0a0)) + bcd(byte(0xc0a1)) * 100 + bcd(byte(0xc0a2)) * 10000
     function score() => low4(0xc0a0) + high4(0xc0a0) * 10 + low4(0xc0a1) * 100 + high4(0xc0a1) * 1000 + low4(0xc0a2) * 10000 + high4(0xc0a2) * 100000
-    //function livesRemaining() => bcd(byte(0xda15))
     function livesRemaining() => high4(0xda15)*10 + low4(0xda15)
     function marioSize() => byte(0xff99)
         MARIO_SIZE_SMALL = 0x00
         MARIO_SIZE_GROWING = 0x01
+        MARIO_SIZE_SHRINKING = 0x03
     function superBallState() => byte(0xffb5)
-    // function coinsCollected() => bcd(byte(0xfffa))
     function coinsCollected() => high4(0xfffa)*10 + low4(0xfffa)
     function playerYPos() => byte(0xc201)
 // #endregion Memory Locations
@@ -255,6 +255,54 @@
         targetConditions = 
             currentStage() == targetStage
             && prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
+            && gameplayState() == GAMEPLAY_STAGE_COMPLETED
+
+        return primingConditions && cancelConditions && trigger_when(targetConditions)
+    }
+
+    function triggerBossKillByProjectiles(targetWorld) {
+        bossByWorld = [
+            {},
+            {"enemyTypeBossAlive": 0x08, "enemyTypeBossDead": 0x4f, "superballBonus": 0xc0}, // World 1
+            {"enemyTypeBossAlive": 0x1a, "enemyTypeBossDead": 0x4f, "superballBonus": 0xc0}, // World 2
+            {"enemyTypeBossAlive": 0x32, "enemyTypeBossDead": 0x4f, "superballBonus": 0xc0}  // World 3
+        ]
+
+        enemyTypeBossAlive = bossByWorld[targetWorld]["enemyTypeBossAlive"]
+        enemyTypeBossDead = bossByWorld[targetWorld]["enemyTypeBossDead"]
+        superballBonus = bossByWorld[targetWorld]["superballBonus"]
+
+        requiredConditions =
+            gameState() == GAME_STATE_STARTED
+            && currentStage() == targetWorld*0x10 + 3
+
+        targetConditions =
+            any_of(range(1,8), index =>
+                prev(enemyType(index)) == enemyTypeBossAlive
+                && enemyType(index) == enemyTypeBossDead
+
+                && prev(enemySuperballStats(index)) == superballBonus
+                && enemySuperballStats(index) == 0x00
+            )
+        
+        return requiredConditions && targetConditions
+    }
+
+    function triggerFinalBossPerfect() {
+        primingConditions = 
+            tally_of(range(1,8), 1, index =>
+                prev(enemyType(index)) != 0x61
+                && enemyType(index) == 0x61
+            )
+
+        cancelConditions = 
+            never(gameState() != GAME_STATE_STARTED)
+            && never(currentStage() != 0x43)
+            && never(marioSize() == MARIO_SIZE_SHRINKING)
+            && never(gameplayState() == GAMEPLAY_DEATH)
+
+        targetConditions =
+            prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
             && gameplayState() == GAMEPLAY_STAGE_COMPLETED
 
         return primingConditions && cancelConditions && trigger_when(targetConditions)
@@ -499,6 +547,40 @@
             trigger = triggerSpeedrun(WORLD_2_2, 70)
         )
     // #endregion Speedruns
+
+    // #region Boss Challenges
+        achievement(
+            id = 75390,
+            title = "Lion Tamer",
+            description = "Defeat King Totomesu with superballs",
+            points = 10,
+            trigger = triggerBossKillByProjectiles(1)
+        )
+
+        achievement(
+            id = 75391,
+            title = "Dragon Tamer",
+            description = "Without taking damage, defeat Dragonzamasu with torpedos",
+            points = 10,
+            trigger = triggerBossKillByProjectiles(2)
+        )
+
+        achievement(
+            id = 75392,
+            title = "Throwdown at the Beach",
+            description = "Defeat Hiyoihoi with superballs",
+            points = 10,
+            trigger = triggerBossKillByProjectiles(3)
+        )
+
+        achievement(
+            id = 75399,
+            title = "Perfect Rescue!",
+            description = "Defeat Biokinton and Tatanga without taking damage",
+            points = 10,
+            trigger = triggerFinalBossPerfect()
+        )
+    // #endregion Boss Challenges
 // #endregion Achievements
 
 // #region Leaderboards
