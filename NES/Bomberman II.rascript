@@ -61,7 +61,7 @@
         cancelConditions =
             never(demoMode() == TRUE)
             && never(music() == MUSIC_GAME_MENU)
-            && never(area() != areaNumber)
+            && never(area() != areaNumber && isBonusStage() == FALSE)
         
         triggerConditions = 
             tally(8,
