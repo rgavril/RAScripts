@@ -18,8 +18,10 @@
         GAMEPLAY_NEW_GAME = 0x11
         GAMEPLAY_SECRET_AREA_INIT = 0x0a
     function currentStage() => byte(0x00ffb4)
+        WORLD_1_1 = 0x11
         WORLD_1_3 = 0x13
         WORLD_2_2 = 0x22
+        WORLD_4_3 = 0x43
     function currentWorld() => high4(0x00ffb4)
     function stageProgress() => byte(0x00c0ab)
         STAGE_PROGRESS_START = 0x0c
@@ -297,12 +299,31 @@
 
         cancelConditions = 
             never(gameState() != GAME_STATE_STARTED)
-            && never(currentStage() != 0x43)
+            && never(currentStage() != WORLD_4_3)
             && never(marioSize() == MARIO_SIZE_SHRINKING)
             && never(gameplayState() == GAMEPLAY_DEATH)
 
         targetConditions =
             prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
+            && gameplayState() == GAMEPLAY_STAGE_COMPLETED
+
+        return primingConditions && cancelConditions && trigger_when(targetConditions)
+    }
+
+    function triggerOneTakeHardMode() {
+        primingConditions = once(
+            currentStage() == WORLD_1_1
+            && prev(gameplayState()) != GAMEPLAY_NEW_GAME
+            && gameplayState() == GAMEPLAY_NEW_GAME
+        )
+
+        cancelConditions = 
+            never(gameState() != GAME_STATE_STARTED)
+            && never(timesGameCompleted() != 1)
+
+        targetConditions = 
+            currentStage() == WORLD_4_3
+            && prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
             && gameplayState() == GAMEPLAY_STAGE_COMPLETED
 
         return primingConditions && cancelConditions && trigger_when(targetConditions)
@@ -366,37 +387,39 @@
         trigger = triggerDeathlessExtraLives(15)
     )
 
-    achievement(
-        id = 1145,
-        title = "The Start of Something Big",
-        description = "Accumulate 20,000 points",
-        points = 5,
-        trigger = triggerScore(20000)
-    )
+    // #region Score Challenges
+        achievement(
+            id = 1145,
+            title = "The Start of Something Big",
+            description = "Accumulate 20,000 points",
+            points = 5,
+            trigger = triggerScore(20000)
+        )
 
-    achievement(
-        id = 1246,
-        title = "An Adventure Told in Points",
-        description = "Accumulate 100,000 points",
-        points = 5,
-        trigger = triggerScore(100000)
-    )
+        achievement(
+            id = 1246,
+            title = "An Adventure Told in Points",
+            description = "Accumulate 100,000 points",
+            points = 5,
+            trigger = triggerScore(100000)
+        )
 
-    achievement(
-        id = 1236,
-        title = "Super, Super Mario!",
-        description = "Accumulate 250,000 points",
-        points = 10,
-        trigger = triggerScore(250000)
-    )
+        achievement(
+            id = 1236,
+            title = "Super, Super Mario!",
+            description = "Accumulate 250,000 points",
+            points = 10,
+            trigger = triggerScore(250000)
+        )
 
-    achievement(
-        id = 75401,
-        title = "Legend",
-        description = "Accumulate 100,000 points on Hard Mode without dying [No Level Select Mode Allowed]",
-        points = 25,
-        trigger = triggerHardModeDeathlessScore(100000)
-    )
+        achievement(
+            id = 75401,
+            title = "Legend",
+            description = "Accumulate 100,000 points on Hard Mode without dying [No Level Select Mode Allowed]",
+            points = 25,
+            trigger = triggerHardModeDeathlessScore(100000)
+        )
+    // #endregion Score Challenges
 
     // #region Stage Clears
         achievement(
@@ -581,6 +604,22 @@
             trigger = triggerFinalBossPerfect()
         )
     // #endregion Boss Challenges
+
+    achievement(
+        id = 1339,
+        title = "Rescue Redux",
+        description = "Beat the game on hard mode",
+        points = 25,
+        trigger = timesGameCompleted() == 1 && triggerWorldClear(4)
+    )
+
+    achievement(
+        id = 75402,
+        title = "Sarasaland King",
+        description = "Beat the game on hard mode without using a continue",
+        points = 25,
+        trigger = triggerOneTakeHardMode()
+    )
 // #endregion Achievements
 
 // #region Leaderboards
