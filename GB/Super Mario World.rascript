@@ -23,6 +23,7 @@
         WORLD_2_2 = 0x22
         WORLD_4_3 = 0x43
     function currentWorld() => high4(0x00ffb4)
+    function currentLevel() => low4(0x00ffb4)
     function stageProgress() => byte(0x00c0ab)
         STAGE_PROGRESS_START = 0x0c
     function timesGameCompleted() => byte(0xff9a)
@@ -626,4 +627,24 @@
 // #endregion Leaderboards
 
 // #region Rich Presence
+    rich_presence_conditional_display(
+        gameState() == GAME_STATE_STARTED && timesGameCompleted() == 0,
+        "World {0}-{1} • Normal Mode • {2} Lives • Score {3}",
+        rich_presence_value("World", currentWorld()),
+        rich_presence_value("Level", currentLevel()),
+        rich_presence_value("Lives", livesRemaining()),
+        rich_presence_macro("Score", score())
+    )
+
+    rich_presence_conditional_display(
+        gameState() == GAME_STATE_STARTED && timesGameCompleted() > 0,
+        "World {0}-{1} • Hard Mode • {2} Lives • Score {3}",
+        rich_presence_value("World", currentWorld()),
+        rich_presence_value("Level", currentLevel()),
+        rich_presence_value("Lives", livesRemaining()),
+        rich_presence_macro("Score", score()),
+        rich_presence_value("Loop", timesGameCompleted() + 1)
+    )
+
+    rich_presence_display("In Attract Mode")
 // #endregion Rich Presence
