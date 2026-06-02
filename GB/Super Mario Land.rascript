@@ -1,4 +1,4 @@
-// Super Mario World
+// Super Mario Land
 // #ID = 504
 
 // #region Memory Locations
@@ -51,6 +51,17 @@
 // #endregion Memory Locations
 
 // #region Frames
+    function frameStageCompleted() {
+        return
+            prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
+            && gameplayState() == GAMEPLAY_STAGE_COMPLETED
+    }
+
+    function frameBonusGameStarted() {
+        return
+            prev(gameplayState()) != GAMEPLAY_BONUS_INIT
+            && gameplayState() == GAMEPLAY_BONUS_INIT
+    }
 // #endregion Frames
 
 // #region Triggers
@@ -108,8 +119,7 @@
 
         targetConditions = 
             currentStage() == worldNumber*0x10 + 3
-            && prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
-            && gameplayState() == GAMEPLAY_STAGE_COMPLETED
+            && frameStageCompleted()
 
         return primingConditions && cancelConditions && trigger_when(targetConditions)
     }
@@ -170,8 +180,7 @@
         return
             gameState() == GAME_STATE_STARTED
             && currentStage() == worldNumber*0x10 + 3
-            && prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
-            && gameplayState() == GAMEPLAY_STAGE_COMPLETED
+            && frameStageCompleted()
     }
 
     function triggerDeathlessWorld(worldNumber) {
@@ -189,8 +198,7 @@
         
         targetConditions = 
             currentStage() == worldNumber*0x10 + 3
-            && prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
-            && gameplayState() == GAMEPLAY_STAGE_COMPLETED
+            && frameStageCompleted()
 
         return primingConditions && cancelConditions && trigger_when(targetConditions)
     }
@@ -199,13 +207,11 @@
         requiredConditions =
             once (
                 currentStage() == worldNumber*0x10 + 1
-                && prev(gameplayState()) != GAMEPLAY_BONUS_INIT
-                && gameplayState() == GAMEPLAY_BONUS_INIT
+                && frameBonusGameStarted()
             )
             && once (
                 currentStage() == worldNumber*0x10 + 2
-                && prev(gameplayState()) != GAMEPLAY_BONUS_INIT
-                && gameplayState() == GAMEPLAY_BONUS_INIT
+                && frameBonusGameStarted()
             )
 
         cancelConditions = 
@@ -257,8 +263,7 @@
 
         targetConditions = 
             currentStage() == targetStage
-            && prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
-            && gameplayState() == GAMEPLAY_STAGE_COMPLETED
+            && frameStageCompleted()
 
         return primingConditions && cancelConditions && trigger_when(targetConditions)
     }
@@ -305,8 +310,7 @@
             && never(gameplayState() == GAMEPLAY_DEATH)
 
         targetConditions =
-            prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
-            && gameplayState() == GAMEPLAY_STAGE_COMPLETED
+            frameStageCompleted()
 
         return primingConditions && cancelConditions && trigger_when(targetConditions)
     }
@@ -324,8 +328,7 @@
 
         targetConditions = 
             currentStage() == WORLD_4_3
-            && prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
-            && gameplayState() == GAMEPLAY_STAGE_COMPLETED
+            && frameStageCompleted()
 
         return primingConditions && cancelConditions && trigger_when(targetConditions)
     }
@@ -633,8 +636,7 @@
             gameState() == GAME_STATE_STARTED
             && currentStage() == WORLD_4_3
             && timesGameCompleted() == 0
-            && prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
-            && gameplayState() == GAMEPLAY_STAGE_COMPLETED
+            && frameStageCompleted()
         ,
         cancel = always_false(),
         submit = always_true(),
@@ -650,8 +652,7 @@
             gameState() == GAME_STATE_STARTED
             && currentStage() == WORLD_4_3
             && timesGameCompleted() == 1
-            && prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
-            && gameplayState() == GAMEPLAY_STAGE_COMPLETED
+            && frameStageCompleted()
         ,
         cancel = always_false(),
         submit = always_true(),
