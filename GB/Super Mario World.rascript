@@ -22,8 +22,8 @@
         WORLD_1_3 = 0x13
         WORLD_2_2 = 0x22
         WORLD_4_3 = 0x43
-    function currentWorld() => high4(0x00ffb4)
-    function currentLevel() => low4(0x00ffb4)
+    function currentWorldNumber() => high4(0x00ffb4)
+    function currentLevelNumber() => low4(0x00ffb4)
     function stageProgress() => byte(0x00c0ab)
         STAGE_PROGRESS_START = 0x0c
     function timesGameCompleted() => byte(0xff9a)
@@ -103,7 +103,7 @@
 
         cancelConditions = 
             never(gameState() != GAME_STATE_STARTED)
-            && never(currentWorld() != worldNumber)
+            && never(currentWorldNumber() != worldNumber)
             && never(prev(coinsCollected()) != coinsCollected())
 
         targetConditions = 
@@ -184,7 +184,7 @@
 
         cancelConditions = 
             never(gameState() != GAME_STATE_STARTED)
-            && never(currentWorld() != worldNumber)
+            && never(currentWorldNumber() != worldNumber)
             && never(gameplayState() == GAMEPLAY_DEATH)
         
         targetConditions = 
@@ -210,7 +210,7 @@
 
         cancelConditions = 
             never(gameState() != GAME_STATE_STARTED)
-            && never(currentWorld() != worldNumber)
+            && never(currentWorldNumber() != worldNumber)
 
         return requiredConditions && cancelConditions
     }
@@ -226,7 +226,7 @@
 
         requiredConditions = tally_of(secretAreaIDs[worldNumber], length(secretAreaIDs[worldNumber]), secretID =>
             once(
-                currentWorld() == worldNumber
+                currentWorldNumber() == worldNumber
                 && prev(gameplayState()) != GAMEPLAY_SECRET_AREA_INIT
                 && gameplayState() == GAMEPLAY_SECRET_AREA_INIT
                 && secretAreaID() == secretID
@@ -235,7 +235,7 @@
 
         cancelConditions = 
             never(gameState() != GAME_STATE_STARTED)
-            && never(currentWorld() != worldNumber)
+            && never(currentWorldNumber() != worldNumber)
 
         return cancelConditions && measured(requiredConditions)
     }
@@ -624,14 +624,47 @@
 // #endregion Achievements
 
 // #region Leaderboards
+    leaderboard(
+        id = 5325,
+        title = "First Loop Finishing Score",
+        description = "Highest Score at the end of the game on Normal Mode",
+        format = "SCORE",
+        start = 
+            gameState() == GAME_STATE_STARTED
+            && currentStage() == WORLD_4_3
+            && timesGameCompleted() == 0
+            && prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
+            && gameplayState() == GAMEPLAY_STAGE_COMPLETED
+        ,
+        cancel = always_false(),
+        submit = always_true(),
+        value = score()
+    )
+
+    leaderboard(
+        id = 5326,
+        title = "Second Loop Finishing Score",
+        description = "Highest Score at the end of the game on Hard Mode",
+        format = "SCORE",
+        start = 
+            gameState() == GAME_STATE_STARTED
+            && currentStage() == WORLD_4_3
+            && timesGameCompleted() == 1
+            && prev(gameplayState()) != GAMEPLAY_STAGE_COMPLETED
+            && gameplayState() == GAMEPLAY_STAGE_COMPLETED
+        ,
+        cancel = always_false(),
+        submit = always_true(),
+        value = score()
+    )
 // #endregion Leaderboards
 
 // #region Rich Presence
     rich_presence_conditional_display(
         gameState() == GAME_STATE_STARTED && timesGameCompleted() == 0,
         "World {0}-{1} • Normal Mode • {2} Lives • Score {3}",
-        rich_presence_value("World", currentWorld()),
-        rich_presence_value("Level", currentLevel()),
+        rich_presence_value("World", currentWorldNumber()),
+        rich_presence_value("Level", currentLevelNumber()),
         rich_presence_value("Lives", livesRemaining()),
         rich_presence_macro("Score", score())
     )
@@ -639,8 +672,8 @@
     rich_presence_conditional_display(
         gameState() == GAME_STATE_STARTED && timesGameCompleted() > 0,
         "World {0}-{1} • Hard Mode • {2} Lives • Score {3}",
-        rich_presence_value("World", currentWorld()),
-        rich_presence_value("Level", currentLevel()),
+        rich_presence_value("World", currentWorldNumber()),
+        rich_presence_value("Level", currentLevelNumber()),
         rich_presence_value("Lives", livesRemaining()),
         rich_presence_macro("Score", score()),
         rich_presence_value("Loop", timesGameCompleted() + 1)
