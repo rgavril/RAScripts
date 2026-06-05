@@ -1,6 +1,9 @@
 // Tennis
 // #ID = 2017
 
+
+// https://github.com/cyneprepou4uk/NES-Games-Disassembly/blob/main/Tennis/bank_ram.inc
+
 // #region Memory Locations
     TRUE = 0x01
     FALSE = 0x00
@@ -10,6 +13,10 @@
     function difficultyLevel() => byte(0x004c) + 1
     function gameplayState() => byte(0x003d)
         GAMEPLAY_STATE_SELECT_DIFFICULTY = 0x00
+        GAMEPLAY_STATE_NEW_GAME = 0x01
+        GAMEPLAY_STATE_NEW_BALL = 0x02
+        GAMEPLAY_SCORE_UPDATED = 0x06
+        GAMEPLAY_STATE_GAME_END = 0x0b
     function currentSet() => byte(0x0050) + 1
 
     function playerScoreForSet(setNumber) => low4(0x0051 + setNumber - 1)
@@ -17,17 +24,40 @@
     function isSetWonByPlayer(setNumber) => bit7(0x0051 + setNumber - 1)
     function isSetWonByComputer(setNumber) => bit7(0x0054 + setNumber - 1)
     
+    function lastHitter() => byte(0x005b)
+        LAST_HITTER_PLAYER = 0x01
+    
     function inDeuceOrTie() => byte(0x0057)
+        IN_DEUCE = 0x01
+        IN_TIE = 0x02
     function playerPoints() => byte(0x0058)
     function computerPoints() => byte(0x0059)
     function gamesFinished() => byte(0x005a)
+
+    function playerBallShotCounter() => byte(0x0304)
+
+    function ballSFX() => byte(0x00ff)
+        BALL_BOUNCE_ON_GROUND = 0x01
+        BALL_BOUNCE_ON_OBJECT = 0x02
+        BALL_NORMAL_SHOT = 0x04
+        BALL_NET_SHOT = 0x10
+        BALL_SERVER_SHOT = 0x20
+        BALL_LOB_UP = 0x40
+        BALL_LOB_DOWN = 0xc0
 // #endregion Memory Locations
 
 // #region Frames
-    function frameGameWon() {
+    function frameMatchWon() {
         return
             prev(isSetWonByPlayer(1)) + prev(isSetWonByPlayer(2)) + prev(isSetWonByPlayer(3)) < 2
             && isSetWonByPlayer(1) + isSetWonByPlayer(2) + isSetWonByPlayer(3) >= 2
+    }
+
+    function framePointWon() {
+        return
+            prev(gameplayState()) != GAMEPLAY_SCORE_UPDATED
+            && gameplayState() == GAMEPLAY_SCORE_UPDATED
+            && lastHitter() == LAST_HITTER_PLAYER
     }
 // #endregion Frames
 
@@ -37,7 +67,7 @@
             inAttractMode() == FALSE
             && numberOfPlayers() == 1
             && difficultyLevel() == level
-            && frameGameWon()
+            && frameMatchWon()
     }
 
     function triggerStraightSetsLevel(level) {
@@ -47,7 +77,7 @@
             && isSetWonByComputer(1) == FALSE
             && isSetWonByComputer(2) == FALSE
             && isSetWonByComputer(3) == FALSE
-            && frameGameWon()
+            && frameMatchWon()
     }
 
     function triggerTwo60SetsLevel(level) {
@@ -103,6 +133,52 @@
             inAttractMode() == FALSE
             && prev(gamesFinished()) == minGames - 1
             && measured(gamesFinished() == minGames)
+    }
+
+    function triggerLobShotPoint() {
+        // Score a point from a lob shot
+        primingConditions = 
+                once(
+                    ballSFX() == BALL_LOB_UP 
+                    && playerBallShotCounter() > 0x00
+                )
+
+        cancelConditions = 
+                    never(ballSFX() == BALL_NORMAL_SHOT)
+                    && never(ballSFX() == BALL_NET_SHOT)
+                    && never(ballSFX() == BALL_SERVER_SHOT)
+
+        targetConditions = 
+            playerPoints() > prev(playerPoints())
+
+        return primingConditions && cancelConditions && trigger_when(targetConditions)
+    }
+
+    function triggerLobPointsPerSet(times) {
+        pauseConditions = unless(
+            once(
+                // Pause when last shot was NOT a lob shot
+                (
+                    ballSFX() == BALL_NORMAL_SHOT
+                    || ballSFX() == BALL_NET_SHOT
+                    || ballSFX() == BALL_SERVER_SHOT
+                )
+                // Unpause when last shot was a lob shot
+                && never(ballSFX() == BALL_LOB_UP)
+            )
+        )
+
+        resetConditions = 
+            never(inAttractMode() == TRUE)
+            && never(currentSet() != prev(currentSet()))
+
+        triggerCondition =
+            repeated(times, framePointWon())
+
+        return 
+            pauseConditions && measured(triggerCondition) && (resetConditions || always_false())
+        
+        //return resetConditions && pauseConditions && measured(triggerCondition)
     }
 // #endregion Triggers
 
@@ -276,6 +352,13 @@
         description = "Win the third set of a match",
         points = 5,
         trigger = triggerWinSet(3)
+    )
+
+    achievement(
+        title = "Bombs Away",
+        description = "Score 10 points from a lob in a single set",
+        points = 5,
+        trigger = triggerLobPointsPerSet(10)
     )
 // #endregion Achievements
 
