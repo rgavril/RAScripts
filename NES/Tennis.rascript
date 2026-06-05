@@ -10,7 +10,8 @@
 
     function inAttractMode() => byte(0x0038)
     function numberOfPlayers() => byte(0x0039) + 1
-    function difficultyLevel() => byte(0x004c) + 1
+    function currentDifficulty() => byte(0x004c) + 1
+    function startDifficulty() => byte(0x003a) + 1
     function gameplayState() => byte(0x003d)
         GAMEPLAY_STATE_SELECT_DIFFICULTY = 0x00
         GAMEPLAY_STATE_NEW_GAME = 0x01
@@ -33,6 +34,7 @@
     function playerPoints() => byte(0x0058)
     function computerPoints() => byte(0x0059)
     function gamesFinished() => byte(0x005a)
+    function matchesWon() => byte(0x004d)
 
     function playerBallShotCounter() => byte(0x0304)
 
@@ -66,14 +68,14 @@
         return
             inAttractMode() == FALSE
             && numberOfPlayers() == 1
-            && difficultyLevel() == level
+            && currentDifficulty() == level
             && frameMatchWon()
     }
 
     function triggerStraightSetsLevel(level) {
         return
             inAttractMode() == FALSE
-            && difficultyLevel() == level
+            && currentDifficulty() == level
             && isSetWonByComputer(1) == FALSE
             && isSetWonByComputer(2) == FALSE
             && isSetWonByComputer(3) == FALSE
@@ -83,7 +85,7 @@
     function triggerTwo60SetsLevel(level) {
         return
             inAttractMode() == FALSE
-            && difficultyLevel() == level
+            && currentDifficulty() == level
             
             && isSetWonByPlayer(1) == TRUE
             && playerScoreForSet(1) == 6
@@ -177,8 +179,14 @@
 
         return 
             pauseConditions && measured(triggerCondition) && (resetConditions || always_false())
-        
-        //return resetConditions && pauseConditions && measured(triggerCondition)
+    }
+
+    function triggerWinCup(minStartDifficulty) {
+        return
+            inAttractMode() == FALSE
+            && startDifficulty() >= minStartDifficulty
+            && prev(matchesWon()) == 1
+            && matchesWon() == 2
     }
 // #endregion Triggers
 
@@ -360,6 +368,20 @@
         points = 5,
         trigger = triggerLobPointsPerSet(10)
     )
+
+    achievement(
+        title = "Tournament Champion",
+        description = "Win the cup by winning 2 consecutive matches starting from any Level",
+        points = 10,
+        trigger = triggerWinCup(minStartDifficulty = 1)
+    )
+
+    achievement(
+        title = "Grand Slam Winner",
+        description = "Win the gold cup by winning 2 consecutive matches starting from Level 5",
+        points = 25,
+        trigger = triggerWinCup(minStartDifficulty = 5)
+    )
 // #endregion Achievements
 
 // #region Rich Presence
@@ -400,7 +422,7 @@
         ,
         "Level {1} • {0} • Sets {10}-{11} ({4}-{5}, {6}-{7}, {8}-{9}) • {12} {2}-{3}",
         rich_presence_lookup("GameType", numberOfPlayers(), gameTypeLookup),
-        rich_presence_value("Level", difficultyLevel()),
+        rich_presence_value("Level", currentDifficulty()),
         rich_presence_lookup("Points", inDeuceOrTie() * 0x100 + playerPoints(), playerPointsLookup),
         rich_presence_lookup("Points", inDeuceOrTie() * 0x100 + computerPoints(), playerPointsLookup),
         rich_presence_value("Game", playerScoreForSet(1)),
