@@ -125,6 +125,24 @@
 
         return primingConditions && cancelConditions && trigger_when(targetConditions)
     }
+
+    function triggerDamegelessStage(stageNumber) {
+        stageIdStart = {
+            2: STAGE_2_1,
+            5: STAGE_5_1
+        }
+
+        stageIdEnd = {
+            2: STAGE_2_2,
+            5: STAGE_5_2
+        }
+
+        return
+            frameInGameplay()
+            && health() == 0x0e
+            && prev(stage()) == stageIdEnd[stageNumber]
+            && stage() == stageIdEnd[stageNumber] + 2
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -235,7 +253,7 @@
         )
     // #endregion Boss Fight Health Challenges
 
-    // #region Damageless Stages
+    // #region Damageless Sub Stages
         achievement(
             id = 21933,
             title = "Gargoyle",
@@ -266,6 +284,24 @@
             description = "Clear the Sewer System, stage 5-1, without taking damage.",
             points = 25,
             trigger = triggerDamagelessSubStage(STAGE_5_1)
+        )
+    // #endregion Damageless Sub Stages
+
+    // #region Damageless Stages
+        achievement(
+            id = 21930,
+            title = "Jetpack Master",
+            description = "Clear stage 2 with full health.",
+            points = 10,
+            trigger = triggerDamegelessStage(2)
+        )
+
+        achievement(
+            id = 21932,
+            title = "Frogman",
+            description = "Clear stage 5 with full health.",
+            points = 10,
+            trigger = triggerDamegelessStage(5)
         )
     // #endregion Damageless Stages
 // #endregion Achievements
