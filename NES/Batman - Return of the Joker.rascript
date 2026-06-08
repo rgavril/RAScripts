@@ -354,3 +354,77 @@
         )
     // #endregion Damageless Stages
 // #endregion Achievements
+
+// #region Rich Presence
+    stageNumberLookup = {
+        0x00: "1-1",
+        0x02: "1-2",
+        0x04: "1-3",
+        0x06: "2-1",
+        0x08: "2-2",
+        0x0a: "3-1",
+        0x0c: "3-2",
+        0x0e: "3-3",
+        0x10: "4-1",
+        0x12: "4-2",
+        0x14: "4-3",
+        0x16: "5-1",
+        0x18: "5-2",
+        0x1a: "6-1",
+        0x1c: "6-2",
+        0x1e: "6-3",
+        0x20: "7-1",
+        0x22: "7-2"
+    }
+
+    stageNameLookup = {
+        0x00: "Cathedral",
+        0x02: "City Rooftops",
+        0x04: "Ace Ranger",
+        0x06: "Assembly Line",
+        0x08: "Weapons Plant",
+        0x0a: "Ice Valley",
+        0x0c: "Excavation Mine",
+        0x0e: "Minedroid",
+        0x10: "Weapons Express",
+        0x12: "Assembly Plant",
+        0x14: "Master CPU",
+        0x16: "Sewer System",
+        0x18: "Deserted Tunnel",
+        0x1a: "Missile Silo",
+        0x1c: "Tank #329",
+        0x1e: "The Joker",
+        0x20: "Tiki Jungle",
+        0x22: "Final Battle"
+    }
+
+    weaponLookup = {
+        0x00: "Default",
+        0x01: "Batarang",
+        0x02: "Cross Bow",
+        0x03: "Sonic Neutralizer",
+        0x04: "Shield Star"
+    }
+
+    rich_presence_conditional_display(
+        stageSection() != SECTION_MAIN_MENU && livesRemaining() != 0xff,
+        "Stage {0}: {1} • Weapon: {2} • Lives: {3}",
+        rich_presence_lookup("StageNumber", stage(), stageNumberLookup),
+        rich_presence_lookup("StageName", stage(), stageNameLookup),
+        rich_presence_lookup("Weapon", weapon(), weaponLookup),
+        rich_presence_value("Lives", livesRemaining())
+    )
+
+    rich_presence_conditional_display(
+        stageSection() != SECTION_MAIN_MENU && livesRemaining() == 0xff,
+        "Stage {0}: {1} • Continue Screen",
+        rich_presence_lookup("StageNumber", stage(), stageNumberLookup),
+        rich_presence_lookup("StageName", stage(), stageNameLookup)
+    )
+
+    rich_presence_display(
+        "In Main Menu"
+    )
+
+
+// #endregion Rich Presence
