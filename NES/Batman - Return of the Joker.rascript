@@ -35,6 +35,23 @@
 
     function energyCapsules() => byte(0x0477)
     function health() => byte(0x0478)
+    function livesRemaining() => byte(0x0482)
+
+    function weapon() => byte(0x0476)
+        WEAPON_DEFAULT = 0x00
+        WEAPON_B = 0x01
+        WEAPON_C = 0x02
+        WEAPON_N = 0x03
+        WEAPON_S = 0x04
+        WEAPON_BACKPACK = 0x05
+
+    function chargeAttackState() => byte(0x00b8)
+        CHARGE_ATTACK_DISABLED = 0x00
+        CHARGE_ATTACK_DISCHARGED = 0x80
+        CHARGE_ATTACK_CHARGING = 0xc0
+        CHARGE_ATTACK_CHARGED = 0xe0
+
+    function backpackChargeAttack() => byte(0x0481)
 
     function bossFightBatmanHealth() => word(0x00b2) * 10
     function bossFightEnemyHealth() => word_be(0x00a9) * 10
@@ -143,6 +160,14 @@
             && prev(stage()) == stageIdEnd[stageNumber]
             && stage() == stageIdEnd[stageNumber] + 2
     }
+
+    function triggerBackpackChargedInStage(stageId) {
+        return
+            stage() == stageId
+            && weapon() == WEAPON_BACKPACK
+            && prev(backpackChargeAttack()) == 0x00
+            && backpackChargeAttack() == 0x80
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -152,6 +177,14 @@
         description = "Get 8 energy capsules and become invincible!",
         points = 5,
         trigger = triggerEnergyCapsules(8)
+    )
+
+    achievement(
+        id = 21893,
+        title = "Bat-Nuke",
+        description = "Use Golden Batman's powerful charged attack in stage 4-1!",
+        points = 5,
+        trigger = triggerBackpackChargedInStage(STAGE_4_1)
     )
 
     // #region Progressions
@@ -250,6 +283,22 @@
             description = "Defeat the Joker's flying machine in stage 6 with 75,000 or more health remaining.",
             points = 25,
             trigger = triggerWinBossFightEnergy(STAGE_6_3, 75000)
+        )
+
+        achievement(
+            id = 21888,
+            title = "One Last Laugh",
+            description = "Defeat the Joker in stage 7 with any weapon other than the Crossbow (C).",
+            points = 25,
+            trigger = weapon() != WEAPON_C && triggerWinBossFight(STAGE_7_2)
+        )
+
+        achievement(
+            id = 21887,
+            title = "I Am the Night!",
+            description = "Defeat the Joker in stage 7 with two lives remaining.",
+            points = 25,
+            trigger = livesRemaining() == 2 && triggerWinBossFight(STAGE_7_2)
         )
     // #endregion Boss Fight Health Challenges
 
