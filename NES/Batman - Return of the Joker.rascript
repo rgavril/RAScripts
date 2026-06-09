@@ -174,7 +174,7 @@
     achievement(
         id = 21892,
         title = "Beyond Batman",
-        description = "Get 8 energy capsules and become invincible!",
+        description = "Become invincible by collecting 8 energy capsules",
         points = 5,
         trigger = triggerEnergyCapsules(8)
     )
@@ -182,7 +182,7 @@
     achievement(
         id = 21893,
         title = "Bat-Nuke",
-        description = "Use Golden Batman's powerful charged attack in stage 4-1!",
+        description = "Use the backpack super power up weapon in Stage 4-1",
         points = 5,
         trigger = triggerBackpackChargedInStage(STAGE_4_1)
     )
@@ -191,7 +191,7 @@
         achievement(
             id = 21880,
             title = "Bat in the Belfry",
-            description = "Defend Gotham Cathedral by defeating Ace Ranger and his airship!",
+            description = "Clear Stage 1: Gotham City Cathedral and defat Ace Ranger",
             points = 5,
             type = "progression",
             trigger = triggerStageCompleted(STAGE_1_3)
@@ -200,7 +200,7 @@
         achievement(
             id = 21881,
             title = "A Bat-Jetpack!?",
-            description = "Destroy the Joker's weapons stockpiles!",
+            description = "Clear Stage 2: The Joker's Warehouse",
             points = 5,
             type = "progression",
             trigger = triggerStageCompleted(STAGE_2_2)
@@ -209,7 +209,7 @@
         achievement(
             id = 21882,
             title = "Batman on Ice",
-            description = "Foil the Joker's mining scheme by defeating his Minedroid!",
+            description = "Clear Stage 3: Snow Mountain and defeat Minedroid",
             points = 10,
             type = "progression",
             trigger = triggerStageCompleted(STAGE_3_3)
@@ -218,7 +218,8 @@
         achievement(
             id = 21883,
             title = "Deja Vu",
-            description = "Shut down the Joker's explosives refinery by taking out the Master CPU!",
+            // Clear Stage 4: Refinery and halt explosives production by taking out the Master CPU
+            description = "Clear Stage 4: Joker's Refinery and defeat Master CPU",
             points = 10,
             type = "progression",
             trigger = triggerStageCompleted(STAGE_4_3)
@@ -227,7 +228,7 @@
         achievement(
             id = 21884,
             title = "Sewer Surfin'",
-            description = "Make your way to the Joker's missile silo through the Gotham sewers!",
+            description = "Clear Stage 5: Underground Conduit",
             points = 10,
             type = "progression",
             trigger = triggerStageCompleted(STAGE_5_2)
@@ -236,7 +237,7 @@
         achievement(
             id = 21885,
             title = "The Army's a Joke",
-            description = "Put a stop to the Joker's deadly plans and defeat his flying machine!",
+            description = "Clear Stage 6: Ammunition Base and defeat Jocker's flying machine",
             points = 25,
             type = "progression",
             trigger = triggerStageCompleted(STAGE_6_3)
@@ -245,7 +246,7 @@
         achievement(
             id = 21886,
             title = "Outer Heaven",
-            description = "Chase the Joker to his island hideout and take him out, once and for all!",
+            description = "Clear Stage 7: Island of Ha-Hacienda and defeat Joker once and for all",
             points = 25,
             type = "win_condition",
             trigger = triggerWinBossFight(STAGE_7_2)
@@ -256,7 +257,7 @@
         achievement(
             id = 21889,
             title = "Ace of Aces",
-            description = "Defeat Ace Ranger in stage 1 without taking damage.",
+            description = "Defeat Ace Ranger in Stage 1-3 without taking damage",
             points = 10,
             trigger = triggerWinBossFightEnergy(STAGE_1_3, 80000)
         )
@@ -264,7 +265,7 @@
         achievement(
             id = 21890,
             title = "Batman & Robot",
-            description = "Defeat the Joker's Minedroid in stage 3 without taking damage.",
+            description = "Defeat Minedroid in Stage 3-3 without taking damage",
             points = 10,
             trigger = triggerWinBossFightEnergy(STAGE_3_3, 80000)
         )
@@ -272,7 +273,7 @@
         achievement(
             id = 21931,
             title = "Oracle? Who Needs Her?",
-            description = "Defeat the Master CPU in stage 4 with 70,000 or more health remaining.",
+            description = "Defeat the Master CPU in Stage 4-3 with 70,000 or more health remaining",
             points = 25,
             trigger = triggerWinBossFightEnergy(STAGE_4_3, 70000)
         )
@@ -280,7 +281,7 @@
         achievement(
             id = 21891,
             title = "The Killing Joke",
-            description = "Defeat the Joker's flying machine in stage 6 with 75,000 or more health remaining.",
+            description = "Defeat the Joker's flying machine in Stage 6-3 with 75,000 or more health remaining",
             points = 25,
             trigger = triggerWinBossFightEnergy(STAGE_6_3, 75000)
         )
@@ -288,7 +289,7 @@
         achievement(
             id = 21888,
             title = "One Last Laugh",
-            description = "Defeat the Joker in stage 7 with any weapon other than the Crossbow (C).",
+            description = "Defeat the Joker in Stage 7-2 with any weapon other than the Crossbow",
             points = 25,
             trigger = weapon() != WEAPON_C && triggerWinBossFight(STAGE_7_2)
         )
@@ -296,7 +297,7 @@
         achievement(
             id = 21887,
             title = "I Am the Night!",
-            description = "Defeat the Joker in stage 7 with two lives remaining.",
+            description = "Defeat the Joker in Stage 7-2 with two lives remaining",
             points = 25,
             trigger = livesRemaining() == 2 && triggerWinBossFight(STAGE_7_2)
         )
@@ -306,7 +307,7 @@
         achievement(
             id = 21933,
             title = "Gargoyle",
-            description = "Clear the Gotham Cathedral, stage 1-1, without taking damage.",
+            description = "Clear Stage 1-1 without taking damage",
             points = 10,
             trigger = triggerDamagelessSubStage(STAGE_1_1)
         )
@@ -314,7 +315,7 @@
         achievement(
             id = 21934,
             title = "The Batman's Natural Habitat",
-            description = "Clear the City Rooftops, stage 1-2, without taking damage.",
+            description = "Clear Stage 1-2 without taking damage",
             points = 10,
             trigger = triggerDamagelessSubStage(STAGE_1_2)
         )
@@ -322,7 +323,7 @@
         achievement(
             id = 21935,
             title = "More Slippery Than You Look",
-            description = "Clear the Ice Valley, stage 3-1, without taking damage.",
+            description = "Clear Stage 3-1 without taking damage",
             points = 25,
             trigger = triggerDamagelessSubStage(STAGE_3_1)
         )
@@ -330,7 +331,7 @@
         achievement(
             id = 21936,
             title = "Pizza Power",
-            description = "Clear the Sewer System, stage 5-1, without taking damage.",
+            description = "Clear Stage 5-1 without taking damage",
             points = 25,
             trigger = triggerDamagelessSubStage(STAGE_5_1)
         )
@@ -340,7 +341,7 @@
         achievement(
             id = 21930,
             title = "Jetpack Master",
-            description = "Clear stage 2 with full health.",
+            description = "Clear all of Stage 2 with full health remaining",
             points = 10,
             trigger = triggerDamegelessStage(2)
         )
@@ -348,7 +349,7 @@
         achievement(
             id = 21932,
             title = "Frogman",
-            description = "Clear stage 5 with full health.",
+            description = "Clear all of Stage 5 with full health remaining",
             points = 10,
             trigger = triggerDamegelessStage(5)
         )
