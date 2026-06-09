@@ -69,6 +69,7 @@
                 once(areaLevel() == 2 && isBonusStage() == FALSE && frameStageCompletedJingleStarted()),
                 once(areaLevel() == 3 && isBonusStage() == FALSE && frameStageCompletedJingleStarted()),
                 once(areaLevel() == 4 && isBonusStage() == FALSE && frameStageCompletedJingleStarted()),
+                once(areaLevel() == 5 && isBonusStage() == FALSE && frameStageCompletedJingleStarted()),
                 once(areaLevel() == 6 && isBonusStage() == FALSE && frameStageCompletedJingleStarted()),
                 once(areaLevel() == 7 && isBonusStage() == FALSE && frameStageCompletedJingleStarted()),
                 once(areaLevel() == 8 && isBonusStage() == FALSE && frameStageCompletedJingleStarted())
