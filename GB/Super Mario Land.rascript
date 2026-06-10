@@ -259,7 +259,7 @@
             && never(currentStage() != targetStage)
             && never(gameplayState() == GAMEPLAY_DEATH)
             && never(gameplayState() == GAMEPLAY_SECRET_AREA_INIT)
-            && never(timeRemaining() < 400 - time)
+            && never(timeRemaining() < 400 - time && gameplayState() != GAMEPLAY_START_LIFE_OR_LEVEL)
 
         targetConditions = 
             currentStage() == targetStage
