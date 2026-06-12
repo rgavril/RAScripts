@@ -82,10 +82,35 @@
             && frameMatchWon()
     }
 
+    function triggerStraightSetsMinLevel(level) {
+        return
+            inAttractMode() == FALSE
+            && currentDifficulty() >= level
+            && isSetWonByComputer(1) == FALSE
+            && isSetWonByComputer(2) == FALSE
+            && isSetWonByComputer(3) == FALSE
+            && frameMatchWon()
+    }
+
     function triggerTwo60SetsLevel(level) {
         return
             inAttractMode() == FALSE
             && currentDifficulty() == level
+            
+            && isSetWonByPlayer(1) == TRUE
+            && playerScoreForSet(1) == 6
+            && computerScoreForSet(1) == 0
+
+            && prev(isSetWonByPlayer(2)) == FALSE
+            && isSetWonByPlayer(2) == TRUE
+            && playerScoreForSet(2) == 6
+            && computerScoreForSet(2) == 0
+    }
+
+    function triggerTwo60SetsMinLevel(level) {
+        return
+            inAttractMode() == FALSE
+            && currentDifficulty() >= level
             
             && isSetWonByPlayer(1) == TRUE
             && playerScoreForSet(1) == 6
@@ -119,6 +144,17 @@
             inAttractMode() == FALSE
             && prev(isSetWonByPlayer(setNumber)) == FALSE
             && isSetWonByPlayer(setNumber) == TRUE
+    }
+
+    function triggerWinSetFlawless() {
+        return
+            inAttractMode() == FALSE
+            && any_of(range(1,3), setNumber =>
+                prev(isSetWonByPlayer(setNumber)) == FALSE
+                && isSetWonByPlayer(setNumber) == TRUE
+                && playerScoreForSet(setNumber) == 6
+                && computerScoreForSet(setNumber) == 0
+            )
     }
 
     function triggerTieBreaker() {
@@ -181,6 +217,31 @@
             pauseConditions && measured(triggerCondition) && (resetConditions || always_false())
     }
 
+    function triggerNetPointsPerSet(times) {
+        pauseConditions = unless(
+            once(
+                // Pause when last shot was NOT a net shot
+                (
+                    ballSFX() == BALL_NORMAL_SHOT
+                    || ballSFX() == BALL_LOB_UP
+                    || ballSFX() == BALL_SERVER_SHOT
+                )
+                // Unpause when last shot was a net shot
+                && never(ballSFX() == BALL_NET_SHOT)
+            )
+        )
+
+        resetConditions = 
+            never(inAttractMode() == TRUE)
+            && never(currentSet() != prev(currentSet()))
+
+        triggerCondition =
+            repeated(times, framePointWon())
+
+        return 
+            pauseConditions && measured(triggerCondition) && (resetConditions || always_false())
+    }
+
     function triggerWinCup(minStartDifficulty) {
         return
             inAttractMode() == FALSE
@@ -196,7 +257,6 @@
             id = 349659,
             title = "Break Out Ya Tennis Shoes",
             description = "Win a game of singles on Level 1",
-            type = "win_condition",
             points = 3,
             trigger = triggerWinSinglesOnLevel(1)
         )
@@ -205,7 +265,6 @@
             id = 349660,
             title = "A Bit Faster",
             description = "Win a game of singles on Level 2",
-            type = "win_condition",
             points = 5,
             trigger = triggerWinSinglesOnLevel(2)
         )
@@ -214,7 +273,6 @@
             id = 349661,
             title = "Quick Feet",
             description = "Win a game of singles on Level 3",
-            type = "win_condition",
             points = 5,
             trigger = triggerWinSinglesOnLevel(3)
         )
@@ -223,7 +281,6 @@
             id = 349662,
             title = "Break Out Ya Running Shoes",
             description = "Win a game of singles on Level 4",
-            type = "win_condition",
             points = 10,
             trigger = triggerWinSinglesOnLevel(4)
         )
@@ -232,8 +289,7 @@
             id = 349663,
             title = "Please Slow Down",
             description = "Win a game of singles on Level 5",
-            type = "win_condition",
-            points = 25,
+            points = 10,
             trigger = triggerWinSinglesOnLevel(5)
         )
     // #endregion Level Wins
@@ -241,7 +297,7 @@
     // #region Level Straight Wins
         achievement(
             id = 28255,
-            title = "Baby Steps",
+            title = "[DEMOTED] Baby Steps",
             description = "Beat Level 1 in straight sets",
             points = 5,
             trigger = triggerStraightSetsLevel(1)
@@ -249,7 +305,7 @@
 
         achievement(
             id = 28256,
-            title = "New Guy on Tour",
+            title = "[DEMOTED] New Guy on Tour",
             description = "Beat Level 2 in straight sets",
             points = 10,
             trigger = triggerStraightSetsLevel(2)
@@ -257,7 +313,7 @@
 
         achievement(
             id = 28257,
-            title = "Moments Till Stardom",
+            title = "[DEMOTED] Moments Till Stardom",
             description = "Beat Level 3 in straight sets",
             points = 10,
             trigger = triggerStraightSetsLevel(3)
@@ -266,14 +322,14 @@
         achievement(
             id = 28258,
             title = "Tennis Star",
-            description = "Beat Level 4 in straight sets",
+            description = "Beat Level 4 or above in straight sets",
             points = 25,
-            trigger = triggerStraightSetsLevel(4)
+            trigger = triggerStraightSetsMinLevel(4)
         )
 
         achievement(
             id = 28259,
-            title = "Tennis Legend",
+            title = "[DEMOTED] Tennis Legend",
             description = "Beat Level 5 in straight sets",
             points = 50,
             trigger = triggerStraightSetsLevel(5)
@@ -283,7 +339,7 @@
     // #region Level 6-0, 6-0 Wins
         achievement(
             id = 28280,
-            title = "Start of Something New",
+            title = "[DEMOTED] Start of Something New",
             description = "Beat Level 1 in straight sets 6-0 6-0",
             points = 10,
             trigger = triggerTwo60SetsLevel(1)
@@ -291,15 +347,15 @@
 
         achievement(
             id = 28281,
-            title = "Two to Tango",
-            description = "Beat Level 2 in straight sets 6-0 6-0",
+            title = "Absolute Winner",
+            description = "Beat Level 2 or above with a score of 6-0, 6-0",
             points = 25,
-            trigger = triggerTwo60SetsLevel(2)
+            trigger = triggerTwo60SetsMinLevel(2)
         )
 
         achievement(
             id = 28282,
-            title = "Three Is Usually Company",
+            title = "[DEMOTED] Three Is Usually Company",
             description = "Beat Level 3 in straight sets 6-0 6-0",
             points = 25,
             trigger = triggerTwo60SetsLevel(3)
@@ -340,7 +396,7 @@
 
     achievement(
         id = 28277,
-        title = "First of Many",
+        title = "[DEMOTED] First of Many",
         description = "Win the first set of a match",
         points = 5,
         trigger = triggerWinSet(1)
@@ -348,7 +404,7 @@
 
     achievement(
         id = 28278,
-        title = "Second of the Match",
+        title = "[DEMOTED] Second of the Match",
         description = "Win the second set of a match",
         points = 5,
         trigger = triggerWinSet(2)
@@ -370,9 +426,17 @@
     )
 
     achievement(
+        title = "Net Superiority",
+        description = "Score 10 points from the net in a single set",
+        points = 5,
+        trigger = triggerNetPointsPerSet(10)
+    )
+
+    achievement(
         title = "Tournament Champion",
         description = "Win the cup by winning 2 consecutive matches starting from any Level",
         points = 10,
+        type = "win_condition",
         trigger = triggerWinCup(minStartDifficulty = 1)
     )
 
@@ -381,6 +445,13 @@
         description = "Win the gold cup by winning 2 consecutive matches starting from Level 5",
         points = 25,
         trigger = triggerWinCup(minStartDifficulty = 5)
+    )
+
+    achievement(
+        title = "Flawless Victory",
+        description = "Win a set without conceding any points",
+        points = 10,
+        trigger = triggerWinSetFlawless()
     )
 // #endregion Achievements
 
