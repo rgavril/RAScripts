@@ -37,6 +37,9 @@
     function matchesWon() => byte(0x004d)
 
     function playerBallShotCounter() => byte(0x0304)
+    function servingTeam() => bit1(0x008d)
+        SERVING_TEAM_PLAYER = 0x00
+        SERVING_TEAM_CPU = 0x01
 
     function ballSFX() => byte(0x00ff)
         BALL_BOUNCE_ON_GROUND = 0x01
@@ -202,7 +205,10 @@
                     || ballSFX() == BALL_SERVER_SHOT
                 )
                 // Unpause when last shot was a lob shot
-                && never(ballSFX() == BALL_LOB_UP)
+                && never(
+                    ballSFX() == BALL_LOB_UP
+                    && playerBallShotCounter() > 0x00
+                )
             )
         )
 
@@ -227,7 +233,10 @@
                     || ballSFX() == BALL_SERVER_SHOT
                 )
                 // Unpause when last shot was a net shot
-                && never(ballSFX() == BALL_NET_SHOT)
+                && never(
+                    ballSFX() == BALL_NET_SHOT
+                    && playerBallShotCounter() > 0x00
+                )
             )
         )
 
@@ -242,12 +251,64 @@
             pauseConditions && measured(triggerCondition) && (resetConditions || always_false())
     }
 
+    function triggerAcesInSingleGame(times) {
+        pauseConditions = unless(
+            once(
+                // Pause when last shot was NOT a serve shot
+                (
+                    ballSFX() == BALL_NORMAL_SHOT
+                    || ballSFX() == BALL_LOB_UP
+                    || ballSFX() == BALL_NET_SHOT
+                )
+                // Unpause when last shot was a serve shot
+                && never(
+                    ballSFX() == BALL_SERVER_SHOT
+                )
+            )
+        )
+
+        resetConditions = 
+            never(inAttractMode() == TRUE)
+            && never(gamesFinished() != prev(gamesFinished()))
+
+        triggerCondition =
+            repeated(times, 
+                framePointWon()
+                && servingTeam() == SERVING_TEAM_PLAYER
+            )
+
+        return 
+            pauseConditions && measured(triggerCondition) && (resetConditions || always_false())
+    }
+
     function triggerWinCup(minStartDifficulty) {
         return
             inAttractMode() == FALSE
             && startDifficulty() >= minStartDifficulty
             && prev(matchesWon()) == 1
             && matchesWon() == 2
+    }
+
+    function triggerWinDeuceMinPlays(balls) {
+        ballsRequiredCondition = repeated(balls - 1, 
+            inDeuceOrTie() == IN_DEUCE
+            && (
+                playerPoints() != prev(playerPoints())
+                ||
+                computerPoints() != prev(computerPoints())
+            )
+        )
+
+        cancelConditions = 
+            never(inAttractMode() == TRUE)
+            && never(prev(inDeuceOrTie() != IN_DEUCE))
+
+        triggerCondition =
+            any_of(range(1, 3), setNumber =>
+                playerScoreForSet(setNumber) == prev(playerScoreForSet(setNumber)) + 1
+            )
+
+        return ballsRequiredCondition && cancelConditions && trigger_when(triggerCondition)
     }
 // #endregion Triggers
 
@@ -452,6 +513,20 @@
         description = "Win a set without conceding any points",
         points = 10,
         trigger = triggerWinSetFlawless()
+    )
+
+    achievement(
+        title = "Pair of Aces",
+        description = "Score 2 aces in a single game",
+        points = 3,
+        trigger = triggerAcesInSingleGame(2)
+    )
+
+    achievement(
+        title = "King of Deuces",
+        description = "Play through a minimum of 5 serves during a single Deuce before winning the game",
+        points = 5,
+        trigger = triggerWinDeuceMinPlays(5)
     )
 // #endregion Achievements
 
