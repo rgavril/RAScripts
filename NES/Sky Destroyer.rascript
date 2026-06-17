@@ -19,6 +19,21 @@
 
     function missonCompletedCountdown() => byte(0x00c0)
 
+    function heavyBomberState() => byte(0x007e)
+        HEAVY_BOMBER_EXPLODING_FRAME1 = 0x09
+        HEAVY_BOMBER_EXPLODING_FRAME2 = 0x0a
+    function aircraftCarrierDeathAnimation() => byte(0x006c)
+        AIRCRAFT_CARRIER_NOT_DEAD = 0x00
+        AIRCRAFT_CARRIER_EXPLODING_FRAME_1 = 0x1e
+    function satelliteState() => byte(0x00a7)
+        SATELLITE_STATE_FALLING = 0x02
+        SATELLITE_STATE_EXPLODING = 0x04
+    function battleshipDeathAnimation() => byte(0x007d)
+        BATTLESHIP_DEATH_FRAME1 = 0x09
+        BATTLESHIP_DEATH_FRAME2 = 0x08
+    function airshipDeathAnimation() => byte(0x00ab)
+        AIRSHIP_DEATH_FRAME1 = 0x28
+        AIRSHIP_DEATH_FRAME2 = 0x27
 // #endregion Memory Locations
 
 // #region Frames
@@ -82,6 +97,46 @@
             && gameStarted() == TRUE
             && prev(score()) < score
             && score() >= score
+    }
+
+    function triggerKillHeavyBomber() {
+        return
+            cheatActive() == FALSE
+            && gameStarted() == TRUE
+            && prev(heavyBomberState()) == HEAVY_BOMBER_EXPLODING_FRAME1
+            && heavyBomberState() == HEAVY_BOMBER_EXPLODING_FRAME2
+    }
+
+    function triggerKillAircraftCarrier() {
+        return
+            cheatActive() == FALSE
+            && gameStarted() == TRUE
+            && prev(aircraftCarrierDeathAnimation()) == AIRCRAFT_CARRIER_NOT_DEAD
+            && aircraftCarrierDeathAnimation() == AIRCRAFT_CARRIER_EXPLODING_FRAME_1
+    }
+
+    function triggerKillSatellite() {
+        return
+            cheatActive() == FALSE
+            && gameStarted() == TRUE
+            && prev(satelliteState()) == SATELLITE_STATE_FALLING
+            && satelliteState() == SATELLITE_STATE_EXPLODING
+    }
+
+    function triggerKillHighSpeedBattleship() {
+        return
+            cheatActive() == FALSE
+            && gameStarted() == TRUE
+            && prev(battleshipDeathAnimation()) == BATTLESHIP_DEATH_FRAME1
+            && battleshipDeathAnimation() == BATTLESHIP_DEATH_FRAME2
+    }
+
+    function triggerKillAirship() {
+        return
+            cheatActive() == FALSE
+            && gameStarted() == TRUE
+            && prev(airshipDeathAnimation()) == AIRSHIP_DEATH_FRAME1
+            && airshipDeathAnimation() == AIRSHIP_DEATH_FRAME2
     }
 // #endregion Triggers
 
@@ -194,6 +249,47 @@
             trigger = triggerScore(500000)
         )
     // #endregion Stage Clear Deathless
+
+    // Heavy Bomber 
+    achievement(
+        title = "Heavy Bomber",
+        description = "Take down a Heavy Bomber by destroying all of it's four engines",
+        points = 5,
+        trigger = triggerKillHeavyBomber()
+    )
+
+    // Aircraft Carrier
+    achievement(
+        title = "Aircraft Carrier",
+        description = "Destroy a Aircraft Carrier before it vanishes over the horizon",
+        points = 5,
+        trigger = triggerKillAircraftCarrier()
+    )
+
+    // Sattelite (Appears after 2 heavy bombers are destroyed)
+    achievement(
+        title = "Satellite",
+        description = "Shot down a falling Satellite before it hits the water",
+        points = 10,
+        trigger = triggerKillSatellite()
+    )
+
+    // High-Speed Battleship
+    achievement(
+        title = "High-Speed Battleship",
+        description = "Destroy a High-Speed Battleship",
+        points = 5,
+        trigger = triggerKillHighSpeedBattleship()
+    )
+
+    // Airship (Appears when High-Speed Battleship is destroyed on it's final sprite-frame state)
+    achievement(
+        title = "Airship",
+        description = "Shot down an Airship before it wanishes back behind the clouds",
+        points = 25,
+        trigger = triggerKillAirship()
+    )
+
 // #endregion Achievements
 
 // #region Rich Presence
