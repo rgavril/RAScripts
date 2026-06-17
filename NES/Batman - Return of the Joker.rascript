@@ -57,6 +57,8 @@
     function bossFightEnemyHealth() => word_be(0x00a9) * 10
 
     function musicStart() => byte(0x0041)
+
+    function stageEndAnimationTimer() => byte(0x0603)
 // #endregion Memory Locations
 
 // #region Frames
@@ -157,8 +159,9 @@
         return
             frameInGameplay()
             && health() == 0x0e
-            && prev(stage()) == stageIdEnd[stageNumber]
-            && stage() == stageIdEnd[stageNumber] + 2
+            && stage() == stageIdEnd[stageNumber]
+            && prev(stageEndAnimationTimer()) == 1
+            && stageEndAnimationTimer() == 2
     }
 
     function triggerBackpackChargedInStage(stageId) {
@@ -331,7 +334,7 @@
         achievement(
             id = 21936,
             title = "Pizza Power",
-            description = "Clear the Sewer System, stage 5-1, without taking damage.",
+            description = "Clear the Sewer System, Stage 5-1, without taking damage.",
             points = 25,
             trigger = triggerDamagelessSubStage(STAGE_5_1)
         )
