@@ -16,6 +16,9 @@
     function score() => tbyte(0x0034)*10
     function bonusStageCounter() => byte(0x00c4)
     function planeDeathAnimation() => byte(0x006d)
+    function torpedoState() => byte(0x0072)
+        TORPEDO_STATE_NOT_ON_SCREEN = 0x00
+        TORPEDO_STATE_DROPPING = 0xff
 
     function missonCompletedCountdown() => byte(0x00c0)
 
@@ -44,6 +47,9 @@
     function sumarineDeathAnimation() => byte(0x008f)
         SUBMARINE_DEATH_FRAME1 = 0x0b
         SUBMARINE_DEATH_FRAME2 = 0x0a
+    function islandState() => byte(0x0090)
+        ISLAND_STATE_ALIVE = 0x03
+        ISLAND_STATE_EXPLODING_FRAME1 = 0x04
 // #endregion Memory Locations
 
 // #region Frames
@@ -62,6 +68,18 @@
         return
             prev(planeDeathAnimation()) == 0x00
             && planeDeathAnimation() != 0x00
+    }
+
+    function frameTorpedoLaunched() {
+        return
+            prev(torpedoState()) == TORPEDO_STATE_NOT_ON_SCREEN
+            && torpedoState() == TORPEDO_STATE_DROPPING
+    }
+
+    function frameTorpedoDespawned() {
+        return
+            prev(torpedoState()) != TORPEDO_STATE_NOT_ON_SCREEN
+            && torpedoState() == TORPEDO_STATE_NOT_ON_SCREEN
     }
 // #endregion Frames
 
@@ -172,6 +190,29 @@
             && gameStarted() == TRUE
             && prev(sumarineDeathAnimation()) == SUBMARINE_DEATH_FRAME1
             && sumarineDeathAnimation() == SUBMARINE_DEATH_FRAME2
+    }
+
+    function triggerKillIslandOneHit() {
+        primingConditions =
+            once(
+                prev(islandState()) != ISLAND_STATE_ALIVE
+                && islandState() == ISLAND_STATE_ALIVE
+            )
+
+        cancelConditions = 
+            never(cheatActive() == TRUE)
+            && never(gameStarted() == FALSE)
+            && never(framePlaneDeathAnimationStarted())
+            && never(
+                once(frameTorpedoLaunched() && islandState() == ISLAND_STATE_ALIVE)
+                && frameTorpedoDespawned() && islandState() == ISLAND_STATE_ALIVE
+            )
+
+        targetConditions = 
+            prev(islandState()) == ISLAND_STATE_ALIVE
+            && islandState() == ISLAND_STATE_EXPLODING_FRAME1
+
+        return primingConditions && cancelConditions && trigger_when(targetConditions)
     }
 // #endregion Triggers
 
@@ -349,6 +390,13 @@
         trigger = triggerKillSubmarine()
     )
 
+    // Island in One Hit
+    achievement(
+        title = "Island One Hit",
+        description = "Destroy a fort by firing no more than one torpedo after the fort becomes fully visible",
+        points = 25,
+        trigger = triggerKillIslandOneHit()
+    )
 // #endregion Achievements
 
 // #region Rich Presence
