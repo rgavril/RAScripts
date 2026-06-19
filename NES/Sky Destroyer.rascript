@@ -19,6 +19,10 @@
 
     function missonCompletedCountdown() => byte(0x00c0)
 
+    function bonusSequenceProgress() => byte(0x00c4)
+        BONUS_SEQUENCE_END_MESSAGE = 0xf9
+    function redPlanesEscaped() => byte(0x00b3)
+
     function heavyBomberState() => byte(0x007e)
         HEAVY_BOMBER_EXPLODING_FRAME1 = 0x09
         HEAVY_BOMBER_EXPLODING_FRAME2 = 0x0a
@@ -97,6 +101,15 @@
             && gameStarted() == TRUE
             && prev(score()) < score
             && score() >= score
+    }
+
+    function triggerBonusStageWon() {
+        return
+            cheatActive() == FALSE
+            && gameStarted() == TRUE
+            && redPlanesEscaped() == 0
+            && prev(bonusSequenceProgress()) != BONUS_SEQUENCE_END_MESSAGE
+            && bonusSequenceProgress() == BONUS_SEQUENCE_END_MESSAGE
     }
 
     function triggerKillHeavyBomber() {
@@ -249,6 +262,14 @@
             trigger = triggerScore(500000)
         )
     // #endregion Stage Clear Deathless
+
+    // Bonus Stage
+    achievement(
+        title = "Bonus Stage",
+        description = "Shot down all red planes in from a Bonus Stage and earn 5,000 points",
+        points = 10,
+        trigger = triggerBonusStageWon()
+    )
 
     // Heavy Bomber 
     achievement(
