@@ -38,6 +38,12 @@
     function airshipDeathAnimation() => byte(0x00ab)
         AIRSHIP_DEATH_FRAME1 = 0x28
         AIRSHIP_DEATH_FRAME2 = 0x27
+    function ghostShipDeathAnimation() => byte(0x00ae)
+        GHOSTSHIP_DEATH_FRAME1 = 0x27
+        GHOSTSHIP_DEATH_FRAME2 = 0x26
+    function sumarineDeathAnimation() => byte(0x008f)
+        SUBMARINE_DEATH_FRAME1 = 0x0b
+        SUBMARINE_DEATH_FRAME2 = 0x0a
 // #endregion Memory Locations
 
 // #region Frames
@@ -150,6 +156,22 @@
             && gameStarted() == TRUE
             && prev(airshipDeathAnimation()) == AIRSHIP_DEATH_FRAME1
             && airshipDeathAnimation() == AIRSHIP_DEATH_FRAME2
+    }
+
+    function triggerKillGhostship() {
+        return
+            cheatActive() == FALSE
+            && gameStarted() == TRUE
+            && prev(ghostShipDeathAnimation()) == GHOSTSHIP_DEATH_FRAME1
+            && ghostShipDeathAnimation() == GHOSTSHIP_DEATH_FRAME2
+    }
+
+    function triggerKillSubmarine() {
+        return
+            cheatActive() == FALSE
+            && gameStarted() == TRUE
+            && prev(sumarineDeathAnimation()) == SUBMARINE_DEATH_FRAME1
+            && sumarineDeathAnimation() == SUBMARINE_DEATH_FRAME2
     }
 // #endregion Triggers
 
@@ -309,6 +331,22 @@
         description = "Shot down an Airship before it wanishes back behind the clouds",
         points = 25,
         trigger = triggerKillAirship()
+    )
+
+    // Ghost Ship (Appears when Aircraft Carrier is destroyed on it's first sprite-frame state during the night)
+    achievement(
+        title = "Ghost Ship",
+        description = "Shot down an Ghost Ship and earn 100,000 points",
+        points = 50,
+        trigger = triggerKillGhostship()
+    )
+
+    // Submarine
+    achievement(
+        title = "Submarine",
+        description = "Shot down an Submarine",
+        points = 10,
+        trigger = triggerKillSubmarine()
     )
 
 // #endregion Achievements
