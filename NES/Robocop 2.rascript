@@ -39,6 +39,8 @@
 
     function demoGameplay() => byte(0x059c)
 
+    function safeCodeDigits() => byte(0x00c1)
+
     function finalFightRound() => byte(0x00a7) + 1
     function finalFightHealth() => byte(0x009f) * 10 + byte(0x00a0)
     function finalFightRoundState() => byte(0x00a5)
@@ -149,6 +151,15 @@
             && activePlayer() == ACTIVE_PLAYER_1
             && byte(0x0059) == puzzleLevel
             && unstableLivesRemaining() > prev(unstableLivesRemaining())
+    }
+
+    function triggerSafeCracker(safecrackerLevel) {
+        return
+            demoGameplay() == FALSE
+            && activePlayer() == ACTIVE_PLAYER_1
+            && byte(0x0059) == safecrackerLevel
+            && safeCodeDigits() == 3
+            && prev(safeCodeDigits()) != 3
     }
 
     function triggerAimTestCompleted() {
@@ -572,7 +583,7 @@
             title = "1st Floor Safecracker",
             description = "Discover the secret strongroom from Level 9 and crack the code",
             points = 5,
-            trigger = triggerPuzzleCompleted(LEVEL_9_SECRET)
+            trigger = triggerSafeCracker(LEVEL_9_SECRET)
         )
 
         // Level 10 Secret Area : Puzzle Minigame
@@ -588,7 +599,7 @@
             title = "3rd Floor Safecracker",
             description = "Discover the secret strongroom from Level 11 and crack the code",
             points = 5,
-            trigger = triggerPuzzleCompleted(LEVEL_11_SECRET)
+            trigger = triggerSafeCracker(LEVEL_11_SECRET)
         )
     // #endregion Secret Area Achivement
 
