@@ -214,6 +214,21 @@
 
         return primingConditions && cancelConditions && trigger_when(targetConditions)
     }
+
+    function triggerAirFightKills(total) {
+        cancelConditions = 
+            never(cheatActive() == TRUE)
+            && never(gameStarted() == FALSE)
+            && never(framePlaneDeathAnimationStarted())
+
+        targetConditions = 
+                tally_of(range(1,7), total, planeId =>
+                    prev(byte(0x0707 + (planeId-1)*8)) == 0x07
+                    && byte(0x0707 + (planeId-1)*8) == 0x06
+                )
+
+        return cancelConditions && measured(targetConditions)
+    }
 // #endregion Triggers
 
 // #region Leaderboards
@@ -386,7 +401,7 @@
     achievement(
         title = "Submarine",
         description = "Shot down an Submarine",
-        points = 10,
+        points = 5,
         trigger = triggerKillSubmarine()
     )
 
@@ -396,6 +411,14 @@
         description = "Destroy a fort by firing no more than one torpedo after the fort becomes fully visible",
         points = 25,
         trigger = triggerKillIslandOneHit()
+    )
+
+    // Air Fight Challange
+    achievement(
+        title = "Air Fight Challange",
+        description = "Shoot down 100 planes in a single life",
+        points = 10,
+        trigger = triggerAirFightKills(100)
     )
 // #endregion Achievements
 
