@@ -41,6 +41,12 @@
         ACTIVE_PLAYER_1 = 0x00
         ACTIVE_PLAYER_2 = 0x01
     function finalBossKills() => byte(0x00aa)
+    function weapon() => byte(0x00c5)
+        WEAPON_AXE = 0x36
+        WEAPON_LANCE = 0x40
+        WEAPON_DAGGER = 0x42
+        WEAPON_FIRE = 0x44
+        WEAPON_SHIELD = 0x4f
 // #endregion Memory Locations
 
 // #region Frames
@@ -71,69 +77,126 @@
             && prev(finalBossKills()) == quest - 1
             && finalBossKills() == quest
     }
+
+    function triggerNoDaggerChallenge() {
+        completeConditions =
+            prev(finalBossKills()) == 1
+            && finalBossKills() == 2
+
+        primingConditions =
+            prev(gameState()) != GAME_STATE_PLAYING
+            && gameState() == GAME_STATE_PLAYING
+            && inDemo() == IN_DEMO_NO
+            && activePlayer() == ACTIVE_PLAYER_1
+            && stage() == STAGE_1A
+            && weapon() != WEAPON_DAGGER
+            && finalBossKills() == 0
+
+        resetConditions =
+            weapon() == WEAPON_DAGGER
+            || stageSelect() == STAGE_SELECT_ACTIVE
+
+        
+        requiredConditions =
+            gameState() == GAME_STATE_PLAYING
+            && inDemo() == IN_DEMO_NO
+            && activePlayer() == ACTIVE_PLAYER_1
+
+
+        return once(primingConditions) && never(resetConditions) && trigger_when(completeConditions) && requiredConditions
+    }
+
+    function triggerAstarothLanceChallenge() {
+        return
+            gameState() == GAME_STATE_PLAYING
+            && inDemo() == IN_DEMO_NO
+            && stageSelect() == STAGE_SELECT_ACTIVE
+            && activePlayer() == ACTIVE_PLAYER_1
+            && stage() == STAGE_7
+            && weapon() == WEAPON_LANCE
+            && finalBossKills() == prev(finalBossKills()) + 1
+    }
 // #endregion Triggers
 
 // #region Achievements
-    achievement(
-        id = 16421,
-        title = "Strange Unicorn",
-        description = "Complete Stage 1",
-        points = 5,
-        trigger = triggerFinishStage(STAGE_1C),
-        type = "progression"
-    )
-    
-    achievement(
-        id = 16422,
-        title = "Dangerous Duo",
-        description = "Complete Stage 2",
-        points = 10,
-        trigger = triggerFinishStage(STAGE_2D),
-        type = "progression"
-    )
+    // #region Progressions
+        achievement(
+            id = 16421,
+            title = "Strange Unicorn",
+            description = "Complete Stage 1",
+            points = 5,
+            trigger = triggerFinishStage(STAGE_1C),
+            type = "progression"
+        )
+        
+        achievement(
+            id = 16422,
+            title = "Dangerous Duo",
+            description = "Complete Stage 2",
+            points = 10,
+            trigger = triggerFinishStage(STAGE_2D),
+            type = "progression"
+        )
+
+        achievement(
+            id = 16423,
+            title = "Dragon Snake",
+            description = "Complete Stage 3",
+            points = 10,
+            trigger = triggerFinishStage(STAGE_3B),
+            type = "progression"
+        )
+
+        achievement(
+            id = 16424,
+            title = "No New Ideas for Bosses",
+            description = "Complete Stage 4",
+            points = 10,
+            trigger = triggerFinishStage(STAGE_4B),
+            type = "progression"
+        )
+
+        achievement(
+            id = 16425,
+            title = "Real Satan",
+            description = "Complete Stage 5",
+            points = 25,
+            trigger = triggerFinishStage(STAGE_5),
+            type = "progression"
+        )
+
+        achievement(
+            id = 16427,
+            title = "More Evil than the Devil Himself",
+            description = "Complete the first quest",
+            points = 25,
+            trigger = triggerFinishQuest(1),
+            type = "progression"
+        )
+
+        achievement(
+            id = 16429,
+            title = "Congraturation!",
+            description = "This story is happy end!",
+            points = 50,
+            trigger = triggerFinishQuest(2),
+            type = "win_condition"
+        )
+    // #endregion Progressions
 
     achievement(
-        id = 16423,
-        title = "Dragon Snake",
-        description = "Complete Stage 3",
-        points = 10,
-        trigger = triggerFinishStage(STAGE_3B),
-        type = "progression"
-    )
-
-    achievement(
-        id = 16424,
-        title = "No New Ideas for Bosses",
-        description = "Complete Stage 4",
-        points = 10,
-        trigger = triggerFinishStage(STAGE_4B),
-        type = "progression"
-    )
-
-    achievement(
-        id = 16425,
-        title = "Real Satan",
-        description = "Complete Stage 5",
+        id = 16792,
+        title = "Standard Zombie Killing Equipment",
+        description = "Defeat Astaroth with a lance",
         points = 25,
-        trigger = triggerFinishStage(STAGE_5),
-        type = "progression"
+        trigger = triggerAstarothLanceChallenge()
     )
 
     achievement(
-        id = 16427,
-        title = "More Evil than the Devil Himself",
-        description = "Complete the first quest",
-        points = 25,
-        trigger = triggerFinishQuest(1),
-        type = "progression"
-    )
-
-    achievement(
-        id = 16429,
-        title = "Congraturation!",
-        description = "This story is happy end!",
+        id = 16471,
+        title = "The Hard Way",
+        description = "Complete the game without ever acquiring a dagger",
         points = 50,
-        trigger = triggerFinishQuest(2),
-        type = "win_condition"
+        trigger = triggerNoDaggerChallenge()
     )
 // #endregion Achievements
