@@ -40,6 +40,7 @@
     function activePlayer() => byte(0x00ba)
         ACTIVE_PLAYER_1 = 0x00
         ACTIVE_PLAYER_2 = 0x01
+    function finalBossKills() => byte(0x00aa)
 // #endregion Memory Locations
 
 // #region Frames
@@ -58,6 +59,17 @@
             && activePlayer() == ACTIVE_PLAYER_1
             && stage() == stage
             && frameStageCompleted()
+    }
+
+    function triggerFinishQuest(quest) {
+        return
+            gameState() == GAME_STATE_PLAYING
+            && inDemo() == IN_DEMO_NO
+            && stageSelect() != STAGE_SELECT_ACTIVE
+            && activePlayer() == ACTIVE_PLAYER_1
+            && stage() == STAGE_7
+            && prev(finalBossKills()) == quest - 1
+            && finalBossKills() == quest
     }
 // #endregion Triggers
 
@@ -108,11 +120,20 @@
     )
 
     achievement(
-        id = 16426,
-        title = "More Satans?!",
-        description = "Complete Stage 6",
+        id = 16427,
+        title = "More Evil than the Devil Himself",
+        description = "Complete the first quest",
         points = 25,
-        trigger = triggerFinishStage(STAGE_6),
+        trigger = triggerFinishQuest(1),
         type = "progression"
+    )
+
+    achievement(
+        id = 16429,
+        title = "Congraturation!",
+        description = "This story is happy end!",
+        points = 50,
+        trigger = triggerFinishQuest(2),
+        type = "win_condition"
     )
 // #endregion Achievements
