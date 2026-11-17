@@ -47,6 +47,14 @@
         WEAPON_DAGGER = 0x42
         WEAPON_FIRE = 0x44
         WEAPON_SHIELD = 0x4f
+    function gameFPS() => byte(0x00cd)
+        GAME_FPS_30 = 0x02
+        GAME_FPS_20 = 0x03
+    
+    function cameraXPosition() => word(0x006c)
+    function timeX00() => byte(0x06f6)
+    function time0X0() => byte(0x06fa)
+    function time00X() => byte(0x06fc)
 // #endregion Memory Locations
 
 // #region Frames
@@ -115,6 +123,28 @@
             && stage() == STAGE_7
             && weapon() == WEAPON_LANCE
             && finalBossKills() == prev(finalBossKills()) + 1
+    }
+
+    function triggerStage1NoDamageChallenge() {
+        completeConditions =
+            stage() == STAGE_1C
+            && frameStageCompleted()
+
+        primingConditions =
+            stage() == STAGE_1A
+            && cameraXPosition() == 0x00
+            && timeX00() == 0x02
+            && time0X0() == 0x00
+            && time00X() == 0x00
+
+        resetConditions =
+            never( byte(0x00d6) == 0x60 && gameFPS() == GAME_FPS_20 )
+            && never(gameState() != GAME_STATE_PLAYING)
+            && never(activePlayer() != ACTIVE_PLAYER_1)
+            && never(inDemo() == IN_DEMO_YES)
+            && never(stage() > STAGE_1C)
+
+        return once(primingConditions) && resetConditions && trigger_when(completeConditions)
     }
 // #endregion Triggers
 
@@ -198,5 +228,13 @@
         description = "Complete the game without ever acquiring a dagger",
         points = 50,
         trigger = triggerNoDaggerChallenge()
+    )
+
+    achievement(
+        id = 16464,
+        title = "Magic Panties",
+        description = "Complete Stage 1 without taking damage",
+        points = 10,
+        trigger = triggerStage1NoDamageChallenge()
     )
 // #endregion Achievements
