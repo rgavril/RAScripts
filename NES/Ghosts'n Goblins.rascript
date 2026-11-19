@@ -26,9 +26,9 @@
         STAGE_COMPLETED_NO = 0x00
         STAGE_COMPLETED_YES = 0xff
 
-    function gameState() => byte(0x0004)
-        GAME_STATE_PLAYING = 0x00
-        GAME_STATE_NOT_PLAYING = 0x80
+    function attractMode() => byte(0x0004)
+        ATTRACT_MODE_INACTIVE = 0x00
+        ATTRACT_MODE_ACTIVE = 0x80
 
     function inDemo() => byte(0x0094)
         IN_DEMO_NO = 0x00
@@ -55,6 +55,7 @@
     function timeX00() => byte(0x06f6)
     function time0X0() => byte(0x06fa)
     function time00X() => byte(0x06fc)
+    function lives() => byte(0x0715)
 // #endregion Memory Locations
 
 // #region Frames
@@ -62,12 +63,16 @@
         return prev(stageCompleted()) == STAGE_COMPLETED_NO
             && stageCompleted() == STAGE_COMPLETED_YES
     }
+
+    function frameLifeLost() {
+        return prev(lives()) > lives()
+    }
 // #endregion Frames
 
 // #region Triggers
     function triggerFinishStage(stage) {
         return
-            gameState() == GAME_STATE_PLAYING
+            attractMode() == ATTRACT_MODE_INACTIVE
             && inDemo() == IN_DEMO_NO
             && stageSelect() != STAGE_SELECT_ACTIVE
             && activePlayer() == ACTIVE_PLAYER_1
@@ -77,7 +82,7 @@
 
     function triggerFinishQuest(quest) {
         return
-            gameState() == GAME_STATE_PLAYING
+            attractMode() == ATTRACT_MODE_INACTIVE
             && inDemo() == IN_DEMO_NO
             && stageSelect() != STAGE_SELECT_ACTIVE
             && activePlayer() == ACTIVE_PLAYER_1
@@ -92,8 +97,8 @@
             && finalBossKills() == 2
 
         primingConditions =
-            prev(gameState()) != GAME_STATE_PLAYING
-            && gameState() == GAME_STATE_PLAYING
+            prev(attractMode()) != ATTRACT_MODE_INACTIVE
+            && attractMode() == ATTRACT_MODE_INACTIVE
             && inDemo() == IN_DEMO_NO
             && activePlayer() == ACTIVE_PLAYER_1
             && stage() == STAGE_1A
@@ -106,7 +111,7 @@
 
         
         requiredConditions =
-            gameState() == GAME_STATE_PLAYING
+            attractMode() == ATTRACT_MODE_INACTIVE
             && inDemo() == IN_DEMO_NO
             && activePlayer() == ACTIVE_PLAYER_1
 
@@ -116,7 +121,7 @@
 
     function triggerAstarothLanceChallenge() {
         return
-            gameState() == GAME_STATE_PLAYING
+            attractMode() == ATTRACT_MODE_INACTIVE
             && inDemo() == IN_DEMO_NO
             && stageSelect() == STAGE_SELECT_ACTIVE
             && activePlayer() == ACTIVE_PLAYER_1
@@ -139,12 +144,13 @@
 
         resetConditions =
             never( byte(0x00d6) == 0x60 && gameFPS() == GAME_FPS_20 )
-            && never(gameState() != GAME_STATE_PLAYING)
-            && never(activePlayer() != ACTIVE_PLAYER_1)
+            && never(frameLifeLost())
+            && never(attractMode() == ATTRACT_MODE_ACTIVE)
             && never(inDemo() == IN_DEMO_YES)
+            && never(activePlayer() != ACTIVE_PLAYER_1)
             && never(stage() > STAGE_1C)
 
-        return once(primingConditions) && resetConditions && trigger_when(completeConditions)
+        return resetConditions && once(primingConditions) && trigger_when(completeConditions)
     }
 // #endregion Triggers
 
