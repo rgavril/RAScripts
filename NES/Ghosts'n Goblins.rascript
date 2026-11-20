@@ -56,6 +56,7 @@
     function time0X0() => byte(0x06fa)
     function time00X() => byte(0x06fc)
     function lives() => byte(0x0715)
+    function buttonB() => bit6(0x00cc)
 // #endregion Memory Locations
 
 // #region Frames
@@ -91,7 +92,7 @@
             && finalBossKills() == quest
     }
 
-    function triggerNoDaggerChallenge() {
+    function triggerNoDaggerChallenge() {ope
         completeConditions =
             prev(finalBossKills()) == 1
             && finalBossKills() == 2
@@ -152,6 +153,30 @@
 
         return resetConditions && once(primingConditions) && trigger_when(completeConditions)
     }
+
+function triggerStage2NoAttackChallenge() {
+    completeConditions =
+        stage() == STAGE_2D
+        && prev(cameraXPosition()) < 0x0c00
+        && cameraXPosition() >= 0x0c00
+
+    primingConditions =
+        stage() == STAGE_2A
+        && cameraXPosition() == 0x00
+        && timeX00() == 0x01
+        && time0X0() == 0x03
+        && time00X() == 0x00
+
+    resetConditions =
+        never(buttonB() == 1)
+        && never(attractMode() == ATTRACT_MODE_ACTIVE)
+        && never(inDemo() == IN_DEMO_YES)
+        && never(activePlayer() != ACTIVE_PLAYER_1)
+        && never(stage() > STAGE_2D)
+        && never(stage() < STAGE_2A)
+
+    return resetConditions && once(primingConditions) && trigger_when(completeConditions)
+}
 // #endregion Triggers
 
 // #region Achievements
@@ -242,5 +267,13 @@
         description = "Complete Stage 1 without taking damage",
         points = 10,
         trigger = triggerStage1NoDamageChallenge()
+    )
+
+    achievement(
+        id = 16465,
+        title = "Zombie Rights Organization",
+        description = "During Stage 2, reach the boss without pressing the B button",
+        points = 50,
+        trigger = triggerStage2NoAttackChallenge()
     )
 // #endregion Achievements
