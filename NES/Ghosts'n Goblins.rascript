@@ -1,6 +1,10 @@
 // Ghosts'n Goblins (NES)
 // #ID = 1710
 
+// TODO:
+// - Update damage detection logic for stage 1 no damage challenge
+// - Make loop 1 and 2 achievements track whole loop not only ending stage
+
 // #region Memory Locations
     function stage() => byte(0x00ac)
         STAGE_1A = 0x00
@@ -57,6 +61,7 @@
     function time00X() => byte(0x06fc)
     function lives() => byte(0x0715)
     function buttonB() => bit6(0x00cc)
+    function buttonLeft() => bit1(0x00cc)
     function hudVisibility() => byte(0x0506)
         HUD_VISIBLE = 0x80
         HUD_HIDDEN = 0x00
@@ -163,9 +168,10 @@
             && frameStageCompleted()
 
         resetConditions =
-            never( byte(0x00d6) == 0x60 && gameFPS() == GAME_FPS_20 )
-            && never(frameLifeLost())
+            never(stageSelect() == STAGE_SELECT_ACTIVE)
             && never(stage() > STAGE_1C)
+            && never( byte(0x00d6) == 0x60 && gameFPS() == GAME_FPS_20 )
+            && never(frameLifeLost())
 
         return once(primingConditions) && resetConditions && requiredConditions && trigger_when(completeConditions)
     }
@@ -186,9 +192,58 @@
             && prev(cameraXPosition()) < 0x0c00 && cameraXPosition() >= 0x0c00
 
         resetConditions =
-            never(buttonB() == 1)
+            never(stageSelect() == STAGE_SELECT_ACTIVE)
             && never(stage() > STAGE_2D)
             && never(stage() < STAGE_2A)
+            && never(buttonB() == 1)
+
+        return once(primingConditions) && resetConditions && trigger_when(completeConditions)
+    }
+
+    function triggerStage3NoBackButton() {
+        requiredConditions =
+            attractMode() == ATTRACT_MODE_INACTIVE
+            && inDemo() == IN_DEMO_NO
+            && activePlayer() == ACTIVE_PLAYER_1
+
+        primingConditions =
+            activePlayer() == ACTIVE_PLAYER_1
+            && stage() == STAGE_3A
+            && frameLifeOrStageStarting()
+
+        completeConditions =
+            stage() == STAGE_3B
+            && prev(cameraXPosition()) < 0x0c70 && cameraXPosition() >= 0x0c70
+
+        resetConditions =
+            never(stageSelect() == STAGE_SELECT_ACTIVE)
+            && never(stage() > STAGE_3B)
+            && never(stage() < STAGE_3A)
+            && never(buttonLeft() == 1)
+
+        return once(primingConditions) && resetConditions && trigger_when(completeConditions)
+    }
+
+    function triggerStage4Deathless() {
+        requiredConditions =
+            attractMode() == ATTRACT_MODE_INACTIVE
+            && inDemo() == IN_DEMO_NO
+            && activePlayer() == ACTIVE_PLAYER_1
+
+        primingConditions =
+            activePlayer() == ACTIVE_PLAYER_1
+            && stage() == STAGE_4A
+            && frameLifeOrStageStarting()
+
+        completeConditions =
+            stage() == STAGE_4B
+            && frameStageCompleted()
+
+        resetConditions =
+            never(stageSelect() == STAGE_SELECT_ACTIVE)
+            && never(stage() > STAGE_4B)
+            && never(stage() < STAGE_4A)
+            && never(frameLifeLost())
 
         return once(primingConditions) && resetConditions && trigger_when(completeConditions)
     }
@@ -299,5 +354,21 @@
         description = "During Stage 2, reach the boss without pressing the B button",
         points = 50,
         trigger = triggerStage2NoAttackChallenge()
+    )
+
+    achievement(
+        id = 16466,
+        title = "Right Way to Go!",
+        description = "During Stage 3, reach the boss without pressing left",
+        points = 50,
+        trigger = triggerStage3NoBackButton()
+    )
+
+    achievement(
+        id = 16467,
+        title = "Magic Armor",
+        description = "Complete Stage 4 without dying",
+        points = 25,
+        trigger = triggerStage4Deathless()
     )
 // #endregion Achievements
