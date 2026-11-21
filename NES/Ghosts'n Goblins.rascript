@@ -57,6 +57,9 @@
     function time00X() => byte(0x06fc)
     function lives() => byte(0x0715)
     function buttonB() => bit6(0x00cc)
+    function hudVisibility() => byte(0x0506)
+        HUD_VISIBLE = 0x80
+        HUD_HIDDEN = 0x00
 // #endregion Memory Locations
 
 // #region Frames
@@ -68,17 +71,35 @@
     function frameLifeLost() {
         return prev(lives()) > lives()
     }
+
+    function frameLifeOrStageStarting() {
+        return prev(hudVisibility()) == HUD_HIDDEN
+            && hudVisibility() == HUD_VISIBLE
+    }
 // #endregion Frames
 
 // #region Triggers
-    function triggerFinishStage(stage) {
-        return
+    function triggerCompleteStages(startStage, endStage) {
+        requiredConditions =
             attractMode() == ATTRACT_MODE_INACTIVE
             && inDemo() == IN_DEMO_NO
-            && stageSelect() != STAGE_SELECT_ACTIVE
             && activePlayer() == ACTIVE_PLAYER_1
-            && stage() == stage
+
+        primingConditions =
+            activePlayer() == ACTIVE_PLAYER_1
+            && stage() == startStage
+            && frameLifeOrStageStarting()
+
+        completeConditions =
+            stage() == endStage
             && frameStageCompleted()
+
+        resetConditions =
+            never(stage() < startStage)
+            && never(stage() > endStage)
+            && never(stageSelect() == STAGE_SELECT_ACTIVE)
+
+        return once(primingConditions) && resetConditions && requiredConditions && completeConditions
     }
 
     function triggerFinishQuest(quest) {
@@ -92,32 +113,27 @@
             && finalBossKills() == quest
     }
 
-    function triggerNoDaggerChallenge() {ope
-        completeConditions =
-            prev(finalBossKills()) == 1
-            && finalBossKills() == 2
-
-        primingConditions =
-            prev(attractMode()) != ATTRACT_MODE_INACTIVE
-            && attractMode() == ATTRACT_MODE_INACTIVE
-            && inDemo() == IN_DEMO_NO
-            && activePlayer() == ACTIVE_PLAYER_1
-            && stage() == STAGE_1A
-            && weapon() != WEAPON_DAGGER
-            && finalBossKills() == 0
-
-        resetConditions =
-            weapon() == WEAPON_DAGGER
-            || stageSelect() == STAGE_SELECT_ACTIVE
-
-        
+    function triggerNoDaggerChallenge() {
         requiredConditions =
             attractMode() == ATTRACT_MODE_INACTIVE
             && inDemo() == IN_DEMO_NO
             && activePlayer() == ACTIVE_PLAYER_1
 
+        primingConditions =
+            activePlayer() == ACTIVE_PLAYER_1
+            && stage() == STAGE_1A
+            && frameLifeOrStageStarting()
+            && finalBossKills() == 0
 
-        return once(primingConditions) && never(resetConditions) && trigger_when(completeConditions) && requiredConditions
+        completeConditions =
+            prev(finalBossKills()) == 1
+            && finalBossKills() == 2
+
+        resetConditions =
+            never(weapon() == WEAPON_DAGGER)
+            && never(stageSelect() == STAGE_SELECT_ACTIVE)
+
+        return once(primingConditions) && resetConditions && requiredConditions && trigger_when(completeConditions) 
     }
 
     function triggerAstarothLanceChallenge() {
@@ -132,51 +148,50 @@
     }
 
     function triggerStage1NoDamageChallenge() {
+        requiredConditions =
+            attractMode() == ATTRACT_MODE_INACTIVE
+            && inDemo() == IN_DEMO_NO
+            && activePlayer() == ACTIVE_PLAYER_1
+
+        primingConditions =
+            activePlayer() == ACTIVE_PLAYER_1
+            && stage() == STAGE_1A
+            && frameLifeOrStageStarting()
+
         completeConditions =
             stage() == STAGE_1C
             && frameStageCompleted()
 
-        primingConditions =
-            stage() == STAGE_1A
-            && cameraXPosition() == 0x00
-            && timeX00() == 0x02
-            && time0X0() == 0x00
-            && time00X() == 0x00
-
         resetConditions =
             never( byte(0x00d6) == 0x60 && gameFPS() == GAME_FPS_20 )
             && never(frameLifeLost())
-            && never(attractMode() == ATTRACT_MODE_ACTIVE)
-            && never(inDemo() == IN_DEMO_YES)
-            && never(activePlayer() != ACTIVE_PLAYER_1)
             && never(stage() > STAGE_1C)
 
-        return resetConditions && once(primingConditions) && trigger_when(completeConditions)
+        return once(primingConditions) && resetConditions && requiredConditions && trigger_when(completeConditions)
     }
 
-function triggerStage2NoAttackChallenge() {
-    completeConditions =
-        stage() == STAGE_2D
-        && prev(cameraXPosition()) < 0x0c00
-        && cameraXPosition() >= 0x0c00
+    function triggerStage2NoAttackChallenge() {
+        requiredConditions =
+            attractMode() == ATTRACT_MODE_INACTIVE
+            && inDemo() == IN_DEMO_NO
+            && activePlayer() == ACTIVE_PLAYER_1
 
-    primingConditions =
-        stage() == STAGE_2A
-        && cameraXPosition() == 0x00
-        && timeX00() == 0x01
-        && time0X0() == 0x03
-        && time00X() == 0x00
+        primingConditions =
+            activePlayer() == ACTIVE_PLAYER_1
+            && frameLifeOrStageStarting()
+            && stage() == STAGE_2A
 
-    resetConditions =
-        never(buttonB() == 1)
-        && never(attractMode() == ATTRACT_MODE_ACTIVE)
-        && never(inDemo() == IN_DEMO_YES)
-        && never(activePlayer() != ACTIVE_PLAYER_1)
-        && never(stage() > STAGE_2D)
-        && never(stage() < STAGE_2A)
+        completeConditions =
+            stage() == STAGE_2D
+            && prev(cameraXPosition()) < 0x0c00 && cameraXPosition() >= 0x0c00
 
-    return resetConditions && once(primingConditions) && trigger_when(completeConditions)
-}
+        resetConditions =
+            never(buttonB() == 1)
+            && never(stage() > STAGE_2D)
+            && never(stage() < STAGE_2A)
+
+        return once(primingConditions) && resetConditions && trigger_when(completeConditions)
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -186,7 +201,7 @@ function triggerStage2NoAttackChallenge() {
             title = "Strange Unicorn",
             description = "Complete Stage 1",
             points = 5,
-            trigger = triggerFinishStage(STAGE_1C),
+            trigger = triggerCompleteStages(STAGE_1A, STAGE_1C),
             type = "progression"
         )
         
@@ -195,7 +210,7 @@ function triggerStage2NoAttackChallenge() {
             title = "Dangerous Duo",
             description = "Complete Stage 2",
             points = 10,
-            trigger = triggerFinishStage(STAGE_2D),
+            trigger = triggerCompleteStages(STAGE_2A, STAGE_2D),
             type = "progression"
         )
 
@@ -204,7 +219,7 @@ function triggerStage2NoAttackChallenge() {
             title = "Dragon Snake",
             description = "Complete Stage 3",
             points = 10,
-            trigger = triggerFinishStage(STAGE_3B),
+            trigger = triggerCompleteStages(STAGE_3A, STAGE_3B),
             type = "progression"
         )
 
@@ -213,7 +228,7 @@ function triggerStage2NoAttackChallenge() {
             title = "No New Ideas for Bosses",
             description = "Complete Stage 4",
             points = 10,
-            trigger = triggerFinishStage(STAGE_4B),
+            trigger = triggerCompleteStages(STAGE_4A, STAGE_4B),
             type = "progression"
         )
 
@@ -222,7 +237,16 @@ function triggerStage2NoAttackChallenge() {
             title = "Real Satan",
             description = "Complete Stage 5",
             points = 25,
-            trigger = triggerFinishStage(STAGE_5),
+            trigger = triggerCompleteStages(STAGE_5, STAGE_5),
+            type = "progression"
+        )
+
+        achievement(
+            id = 16426,
+            title = "More Satans?!",
+            description = "Complete Stage 6",
+            points = 25,
+            trigger = triggerCompleteStages(STAGE_6, STAGE_6),
             type = "progression"
         )
 
