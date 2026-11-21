@@ -38,9 +38,9 @@
         IN_DEMO_NO = 0x00
         IN_DEMO_YES = 0xff
 
-    function stageSelect() => byte(0x00a7)
-        STAGE_SELECT_ACTIVE = 0x0f
-        STAGE_SELECT_INACTIVE = 0x00
+    function cheatCode() => byte(0x00a7)
+        CHEAT_CODE_STAGE_SELECT = 0x0f
+        CHEAT_CODE_CREDITS = 0x08
     function activePlayer() => byte(0x00ba)
         ACTIVE_PLAYER_1 = 0x00
         ACTIVE_PLAYER_2 = 0x01
@@ -102,7 +102,7 @@
         resetConditions =
             never(stage() < startStage)
             && never(stage() > endStage)
-            && never(stageSelect() == STAGE_SELECT_ACTIVE)
+            && never(cheatCode() == CHEAT_CODE_STAGE_SELECT)
 
         return once(primingConditions) && resetConditions && requiredConditions && completeConditions
     }
@@ -111,7 +111,7 @@
         return
             attractMode() == ATTRACT_MODE_INACTIVE
             && inDemo() == IN_DEMO_NO
-            && stageSelect() != STAGE_SELECT_ACTIVE
+            && cheatCode() != CHEAT_CODE_STAGE_SELECT
             && activePlayer() == ACTIVE_PLAYER_1
             && stage() == STAGE_7
             && prev(finalBossKills()) == quest - 1
@@ -136,7 +136,7 @@
 
         resetConditions =
             never(weapon() == WEAPON_DAGGER)
-            && never(stageSelect() == STAGE_SELECT_ACTIVE)
+            && never(cheatCode() == CHEAT_CODE_STAGE_SELECT)
 
         return once(primingConditions) && resetConditions && requiredConditions && trigger_when(completeConditions) 
     }
@@ -145,14 +145,25 @@
         return
             attractMode() == ATTRACT_MODE_INACTIVE
             && inDemo() == IN_DEMO_NO
-            && stageSelect() == STAGE_SELECT_ACTIVE
+            && cheatCode() == CHEAT_CODE_STAGE_SELECT
             && activePlayer() == ACTIVE_PLAYER_1
             && stage() == STAGE_7
             && weapon() == WEAPON_LANCE
             && finalBossKills() == prev(finalBossKills()) + 1
     }
 
-    function triggerStage1NoDamageChallenge() {
+    function triggerAstarothTimeChallenge() {
+        return
+            attractMode() == ATTRACT_MODE_INACTIVE
+            && inDemo() == IN_DEMO_NO
+            && activePlayer() == ACTIVE_PLAYER_1
+            && stage() == STAGE_7
+            && timeX00() == 0
+            && time0X0() == 0
+            && time00X() == 0 && prev(time00X()) > 0
+    }
+
+    function triggerStage1Damageless() {
         requiredConditions =
             attractMode() == ATTRACT_MODE_INACTIVE
             && inDemo() == IN_DEMO_NO
@@ -168,7 +179,7 @@
             && frameStageCompleted()
 
         resetConditions =
-            never(stageSelect() == STAGE_SELECT_ACTIVE)
+            never(cheatCode() == CHEAT_CODE_STAGE_SELECT)
             && never(stage() > STAGE_1C)
             && never( byte(0x00d6) == 0x60 && gameFPS() == GAME_FPS_20 )
             && never(frameLifeLost())
@@ -176,7 +187,7 @@
         return once(primingConditions) && resetConditions && requiredConditions && trigger_when(completeConditions)
     }
 
-    function triggerStage2NoAttackChallenge() {
+    function triggerStage2NoAttack() {
         requiredConditions =
             attractMode() == ATTRACT_MODE_INACTIVE
             && inDemo() == IN_DEMO_NO
@@ -192,7 +203,7 @@
             && prev(cameraXPosition()) < 0x0c00 && cameraXPosition() >= 0x0c00
 
         resetConditions =
-            never(stageSelect() == STAGE_SELECT_ACTIVE)
+            never(cheatCode() == CHEAT_CODE_STAGE_SELECT)
             && never(stage() > STAGE_2D)
             && never(stage() < STAGE_2A)
             && never(buttonB() == 1)
@@ -216,7 +227,7 @@
             && prev(cameraXPosition()) < 0x0c70 && cameraXPosition() >= 0x0c70
 
         resetConditions =
-            never(stageSelect() == STAGE_SELECT_ACTIVE)
+            never(cheatCode() == CHEAT_CODE_STAGE_SELECT)
             && never(stage() > STAGE_3B)
             && never(stage() < STAGE_3A)
             && never(buttonLeft() == 1)
@@ -240,12 +251,92 @@
             && frameStageCompleted()
 
         resetConditions =
-            never(stageSelect() == STAGE_SELECT_ACTIVE)
+            never(cheatCode() == CHEAT_CODE_STAGE_SELECT)
             && never(stage() > STAGE_4B)
             && never(stage() < STAGE_4A)
             && never(frameLifeLost())
 
         return once(primingConditions) && resetConditions && trigger_when(completeConditions)
+    }
+
+    function triggerStage5InTime() {
+        requiredConditions =
+            attractMode() == ATTRACT_MODE_INACTIVE
+            && inDemo() == IN_DEMO_NO
+            && activePlayer() == ACTIVE_PLAYER_1
+
+        primingConditions =
+            activePlayer() == ACTIVE_PLAYER_1
+            && stage() == STAGE_5
+            && frameLifeOrStageStarting()
+
+        completeConditions =
+            stage() == STAGE_5
+            && frameStageCompleted()
+            && timeX00() > 0
+
+        resetConditions =
+            never(cheatCode() == CHEAT_CODE_STAGE_SELECT)
+            && never(stage() != STAGE_5)
+            && never(timeX00() == 0)
+
+        return once(primingConditions) && resetConditions && requiredConditions && trigger_when(completeConditions)
+    }
+
+    function triggerStage6Damageless() {
+        requiredConditions =
+            attractMode() == ATTRACT_MODE_INACTIVE
+            && inDemo() == IN_DEMO_NO
+            && activePlayer() == ACTIVE_PLAYER_1
+
+        primingConditions =
+            activePlayer() == ACTIVE_PLAYER_1
+            && stage() == STAGE_6
+            && frameLifeOrStageStarting()
+
+        completeConditions =
+            stage() == STAGE_6
+            && frameStageCompleted()
+
+        resetConditions =
+            never(cheatCode() == CHEAT_CODE_STAGE_SELECT)
+            && never(stage() != STAGE_6)
+            && never( byte(0x00d6) == 0x60 && gameFPS() == GAME_FPS_20 )
+            && never(frameLifeLost())
+
+        return once(primingConditions) && resetConditions && requiredConditions && trigger_when(completeConditions)
+    }
+
+    function triggerStage6NoShield() {
+        requiredConditions =
+            attractMode() == ATTRACT_MODE_INACTIVE
+            && inDemo() == IN_DEMO_NO
+            && activePlayer() == ACTIVE_PLAYER_1
+
+        primingConditions =
+            activePlayer() == ACTIVE_PLAYER_1
+            && stage() == STAGE_6
+            && frameLifeOrStageStarting()
+
+        completeConditions =
+            stage() == STAGE_6
+            && frameStageCompleted()
+            && weapon() != WEAPON_SHIELD
+
+        resetConditions =
+            never(cheatCode() == CHEAT_CODE_STAGE_SELECT)
+            && never(stage() != STAGE_6)
+
+        return once(primingConditions) && resetConditions && requiredConditions && completeConditions
+    }
+
+    function triggerHiddenCredits() {
+        return
+            attractMode() == ATTRACT_MODE_INACTIVE
+            && inDemo() == IN_DEMO_NO
+            && activePlayer() == ACTIVE_PLAYER_1
+            && stage() == STAGE_7
+            && prev(cheatCode()) != CHEAT_CODE_CREDITS && cheatCode() == CHEAT_CODE_CREDITS
     }
 // #endregion Triggers
 
@@ -341,34 +432,77 @@
     )
 
     achievement(
-        id = 16464,
-        title = "Magic Panties",
-        description = "Complete Stage 1 without taking damage",
-        points = 10,
-        trigger = triggerStage1NoDamageChallenge()
-    )
-
-    achievement(
-        id = 16465,
-        title = "Zombie Rights Organization",
-        description = "During Stage 2, reach the boss without pressing the B button",
-        points = 50,
-        trigger = triggerStage2NoAttackChallenge()
-    )
-
-    achievement(
-        id = 16466,
-        title = "Right Way to Go!",
-        description = "During Stage 3, reach the boss without pressing left",
-        points = 50,
-        trigger = triggerStage3NoBackButton()
-    )
-
-    achievement(
-        id = 16467,
-        title = "Magic Armor",
-        description = "Complete Stage 4 without dying",
+        id = 16470,
+        title = "Ace Survivor",
+        description = "Run out of time during the battle with Astaroth",
         points = 25,
-        trigger = triggerStage4Deathless()
+        trigger = triggerAstarothTimeChallenge()
     )
-// #endregion Achievements
+
+    achievement(
+        id = 16428,
+        title = "This Weapon Has No Effect...",
+        description = "Complete Stage 6 without acquiring a shield",
+        points = 25,
+        trigger = triggerStage6NoShield()
+    )
+
+    achievement(
+        id = 16463,
+        title = "Hystorical Entry",
+        description = "View the credits",
+        points = 10,
+        trigger = triggerHiddenCredits()
+    )
+
+    // #region Stage Challenges
+        achievement(
+            id = 16464,
+            title = "Magic Panties",
+            description = "Complete Stage 1 without taking damage",
+            points = 10,
+            trigger = triggerStage1Damageless()
+        )
+
+        achievement(
+            id = 16465,
+            title = "Zombie Rights Organization",
+            description = "During Stage 2, reach the boss without pressing the B button",
+            points = 50,
+            trigger = triggerStage2NoAttack()
+        )
+
+        achievement(
+            id = 16466,
+            title = "Right Way to Go!",
+            description = "During Stage 3, reach the boss without pressing left",
+            points = 50,
+            trigger = triggerStage3NoBackButton()
+        )
+
+        achievement(
+            id = 16467,
+            title = "Magic Armor",
+            description = "Complete Stage 4 without dying",
+            points = 25,
+            trigger = triggerStage4Deathless()
+        )
+
+        achievement(
+            id = 16468,
+            title = "Fast Paced Escape",
+            description = "Complete Stage 5 with at least 60 seconds remaining on the timer",
+            points = 25,
+            trigger = triggerStage5InTime()
+        )
+
+        achievement(
+            id = 16469,
+            title = "Last Action Hero",
+            description = "Complete Stage 6 without being damaged",
+            points = 50,
+            trigger = triggerStage6Damageless()
+        )
+    // #endregion Stage Challenges
+
+    // #region Achievements
