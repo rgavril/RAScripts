@@ -65,6 +65,8 @@
     function hudVisibility() => byte(0x0506)
         HUD_VISIBLE = 0x80
         HUD_HIDDEN = 0x00
+    function frogActive() => bit4(0x061d)
+    function score() => byte(0x04e2) * 100000 + byte(0x04e4) * 10000 + byte(0x04e6) * 1000 + byte(0x04e8) * 100 + byte(0x04ea) * 10 + byte(0x04ec)
 // #endregion Memory Locations
 
 // #region Frames
@@ -338,6 +340,41 @@
             && stage() == STAGE_7
             && prev(cheatCode()) != CHEAT_CODE_CREDITS && cheatCode() == CHEAT_CODE_CREDITS
     }
+
+    function triggerWeaponCollected(weapon) {
+        return
+            attractMode() == ATTRACT_MODE_INACTIVE
+            && inDemo() == IN_DEMO_NO
+            && activePlayer() == ACTIVE_PLAYER_1
+            && prev(weapon()) != weapon
+            && weapon() == weapon
+    }
+
+    function triggerFrog() {
+        return
+            attractMode() == ATTRACT_MODE_INACTIVE
+            && inDemo() == IN_DEMO_NO
+            && activePlayer() == ACTIVE_PLAYER_1
+            && prev(frogActive()) != 1
+            && frogActive() == 1
+    }
+
+    function trigger1Up() {
+        return
+            attractMode() == ATTRACT_MODE_INACTIVE
+            && inDemo() == IN_DEMO_NO
+            && activePlayer() == ACTIVE_PLAYER_1
+            && lives() > prev(lives())
+    }
+
+    function triggerScore(targetScore) {
+        return
+            attractMode() == ATTRACT_MODE_INACTIVE
+            && inDemo() == IN_DEMO_NO
+            && activePlayer() == ACTIVE_PLAYER_1
+            && prev(score()) < targetScore
+            && score() >= targetScore
+    }
 // #endregion Triggers
 
 // #region Achievements
@@ -455,6 +492,64 @@
         trigger = triggerHiddenCredits()
     )
 
+    achievement(
+        id = 16434,
+        title = "Frogged Knight",
+        description = "Transform into a frog",
+        points = 5,
+        trigger = triggerFrog()
+    )
+
+    achievement(
+        id = 16435,
+        title = "Extra Soldier",
+        description = "Acquire a 1-up",
+        points = 5,
+        trigger = trigger1Up()
+    )
+
+    achievement(
+        id = 16436,
+        title = "Points Do Not Matter",
+        description = "Score 100,000 points",
+        points = 5,
+        trigger = triggerScore(100000)
+    )
+
+    // #region Collectibles
+        achievement(
+            id = 16430,
+            title = "You Have Invented the Flamethrower",
+            description = "Acquire a torch",
+            points = 2,
+            trigger = triggerWeaponCollected(WEAPON_FIRE)
+        )
+
+        achievement(
+            id = 16431,
+            title = "Main Way to Survive",
+            description = "Acquire a dagger",
+            points = 3,
+            trigger = triggerWeaponCollected(WEAPON_DAGGER)
+        )
+
+        achievement(
+            id = 16432,
+            title = "Timber Man",
+            description = "Acquire an axe",
+            points = 5,
+            trigger = triggerWeaponCollected(WEAPON_AXE)
+        )
+
+        achievement(
+            id = 16433,
+            title = "Defend the Princess",
+            description = "Acquire a shield",
+            points = 5,
+            trigger = triggerWeaponCollected(WEAPON_SHIELD)
+        )
+    // #endregion Collectibles
+
     // #region Stage Challenges
         achievement(
             id = 16464,
@@ -505,4 +600,4 @@
         )
     // #endregion Stage Challenges
 
-    // #region Achievements
+// #endregion Achievements
