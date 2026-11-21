@@ -110,14 +110,26 @@
     }
 
     function triggerFinishQuest(quest) {
-        return
+        requiredConditions =
             attractMode() == ATTRACT_MODE_INACTIVE
             && inDemo() == IN_DEMO_NO
-            && cheatCode() != CHEAT_CODE_STAGE_SELECT
             && activePlayer() == ACTIVE_PLAYER_1
-            && stage() == STAGE_7
+
+        primingConditions =
+            activePlayer() == ACTIVE_PLAYER_1
+            && stage() == STAGE_1A
+            && prev(finalBossKills()) == 0
+            && frameLifeOrStageStarting()
+
+        completeConditions =
+            stage() == STAGE_7
             && prev(finalBossKills()) == quest - 1
             && finalBossKills() == quest
+
+        resetConditions =
+            never(cheatCode() == CHEAT_CODE_STAGE_SELECT)
+
+        return once(primingConditions) && resetConditions && requiredConditions && completeConditions
     }
 
     function triggerNoDaggerChallenge() {
@@ -601,3 +613,58 @@
     // #endregion Stage Challenges
 
 // #endregion Achievements
+
+// #region Rich Presence
+    stageLookup = {
+        STAGE_1A: "1",
+        STAGE_1B: "1",
+        STAGE_1C: "1",
+        STAGE_2A: "2",
+        STAGE_2B: "2",
+        STAGE_2C: "2",
+        STAGE_2D: "2",
+        STAGE_3A: "3",
+        STAGE_3B: "3",
+        STAGE_4A: "4",
+        STAGE_4B: "4",
+        STAGE_5: "5",
+        STAGE_6: "6",
+        STAGE_7: "Final"
+    }
+
+    weaponLookup = {
+        WEAPON_AXE : "Axe",
+        WEAPON_LANCE : "Lance",
+        WEAPON_DAGGER : "Dagger",
+        WEAPON_FIRE : "Torch",
+        WEAPON_SHIELD : "Shield"
+    }
+
+    cheatCodeLookup = {
+        CHEAT_CODE_STAGE_SELECT: "❗"
+    }
+    
+    rich_presence_conditional_display(
+        attractMode() == ATTRACT_MODE_INACTIVE && inDemo() == IN_DEMO_NO,
+        "Playing · {4} Quest · Stage {0} · {2} · {1} Lives {5}",
+        rich_presence_lookup("Level",stage(), stageLookup),
+        rich_presence_value("Lives", lives()),
+        rich_presence_lookup("Weapon", weapon(), weaponLookup),
+        rich_presence_macro("Score", score()),
+        rich_presence_lookup("Quest", finalBossKills() , {0: "1st", 1: "2nd", 2: "3rd", 3: "4th"}),
+        rich_presence_lookup("Cheat", cheatCode(), cheatCodeLookup, "")
+    )
+
+    rich_presence_conditional_display(
+        attractMode() != ATTRACT_MODE_INACTIVE || inDemo() == IN_DEMO_YES,
+        "Main Menu · {4} Quest · Stage {0} · {2} · {1} Lives {5}",
+        rich_presence_lookup("Level",stage(), stageLookup),
+        rich_presence_value("Lives", lives()),
+        rich_presence_lookup("Weapon", weapon(), weaponLookup),
+        rich_presence_macro("Score", score()),
+        rich_presence_lookup("Quest", finalBossKills() , {0: "1st", 1: "2nd", 2: "3rd", 3: "4th"}),
+        rich_presence_lookup("Cheat", cheatCode(), cheatCodeLookup, "")
+    )
+
+    rich_presence_display("Playing Ghosts'n Goblins")
+// #endregion Rich Presence
