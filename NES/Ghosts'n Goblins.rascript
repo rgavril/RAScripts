@@ -668,3 +668,22 @@
 
     rich_presence_display("Playing Ghosts'n Goblins")
 // #endregion Rich Presence
+
+// #region Leaderboards
+    // Leaderboard : High Score
+    leaderboard(
+        title = "Highest Score",
+        description = "Earn the most amount of points before Game Over",
+        format = "SCORE",
+        start = 
+            attractMode() == ATTRACT_MODE_INACTIVE
+            && inDemo() == IN_DEMO_NO
+            && activePlayer() == ACTIVE_PLAYER_1
+            && prev(lives()) > 0
+            && lives() == 0
+            ,
+        cancel = always_false(),
+        submit = always_true(),
+        value = score()
+    )
+// #endregion Leaderboards
