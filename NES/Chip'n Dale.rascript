@@ -31,7 +31,7 @@
         }
     function stageClearTimer() => byte(0x006d)
     function soundQueueIndex() => byte(0x00db)
-    function soundQueueSlot(index) => byte(0x00dc + index)
+    function soundQueue(index) => byte(0x00dc + index)
         ZONE_MUSIC = {
             ZONE_0: 0x00,
             ZONE_A: 0x05,
@@ -51,6 +51,8 @@
     function player2InvincibilityFrames() => byte(0x005f)
     function player1Lives() => low4(0x005b4) * 10 + low4(0x05b6)
     function player2Lives() => low4(0x005e4) * 10 + low4(0x05e6)
+    function player1Flowers00X() => low4(0x05ae)
+    function player2Flowers00X() => low4(0x05de)
 // #endsection Memory Addresses
 
 // #section Frames
@@ -58,6 +60,26 @@
         return
             prev(stageClearTimer()) == 0x00
             && stageClearTimer() != 0x00
+    }
+
+    function framePlayerDamaged(player) {
+        if (player == 1) {
+            return 
+                prev(player1InvincibilityFrames()) != 0x3b 
+                && player1InvincibilityFrames() == 0x3b
+        } else if (player == 2) {
+            return 
+                prev(player2InvincibilityFrames()) != 0x3b 
+                && player2InvincibilityFrames() == 0x3b
+        }
+    }
+
+    function framePlayerDeath(player) {
+        if (player == 1) {
+            return prev(player1Lives()) > player1Lives()
+        } else if (player == 2) {
+            return prev(player2Lives()) > player2Lives()
+        }
     }
 // #endsection Frames
 
@@ -72,7 +94,7 @@
             && frameStageCompleted()
     }
 
-    function triggerZoneClearDamageless(zone) {
+    function triggerZoneDamageless(zone) {
         zoneMusic = ZONE_MUSIC[zone]
 
         zoneSections = ZONE_SECTION[zone]
@@ -81,7 +103,7 @@
 
         primingCondition =
             stageSection() == zoneFirstSection
-            && soundQueueSlot(soundQueueIndex()) == zoneMusic
+            && soundQueue(soundQueueIndex()) == zoneMusic
 
         targetCondition =
             stageSection() == zoneLastSection
@@ -89,13 +111,13 @@
 
         cancelConditions = 
             never(stageId() != zone)
-            && never(player1InvincibilityFrames() == 0x3b)
-            && never(player2InvincibilityFrames() == 0x3b)
+            && never(framePlayerDamaged(1))
+            && never(framePlayerDamaged(2))
 
         return once(primingCondition) && cancelConditions && trigger_when(targetCondition)
     }
 
-    function triggerZoneClearDeathless(zone) {
+    function triggerZoneDeathless(zone) {
         zoneMusic = ZONE_MUSIC[zone]
 
         zoneSections = ZONE_SECTION[zone]
@@ -104,7 +126,7 @@
 
         primingCondition =
             stageSection() == zoneFirstSection
-            && soundQueueSlot(soundQueueIndex()) == zoneMusic
+            && soundQueue(soundQueueIndex()) == zoneMusic
 
         targetCondition =
             stageSection() == zoneLastSection
@@ -112,10 +134,35 @@
 
         cancelConditions = 
             never(stageId() != zone)
-            && never(prev(player1Lives()) > player1Lives())
-            && never(prev(player2Lives()) > player2Lives())
+            && never(framePlayerDeath(1))
+            && never(framePlayerDeath(2))
 
         return once(primingCondition) && cancelConditions && trigger_when(targetCondition)
+    }
+
+    function triggerFlowers(zone, count) {
+        zoneMusic = ZONE_MUSIC[zone]
+
+        zoneSections = ZONE_SECTION[zone]
+        zoneFirstSection = zoneSections[0]
+        zoneLastSection = array_pop(zoneSections)
+
+        primingCondition =
+            stageSection() == zoneFirstSection
+            && soundQueue(soundQueueIndex()) == zoneMusic
+
+        targetCondition =
+            tally(count,
+                prev(player1Flowers00X()) != player1Flowers00X(),
+                prev(player2Flowers00X()) != player2Flowers00X()
+            )
+
+        cancelConditions = 
+            never(stageId() != zone)
+            && never(framePlayerDeath(1))
+            && never(framePlayerDeath(2))
+
+        return measured(targetCondition, once(primingCondition)) && cancelConditions
     }
 // #endsection Triggers
 
@@ -134,29 +181,41 @@
     achievement(id = 11404, title = "Rescue Rangers J (The Post Office)", description = "Clear Zone J", points = 5, trigger = triggerZoneClear(ZONE_J), type = "progression")
 
     // Deathless Achievements
-    achievement(id = 11405, title = "Monty's Challenge 0 (The Lab)", description = "Clear Zone 0 without dying", points = 5, trigger = triggerZoneClearDeathless(ZONE_0))
-    achievement(id = 11406, title = "Monty's Challenge A (The Tree)", description = "Clear Zone A without dying", points = 10, trigger = triggerZoneClearDeathless(ZONE_A))
-    achievement(id = 11407, title = "Monty's Challenge B (The Diner)", description = "Clear Zone B without dying", points = 10, trigger = triggerZoneClearDeathless(ZONE_B))
-    achievement(id = 11408, title = "Monty's Challenge C (The Library)", description = "Clear Zone C without dying", points = 10, trigger = triggerZoneClearDeathless(ZONE_C))
-    achievement(id = 11409, title = "Monty's Challenge D (The Toy Store)", description = "Clear Zone D without dying", points = 10, trigger = triggerZoneClearDeathless(ZONE_D))
-    achievement(id = 11410, title = "Monty's Challenge E (The Park)", description = "Clear Zone E without dying", points = 10, trigger = triggerZoneClearDeathless(ZONE_E))
-    achievement(id = 11411, title = "Monty's Challenge F (The Factory)", description = "Clear Zone F without dying", points = 4, trigger = triggerZoneClearDeathless(ZONE_F))
-    achievement(id = 11412, title = "Monty's Challenge G (The Casino)", description = "Clear Zone G without dying", points = 10, trigger = triggerZoneClearDeathless(ZONE_G))
-    achievement(id = 11413, title = "Monty's Challenge H (The Sewers)", description = "Clear Zone H without dying", points = 10, trigger = triggerZoneClearDeathless(ZONE_H))
-    achievement(id = 11414, title = "Monty's Challenge I (The Bureau)", description = "Clear Zone I without dying", points = 10, trigger = triggerZoneClearDeathless(ZONE_I))
-    achievement(id = 11415, title = "Monty's Challenge J (The Post Office)", description = "Clear Zone J without dying", points = 10, trigger = triggerZoneClearDeathless(ZONE_J))
+    achievement(id = 11405, title = "Monty's Challenge 0 (The Lab)", description = "Clear Zone 0 without dying", points = 5, trigger = triggerZoneDeathless(ZONE_0))
+    achievement(id = 11406, title = "Monty's Challenge A (The Tree)", description = "Clear Zone A without dying", points = 10, trigger = triggerZoneDeathless(ZONE_A))
+    achievement(id = 11407, title = "Monty's Challenge B (The Diner)", description = "Clear Zone B without dying", points = 10, trigger = triggerZoneDeathless(ZONE_B))
+    achievement(id = 11408, title = "Monty's Challenge C (The Library)", description = "Clear Zone C without dying", points = 10, trigger = triggerZoneDeathless(ZONE_C))
+    achievement(id = 11409, title = "Monty's Challenge D (The Toy Store)", description = "Clear Zone D without dying", points = 10, trigger = triggerZoneDeathless(ZONE_D))
+    achievement(id = 11410, title = "Monty's Challenge E (The Park)", description = "Clear Zone E without dying", points = 10, trigger = triggerZoneDeathless(ZONE_E))
+    achievement(id = 11411, title = "Monty's Challenge F (The Factory)", description = "Clear Zone F without dying", points = 4, trigger = triggerZoneDeathless(ZONE_F))
+    achievement(id = 11412, title = "Monty's Challenge G (The Casino)", description = "Clear Zone G without dying", points = 10, trigger = triggerZoneDeathless(ZONE_G))
+    achievement(id = 11413, title = "Monty's Challenge H (The Sewers)", description = "Clear Zone H without dying", points = 10, trigger = triggerZoneDeathless(ZONE_H))
+    achievement(id = 11414, title = "Monty's Challenge I (The Bureau)", description = "Clear Zone I without dying", points = 10, trigger = triggerZoneDeathless(ZONE_I))
+    achievement(id = 11415, title = "Monty's Challenge J (The Post Office)", description = "Clear Zone J without dying", points = 10, trigger = triggerZoneDeathless(ZONE_J))
 
     // Damageless Achievements
-    achievement(id = 11416, title = "Zipper's Challenge 0 (The Lab)", description = "Clear Zone 0 without taking damage", points = 10, trigger = triggerZoneClearDamageless(ZONE_0))
-    achievement(id = 11417, title = "Zipper's Challenge A (The Tree)", description = "Clear Zone A without taking damage", points = 10, trigger = triggerZoneClearDamageless(ZONE_A))
-    achievement(id = 11418, title = "Zipper's Challenge B (The Diner)", description = "Clear Zone B without taking damage", points = 10, trigger = triggerZoneClearDamageless(ZONE_B))
-    achievement(id = 11419, title = "Zipper's Challenge C (The Library)", description = "Clear Zone C without taking damage", points = 10, trigger = triggerZoneClearDamageless(ZONE_C))
-    achievement(id = 11420, title = "Zipper's Challenge D (The Toy Store)", description = "Clear Zone D without taking damage", points = 10, trigger = triggerZoneClearDamageless(ZONE_D))
-    achievement(id = 11421, title = "Zipper's Challenge E (The Park)", description = "Clear Zone E without taking damage", points = 10, trigger = triggerZoneClearDamageless(ZONE_E))
-    achievement(id = 11422, title = "Zipper's Challenge F (The Factory)", description = "Clear Zone F without taking damage", points = 10, trigger = triggerZoneClearDamageless(ZONE_F))
-    achievement(id = 11423, title = "Zipper's Challenge G (The Casino)", description = "Clear Zone G without taking damage", points = 10, trigger = triggerZoneClearDamageless(ZONE_G))
-    achievement(id = 11424, title = "Zipper's Challenge H (The Sewers)", description = "Clear Zone H without taking damage", points = 10, trigger = triggerZoneClearDamageless(ZONE_H))
-    achievement(id = 11425, title = "Zipper's Challenge I (The Bureau)", description = "Clear Zone I without taking damage", points = 10, trigger = triggerZoneClearDamageless(ZONE_I))
-    achievement(id = 11426, title = "Zipper's Challenge J (The Post Office)", description = "Clear Zone J without taking damage", points = 10, trigger = triggerZoneClearDamageless(ZONE_J))
+    achievement(id = 11416, title = "Zipper's Challenge 0 (The Lab)", description = "Clear Zone 0 without taking damage", points = 10, trigger = triggerZoneDamageless(ZONE_0))
+    achievement(id = 11417, title = "Zipper's Challenge A (The Tree)", description = "Clear Zone A without taking damage", points = 10, trigger = triggerZoneDamageless(ZONE_A))
+    achievement(id = 11418, title = "Zipper's Challenge B (The Diner)", description = "Clear Zone B without taking damage", points = 10, trigger = triggerZoneDamageless(ZONE_B))
+    achievement(id = 11419, title = "Zipper's Challenge C (The Library)", description = "Clear Zone C without taking damage", points = 10, trigger = triggerZoneDamageless(ZONE_C))
+    achievement(id = 11420, title = "Zipper's Challenge D (The Toy Store)", description = "Clear Zone D without taking damage", points = 10, trigger = triggerZoneDamageless(ZONE_D))
+    achievement(id = 11421, title = "Zipper's Challenge E (The Park)", description = "Clear Zone E without taking damage", points = 10, trigger = triggerZoneDamageless(ZONE_E))
+    achievement(id = 11422, title = "Zipper's Challenge F (The Factory)", description = "Clear Zone F without taking damage", points = 10, trigger = triggerZoneDamageless(ZONE_F))
+    achievement(id = 11423, title = "Zipper's Challenge G (The Casino)", description = "Clear Zone G without taking damage", points = 10, trigger = triggerZoneDamageless(ZONE_G))
+    achievement(id = 11424, title = "Zipper's Challenge H (The Sewers)", description = "Clear Zone H without taking damage", points = 10, trigger = triggerZoneDamageless(ZONE_H))
+    achievement(id = 11425, title = "Zipper's Challenge I (The Bureau)", description = "Clear Zone I without taking damage", points = 10, trigger = triggerZoneDamageless(ZONE_I))
+    achievement(id = 11426, title = "Zipper's Challenge J (The Post Office)", description = "Clear Zone J without taking damage", points = 10, trigger = triggerZoneDamageless(ZONE_J))
 
+    // Flower Collecting Achievements
+    achievement(id = 41610, title = "Rodent Philatelist 0 (The Lab)", description = "Collect 55 single and pairs of flower stamps in Zone 0 without dying", points = 5, trigger = triggerFlowers(ZONE_0, 55))
+    achievement(id = 41611, title = "Rodent Philatelist A (The Tree)", description = "Collect 20 single and pairs of flower stamps in Zone A without dying", points = 10, trigger = triggerFlowers(ZONE_A, 20))
+    achievement(id = 41612, title = "Rodent Philatelist B (The Diner)", description = "Collect 74 single and pairs of flower stamps in Zone B without dying", points = 10, trigger = triggerFlowers(ZONE_B, 74))
+    achievement(id = 41613, title = "Rodent Philatelist C (The Library)", description = "Collect 60 single and pairs of flower stamps in Zone C without dying", points = 10, trigger = triggerFlowers(ZONE_C, 60))
+    achievement(id = 41614, title = "Rodent Philatelist D (The Toy Store)", description = "Collect 98 single and pairs of flower stamps in Zone D without dying", points = 10, trigger = triggerFlowers(ZONE_D, 98))
+    achievement(id = 41615, title = "Rodent Philatelist E (The Park)", description = "Collect 55 single and pairs of flower stamps in Zone E without dying", points = 10, trigger = triggerFlowers(ZONE_E, 55))
+    achievement(id = 41616, title = "Rodent Philatelist F (The Factory)", description = "Collect 60 single and pairs of flower stamps in Zone F without dying", points = 10, trigger = triggerFlowers(ZONE_F, 60))
+    achievement(id = 41617, title = "Rodent Philatelist G (The Casino)", description = "Collect 130 single and pairs of flower stamps in Zone G without dying", points = 10, trigger = triggerFlowers(ZONE_G, 130))
+    achievement(id = 41618, title = "Rodent Philatelist H (Sewers)", description = "Collect 110 single and pairs of flower stamps in Zone H without dying", points = 10, trigger = triggerFlowers(ZONE_H, 110))
+    achievement(id = 41619, title = "Rodent Philatelist I (The Bureau)", description = "Collect 65 single and pairs of flower stamps in Zone I without dying", points = 10, trigger = triggerFlowers(ZONE_I, 65))
+    achievement(id = 41620, title = "Rodent Philatelist J (The Post Office)", description = "Collect 55 single and pairs of flower stamps in Zone J without dying", points = 10, trigger = triggerFlowers(ZONE_J, 55))
 // #endsection Achievements
